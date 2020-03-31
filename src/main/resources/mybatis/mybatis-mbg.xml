@@ -13,10 +13,10 @@
         <!--自动生成toString方法-->
         <plugin type="org.mybatis.generator.plugins.ToStringPlugin" />
          <!--是否取消自动生成的注释-->
-        <!--<commentGenerator>
+        <commentGenerator>
             <property name="suppressDate" value="true"/>
             <property name="suppressAllComments" value="true"/>
-        </commentGenerator>-->
+        </commentGenerator>
         <!-- jdbcConnection：指定如何连接到目标数据库 -->
         <jdbcConnection driverClass="${jdbc.driverClass}"
                         connectionURL="${jdbc.jdbcUrl}"
