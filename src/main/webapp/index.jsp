@@ -53,7 +53,7 @@
 
 <!-- 4:3 aspect ratio -->
 
-<div class="embed-responsive embed-responsive-4by3">
+<%--<div class="embed-responsive embed-responsive-4by3">
 
     <video width="100" height="100" controls>
 
@@ -61,8 +61,8 @@
 
     </video>
 
-</div>
-
+</div>--%>
+${APP_PATH}
 </body>
 </html>
 <script type="text/javascript">
