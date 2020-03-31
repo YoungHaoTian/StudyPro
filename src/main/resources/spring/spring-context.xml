@@ -1,14 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd">
     <!--自动扫描包，除了控制器不扫描，都扫描-->
     <context:component-scan base-package="com.cdut.studypro">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 
+    <!--数据源、事务配置、xxx-->
+    <!--引入外部资源文件-->
+    <context:property-placeholder location="classpath:dbconfig.properties"/>
 
+    <!--c3p0数据源的配置-->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="jdbcUrl" value="${jdbc.jdbcUrl}"/>
+        <property name="driverClass" value="${jdbc.driverClass}"/>
+        <property name="user" value="${jdbc.user}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+    <!--
+          配置和MyBatis的整合
+     -->
+    <bean id="sessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <!--配置别名-->
+        <property name="typeAliasesPackage" value="com.cdut.studypro.beans"/>
+        <!--指定mybatis全局配置文件-->
+        <property name="configLocation" value="classpath:mybatis/mybatis-config.xml"/>
+        <!--指定mybatis mapper文件的位置-->
+        <property name="mapperLocations" value="classpath*:mybatis/mappers/*.xml"/>
 
+    </bean>
+    <!-- 批量执行的sqlSession-->
+    <!--<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg name="sqlSessionFactory" ref="sessionFactory"/>
+        <constructor-arg name="executorType" value="BATCH"/>
+    </bean>-->
 
+    <!--配置扫描器，将mybatis接口的实现加入到IOC容器中-->
+    <bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!--扫描所有dao接口的实现，加入到IOC容器中-->
+        <property name="basePackage" value="com.cdut.studypro.daos"/>
+    </bean>
+    <!--事务控制配置-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!--开启基于注解的事务，重要的事务还是使用配置文件的方式-->
+    <!--<tx:annotation-driven/>-->
+
+    <!--基于配置的事务-->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <!--事务属性-->
+        <tx:attributes>
+            <!--所有方法都是事务方法-->
+            <tx:method name="*"/>
+            <!--get开始的所有方法-->
+            <tx:method name="get*" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!--面向切面配置-->
+    <aop:config>
+        <!--切入点表达式-->
+        <aop:pointcut id="txPoint" expression="execution(* com.cdut.studypro.services.*.*(..))"/>
+        <!--配置事务增强-->
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="txPoint"/>
+    </aop:config>
 </beans>
