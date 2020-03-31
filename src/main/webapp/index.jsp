@@ -15,6 +15,8 @@
     <title>测试BootStrap</title>
     <!--引入jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
     <script type="text/javascript" src="resources/js/jquery/jquery-3.4.1.js"></script>
+    <!--加载layer组件-->
+    <script src="resources/layer/layer.js"></script>
     <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
     <script src="resources/bootstrap/js/bootstrap.min.js"></script>
     <!-- Bootstrap 样式-->
@@ -63,3 +65,8 @@
 
 </body>
 </html>
+<script type="text/javascript">
+    $(function () {
+        layer.msg("提示信息", {time:1000, icon:5, shift:6});
+    })
+</script>

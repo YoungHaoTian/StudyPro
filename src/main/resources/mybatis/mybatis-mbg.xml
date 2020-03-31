@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+
+    <properties resource="dbconfig.properties"/>
+    <!--
+        targetRuntime="MyBatis3Simple":生成简单版的CRUD
+        MyBatis3:豪华版，复杂查询，xxxExample
+     -->
+    <context id="studypro_mbg" targetRuntime="MyBatis3">
+        <!--自动生成toString方法-->
+        <plugin type="org.mybatis.generator.plugins.ToStringPlugin" />
+         <!--是否取消自动生成的注释-->
+        <!--<commentGenerator>
+            <property name="suppressDate" value="true"/>
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>-->
+        <!-- jdbcConnection：指定如何连接到目标数据库 -->
+        <jdbcConnection driverClass="${jdbc.driverClass}"
+                        connectionURL="${jdbc.jdbcUrl}"
+                        userId="${jdbc.user}"
+                        password="${jdbc.password}">
+        </jdbcConnection>
+
+        <!-- java类型解析器 -->
+        <javaTypeResolver >
+            <property name="forceBigDecimals" value="false" />
+        </javaTypeResolver>
+
+        <!-- javaModelGenerator：指定javaBean的生成策略
+        targetPackage="test.model"：目标包名
+        targetProject="\MBGTestProject\src"：目标工程
+        -->
+        <javaModelGenerator targetPackage="${targetModelPackage}"
+                            targetProject="${targetJavaProject}">
+            <property name="enableSubPackages" value="true" />
+            <!-- 从数据库返回的值被清理前后的空格 -->
+            <property name="trimStrings" value="true" />
+        </javaModelGenerator>
+
+        <!-- sqlMapGenerator：sql映射生成策略： -->
+        <sqlMapGenerator targetPackage="${targetXMLPackage}"
+                         targetProject="${targetResourcesProject}">
+            <!-- enableSubPackages:是否让schema作为包的后缀 -->
+            <property name="enableSubPackages" value="true" />
+        </sqlMapGenerator>
+
+        <!-- javaClientGenerator:指定mapper接口所在的位置 -->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="${targetMapperPackage}"
+                             targetProject="${targetJavaProject}">
+            <property name="enableSubPackages" value="true" />
+        </javaClientGenerator>
+
+        <!-- 指定要逆向分析哪些表：根据表要创建javaBean -->
+        <table tableName="admin" domainObjectName="Admin"/>
+        <table tableName="collect" domainObjectName="Collect"/>
+        <table tableName="college" domainObjectName="College"/>
+        <table tableName="course" domainObjectName="Course"/>
+        <table tableName="course_file" domainObjectName="CourseFile"/>
+        <table tableName="course_video" domainObjectName="CourseVideo"/>
+        <table tableName="discuss" domainObjectName="Discuss"/>
+        <table tableName="discuss_post" domainObjectName="DiscussPost"/>
+        <table tableName="notice" domainObjectName="Notice"/>
+        <table tableName="student" domainObjectName="Student"/>
+        <table tableName="student_task" domainObjectName="StudentTask"/>
+        <table tableName="task" domainObjectName="Task"/>
+        <table tableName="task_question" domainObjectName="TaskQuestion"/>
+        <table tableName="teacher" domainObjectName="Teacher"/>
+    </context>
+</generatorConfiguration>
