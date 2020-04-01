@@ -6,6 +6,7 @@
   Description: 
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<jsp:forward page="/index/login"/>
 <html>
 <head>
     <meta charset="utf-8">
@@ -23,45 +24,7 @@
     <link href="resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<!-- Standard button -->
-<button type="button" class="btn btn-default">（默认样式）Default</button>
-<br><br>
 
-<!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
-<button type="button" class="btn btn-primary">（首选项）Primary</button>
-<br><br>
-
-<!-- Indicates a successful or positive action -->
-<button type="button" class="btn btn-success">（成功）Success</button>
-<br><br>
-
-<!-- Contextual button for informational alert messages -->
-<button type="button" class="btn btn-info">（一般信息）Info</button>
-<br><br>
-
-<!-- Indicates caution should be taken with this action -->
-<button type="button" class="btn btn-warning">（警告）Warning</button>
-<br><br>
-
-<!-- Indicates a dangerous or potentially negative action -->
-<button type="button" class="btn btn-danger">（危险）Danger</button>
-<br><br>
-
-<!-- Deemphasize a button by making it look like a link while maintaining button behavior -->
-<button type="button" class="btn btn-link">（链接）Link</button>
-<br><br>
-
-<!-- 4:3 aspect ratio -->
-
-<%--<div class="embed-responsive embed-responsive-4by3">
-
-    <video width="100" height="100" controls>
-
-        <source src="video/movie.mp4" type="video/mp4">
-
-    </video>
-
-</div>--%>
 ${APP_PATH}
 </body>
 </html>

@@ -1,5 +1,12 @@
 package com.cdut.studypro.services;
 
+
+import com.cdut.studypro.beans.AdminExample;
+import com.cdut.studypro.beans.Student;
+import com.cdut.studypro.beans.StudentExample;
+
+import java.util.List;
+
 /**
  * @description:
  * @author: Mr.Young
@@ -8,4 +15,13 @@ package com.cdut.studypro.services;
  * @qq: 1023704092
  */
 public interface StudentService {
+    List<Student> selectStudentByExample(StudentExample example);
+
+    boolean insertStudentSelective(Student student);
+
+    boolean isExistsByExample(StudentExample example);
+
+    boolean updateStudentByPrimaryKeySelective(Student student);
+
+    Integer getIdByTelephone(String phone);
 }

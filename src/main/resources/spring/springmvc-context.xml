@@ -9,9 +9,13 @@
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 
-
-    <mvc:annotation-driven/>
-    <mvc:default-servlet-handler/>
+    <!--<mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+&lt;!&ndash;            <mvc:exclude-mapping path=""/>&ndash;&gt;
+            <bean class="com.cdut.studypro.interceptors.LoginInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>-->
 
     <!--配置视图解析器，方便页面返回-->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">

@@ -2,7 +2,9 @@ package com.cdut.studypro.daos;
 
 import com.cdut.studypro.beans.Teacher;
 import com.cdut.studypro.beans.TeacherExample;
+
 import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface TeacherMapper {
@@ -27,4 +29,6 @@ public interface TeacherMapper {
     int updateByPrimaryKeySelective(Teacher record);
 
     int updateByPrimaryKey(Teacher record);
+
+    Integer getIdByTelephone(String phone);
 }

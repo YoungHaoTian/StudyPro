@@ -5,11 +5,11 @@ public class Student {
 
     private String name;
 
-    private String num;
+    private String number;
 
     private Integer collegeId;
 
-    private String telphone;
+    private String telephone;
 
     private String idCardNo;
 
@@ -18,6 +18,8 @@ public class Student {
     private String account;
 
     private String password;
+
+    private String email;
 
     public Integer getId() {
         return id;
@@ -35,12 +37,12 @@ public class Student {
         this.name = name == null ? null : name.trim();
     }
 
-    public String getNum() {
-        return num;
+    public String getNumber() {
+        return number;
     }
 
-    public void setNum(String num) {
-        this.num = num == null ? null : num.trim();
+    public void setNumber(String number) {
+        this.number = number == null ? null : number.trim();
     }
 
     public Integer getCollegeId() {
@@ -51,12 +53,12 @@ public class Student {
         this.collegeId = collegeId;
     }
 
-    public String getTelphone() {
-        return telphone;
+    public String getTelephone() {
+        return telephone;
     }
 
-    public void setTelphone(String telphone) {
-        this.telphone = telphone == null ? null : telphone.trim();
+    public void setTelephone(String telephone) {
+        this.telephone = telephone == null ? null : telephone.trim();
     }
 
     public String getIdCardNo() {
@@ -91,6 +93,14 @@ public class Student {
         this.password = password == null ? null : password.trim();
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email == null ? null : email.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -99,13 +109,14 @@ public class Student {
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
         sb.append(", name=").append(name);
-        sb.append(", num=").append(num);
+        sb.append(", number=").append(number);
         sb.append(", collegeId=").append(collegeId);
-        sb.append(", telphone=").append(telphone);
+        sb.append(", telephone=").append(telephone);
         sb.append(", idCardNo=").append(idCardNo);
         sb.append(", gender=").append(gender);
         sb.append(", account=").append(account);
         sb.append(", password=").append(password);
+        sb.append(", email=").append(email);
         sb.append("]");
         return sb.toString();
     }

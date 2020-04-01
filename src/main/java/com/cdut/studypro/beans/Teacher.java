@@ -9,7 +9,7 @@ public class Teacher {
 
     private Integer collegeId;
 
-    private String telphone;
+    private String telephone;
 
     private String idCardNo;
 
@@ -17,9 +17,11 @@ public class Teacher {
 
     private String password;
 
-    private String num;
+    private String number;
 
     private Integer courseId;
+
+    private String email;
 
     public Integer getId() {
         return id;
@@ -53,12 +55,12 @@ public class Teacher {
         this.collegeId = collegeId;
     }
 
-    public String getTelphone() {
-        return telphone;
+    public String getTelephone() {
+        return telephone;
     }
 
-    public void setTelphone(String telphone) {
-        this.telphone = telphone == null ? null : telphone.trim();
+    public void setTelephone(String telephone) {
+        this.telephone = telephone == null ? null : telephone.trim();
     }
 
     public String getIdCardNo() {
@@ -85,12 +87,12 @@ public class Teacher {
         this.password = password == null ? null : password.trim();
     }
 
-    public String getNum() {
-        return num;
+    public String getNumber() {
+        return number;
     }
 
-    public void setNum(String num) {
-        this.num = num == null ? null : num.trim();
+    public void setNumber(String number) {
+        this.number = number == null ? null : number.trim();
     }
 
     public Integer getCourseId() {
@@ -99,6 +101,14 @@ public class Teacher {
 
     public void setCourseId(Integer courseId) {
         this.courseId = courseId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email == null ? null : email.trim();
     }
 
     @Override
@@ -111,12 +121,13 @@ public class Teacher {
         sb.append(", name=").append(name);
         sb.append(", gender=").append(gender);
         sb.append(", collegeId=").append(collegeId);
-        sb.append(", telphone=").append(telphone);
+        sb.append(", telephone=").append(telephone);
         sb.append(", idCardNo=").append(idCardNo);
         sb.append(", account=").append(account);
         sb.append(", password=").append(password);
-        sb.append(", num=").append(num);
+        sb.append(", number=").append(number);
         sb.append(", courseId=").append(courseId);
+        sb.append(", email=").append(email);
         sb.append("]");
         return sb.toString();
     }

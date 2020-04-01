@@ -1,5 +1,10 @@
 package com.cdut.studypro.services;
 
+import com.cdut.studypro.beans.Admin;
+import com.cdut.studypro.beans.AdminExample;
+
+import java.util.List;
+
 /**
  * @description:
  * @author: Mr.Young
@@ -8,4 +13,6 @@ package com.cdut.studypro.services;
  * @qq: 1023704092
  */
 public interface AdminService {
+    List<Admin> selectAdminByExample(AdminExample example);
+    boolean isExistsByExample(AdminExample example);
 }

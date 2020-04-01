@@ -9,6 +9,10 @@ public class Admin {
 
     private String password;
 
+    private String email;
+
+    private String telephone;
+
     public Integer getId() {
         return id;
     }
@@ -41,6 +45,22 @@ public class Admin {
         this.password = password == null ? null : password.trim();
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email == null ? null : email.trim();
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone == null ? null : telephone.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -51,6 +71,8 @@ public class Admin {
         sb.append(", name=").append(name);
         sb.append(", account=").append(account);
         sb.append(", password=").append(password);
+        sb.append(", email=").append(email);
+        sb.append(", telephone=").append(telephone);
         sb.append("]");
         return sb.toString();
     }

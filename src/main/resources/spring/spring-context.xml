@@ -30,7 +30,7 @@
         <!--指定mybatis全局配置文件-->
         <property name="configLocation" value="classpath:mybatis/mybatis-config.xml"/>
         <!--指定mybatis mapper文件的位置-->
-        <property name="mapperLocations" value="classpath*:mybatis/mappers/*.xml"/>
+        <property name="mapperLocations" value="classpath:mybatis/mappers/*.xml"/>
 
     </bean>
     <!-- MyBatisPlus   -->
@@ -66,8 +66,16 @@
     <tx:advice id="txAdvice" transaction-manager="transactionManager">
         <!--事务属性-->
         <tx:attributes>
-            <!--所有方法都是事务方法-->
-            <tx:method name="*"/>
+            <!--事务方法-->
+            <tx:method name="sel*" propagation="REQUIRED" read-only="true" rollback-for="java.lang.Exception" />
+			<tx:method name="que*" propagation="REQUIRED" read-only="true" rollback-for="java.lang.Exception" />
+
+			<tx:method name="del*" propagation="REQUIRED" rollback-for="java.lang.Exception" />
+			<tx:method name="upd*" propagation="REQUIRED" rollback-for="java.lang.Exception" />
+
+			<tx:method name="ins*" propagation="REQUIRED" rollback-for="java.lang.Exception" />
+			<tx:method name="add*" propagation="REQUIRED" rollback-for="java.lang.Exception" />
+			<tx:method name="save*" propagation="REQUIRED" rollback-for="java.lang.Exception" />
             <!--get开始的所有方法-->
             <tx:method name="get*" read-only="true"/>
         </tx:attributes>

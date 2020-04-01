@@ -2,7 +2,9 @@ package com.cdut.studypro.daos;
 
 import com.cdut.studypro.beans.Student;
 import com.cdut.studypro.beans.StudentExample;
+
 import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface StudentMapper {
@@ -27,4 +29,7 @@ public interface StudentMapper {
     int updateByPrimaryKeySelective(Student record);
 
     int updateByPrimaryKey(Student record);
+
+    //根据手机号获取id，该方法可以根据phone查看用户是否存在
+    Integer getIdByTelephone(String phone);
 }
