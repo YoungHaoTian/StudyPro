@@ -82,7 +82,6 @@ public class TeacherController {
             request.getSession().removeAttribute("ForgetCode");
             return RequestResult.failure("验证码已过期，请重新获取");
         }
-
         //2、查询该手机号是否存在
         Integer id = teacherService.getIdByTelephone(phone);
         //不存在

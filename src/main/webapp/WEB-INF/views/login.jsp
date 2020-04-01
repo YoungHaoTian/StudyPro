@@ -181,88 +181,29 @@
             $("#Userpwd").focus();
             return;
         }
-        if (role === "admin") {
-            console.log("admin");
-            txtPwd = $.md5(txtPwd);
-            let data = {"type": type, "username": txtUser, "password": txtPwd};
-            let loadingIndex = layer.msg('处理中', {icon: 16});
+        console.log("admin");
+        txtPwd = $.md5(txtPwd);
+        let data = {"type": type, "username": txtUser, "password": txtPwd};
+        let loadingIndex = layer.msg('处理中', {icon: 16});
 
-            $.ajax({
-                url: "${APP_PATH}/admin/login",
-                type: "POST",
-                contentType: "application/json",
-                data: JSON.stringify(data),
-                success: function (result) {
-                    layer.close(loadingIndex);
-                    console.log(result);
-                    if (result.code === 200) {
-                        layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
-                        });
-                    }
-                    if (result.code === 100) {
-                        console.log("success");
-                        // window.location.href = "main";
-                    }
+        $.ajax({
+            url: "${APP_PATH}/"+role+"/login",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function (result) {
+                layer.close(loadingIndex);
+                console.log(result);
+                if (result.code === 200) {
+                    layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
+                    });
                 }
-            });
-        } else if (role === "student") {
-            console.log("student");
-            txtPwd = $.md5(txtPwd);
-            let data = {"type": type, "username": txtUser, "password": txtPwd};
-            let loadingIndex = layer.msg('处理中', {icon: 16});
-
-            $.ajax({
-                url: "${APP_PATH}/student/login",
-                type: "POST",
-                contentType: "application/json",
-                data: JSON.stringify(data),
-                success: function (result) {
-                    layer.close(loadingIndex);
-                    console.log(result);
-                    if (result.code === 200) {
-                        layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
-                        });
-                    }
-                    if (result.code === 100) {
-                        console.log("success");
-                        // window.location.href = "main";
-                    }
-
-                },
-                error: function () {
-
+                if (result.code === 100) {
+                    console.log("success");
+                    // window.location.href = "main";
                 }
-            });
-        } else if (role === "teacher") {
-            console.log("teacher");
-            txtPwd = $.md5(txtPwd);
-            let data = {"type": type, "username": txtUser, "password": txtPwd};
-            let loadingIndex = layer.msg('处理中', {icon: 16});
-
-            $.ajax({
-                url: "${APP_PATH}/teacher/login",
-                type: "POST",
-                contentType: "application/json",
-                data: JSON.stringify(data),
-                success: function (result) {
-                    layer.close(loadingIndex);
-                    console.log(result);
-                    if (result.code === 200) {
-                        layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
-                        });
-                    }
-                    if (result.code === 100) {
-                        console.log("success");
-                        // window.location.href = "main";
-                    }
-
-                },
-                error: function () {
-
-                }
-            });
-        }
-
+            }
+        });
     }
 
     function cliRegister() {
