@@ -18,6 +18,7 @@
     <link href="${APP_PATH}/resources/css/bootsnav.css" type="text/css" rel="stylesheet">
     <link href="${APP_PATH}/resources/css/normalize.css" type="text/css" rel="stylesheet">
     <link href="${APP_PATH}/resources/css/css.css" rel="stylesheet" type="text/css">
+    <link rel="shortcut icon" href="https://8.url.cn/edu/edu_modules/edu-ui/img/nohash/favicon.ico">
     <script src="${APP_PATH}/resources/js/jquery-1.9.1.min.js" type="text/javascript"></script>
     <script src="${APP_PATH}/resources/js/bootstrap.min.js" type="text/javascript"></script>
     <script src="${APP_PATH}/resources/js/bootsnav.js" type="text/javascript"></script>
@@ -132,7 +133,7 @@
 </html>
 <script type="text/javascript">
     //登录操作
-    let phone = /^1[345789]\d{9}$/;
+    let phone = /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\d{8}$/;
     let email = /^(\w+\.)*\w+\@+[0-9a-zA-Z]+\.(com|com.cn|edu|hk|cn|net)$/;
 
     function cliLogin() {
@@ -187,7 +188,7 @@
         let loadingIndex = layer.msg('处理中', {icon: 16});
 
         $.ajax({
-            url: "${APP_PATH}/"+role+"/login",
+            url: "${APP_PATH}/" + role + "/login",
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify(data),
@@ -199,9 +200,14 @@
                     });
                 }
                 if (result.code === 100) {
-                    console.log("success");
-                    // window.location.href = "main";
+                    layer.msg("登录成功，即将跳转", {time: 1000, icon: 6}, function () {
+                    });
+                    window.location.href = "${APP_PATH}/" + role + "/" + role + "Index";
                 }
+            },
+            error: function () {
+                layer.msg("网络异常，请稍后再试", {time: 1500, icon: 5, shift: 6}, function () {
+                });
             }
         });
     }

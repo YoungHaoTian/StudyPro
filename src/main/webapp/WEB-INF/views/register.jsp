@@ -17,6 +17,7 @@
     <link href="${APP_PATH}/resources/css/bootsnav.css" type="text/css" rel="stylesheet">
     <link href="${APP_PATH}/resources/css/normalize.css" type="text/css" rel="stylesheet">
     <link href="${APP_PATH}/resources/css/css.css" rel="stylesheet" type="text/css">
+    <link rel="shortcut icon" href="https://8.url.cn/edu/edu_modules/edu-ui/img/nohash/favicon.ico">
     <script src="${APP_PATH}/resources/js/jquery-1.11.0.min.js" type="text/javascript"></script>
     <script src="${APP_PATH}/resources/js/jquery.step.js"></script>
     <script src="${APP_PATH}/resources/js/bootstrap.min.js" type="text/javascript"></script>
@@ -108,7 +109,7 @@
                 <div class="step-list">
                     <div class="ok_style center">
                         <h2><img src="${APP_PATH}/resources/images/ok.png"></h2>
-                        <h5 class="color2 mtb20">你已成功注册会员<b id="sec">5</b>秒后跳转到登录页面</h5>
+                        <h5 class="color2 mtb20">你已成功注册<b id="sec">5</b>秒后跳转到登录页面</h5>
                         <a href="javaScript:void(0);" class="btn btn-danger back" id="back" style="margin-right: 20px">返回登录</a>
                         <a href="javaScript:void(0);" class="btn btn-primary" id="goBtn">重新注册</a>
                     </div>
@@ -126,7 +127,7 @@
 </html>
 <script type="text/javascript">
     let validCode = true;
-    let phone = /^1[345789]\d{9}$/;
+    let phone = /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\d{8}$/;
 
     //发送验证码
     function Sendpwd(sender) {
@@ -161,9 +162,13 @@
                     });
                 }
                 if (result.code === 100) {
-                    console.log("success");
-                    // window.location.href = "main";
+                    layer.msg("获取成功，请注意查收", {time: 1000, icon: 6}, function () {
+                    });
                 }
+            },
+            error: function () {
+                layer.msg("网络异常，请稍后再试", {time: 1500, icon: 5, shift: 6}, function () {
+                });
             }
         });
         let code = $(sender);
@@ -256,6 +261,12 @@
                 return;
 
             }
+            if (/(^\s*)|(\s*$)/g.test(txtPwd)) {
+                layer.msg("密码不能包含空格", {time: 1500, icon: 5, shift: 6}, function () {
+                });
+                $("#txtconfirm").focus();
+                return;
+            }
             if ($.trim(txtPwd).length < 6) {
                 layer.msg("密码长度需大于6", {time: 1500, icon: 5, shift: 6}, function () {
                 });
@@ -278,12 +289,17 @@
                         });
                     }
                     if (result.code === 100) {
-                        console.log("success");
+                        /*layer.msg("注册成功", {time: 1000, icon: 6}, function () {
+                        });*/
                         let yes = step.nextStep();
                         $(function () {
                             setTimeout("lazyGo()", 1000);
                         });
                     }
+                },
+                error: function () {
+                    layer.msg("网络异常，请稍后再试", {time: 1500, icon: 5, shift: 6}, function () {
+                    });
                 }
             });
         });

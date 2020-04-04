@@ -1,5 +1,7 @@
 package com.cdut.studypro.beans;
 
+import org.springframework.validation.annotation.Validated;
+
 public class Student {
     private Integer id;
 
@@ -18,7 +20,7 @@ public class Student {
     private String account;
 
     private String password;
-
+//    @Validated()
     private String email;
 
     public Integer getId() {

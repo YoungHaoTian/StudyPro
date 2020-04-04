@@ -4,18 +4,22 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+
     <!--自动扫描包，只扫描控制器-->
     <context:component-scan base-package="com.cdut.studypro.controllers">
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 
-    <!--<mvc:interceptors>
+
+    <mvc:interceptors>
         <mvc:interceptor>
-            <mvc:mapping path="/**"/>
-&lt;!&ndash;            <mvc:exclude-mapping path=""/>&ndash;&gt;
-            <bean class="com.cdut.studypro.interceptors.LoginInterceptor"/>
+            <mvc:mapping path="/*DataImport"/>
+            <bean class="com.cdut.studypro.interceptors.FileUploadInterceptor">
+                <property name="maxSize" value="1024"/>
+            </bean>
         </mvc:interceptor>
-    </mvc:interceptors>-->
+    </mvc:interceptors>
 
     <!--配置视图解析器，方便页面返回-->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -23,11 +27,26 @@
         <property name="suffix" value=".jsp"/>
     </bean>
 
-
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="UTF-8"/>
+        <!--50M-->
+        <property name="maxUploadSize" value="52428800"/>
+        <!--临时文件的存储地址-->
+        <property name="uploadTempDir" value="WEB-INF/temp"/>
+        <!--设置允许单个上传文件的最大值，不要在这里配置-->
+<!--        <property name="maxUploadSizePerFile" value="1024"/>-->
+        <!--延迟解析，在Controller中抛出异常-->
+        <property name="resolveLazily" value="true"/>
+    </bean>
     <!--两个标准-->
     <!--将spring MVC 不能处理的请求（静态资源之类的请求）交给Tomcat-->
     <mvc:default-servlet-handler/>
     <!--能支持springMVC更高级的一些功能，JSR303校验、快捷的ajax...映射动态请求-->
     <mvc:annotation-driven/>
+
+    <!--<mvc:resources mapping="/resources/**" location="/resources/" />
+    <mvc:resources mapping="/resources1/**" location="/resources1/" />
+    <mvc:resources mapping="/head/**" location="/head/" />
+    <mvc:resources mapping="/video/**" location="/video/" />-->
 
 </beans>

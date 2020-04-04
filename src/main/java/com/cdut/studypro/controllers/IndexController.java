@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -57,7 +58,7 @@ public class IndexController {
     }
 
     @ResponseBody
-    @RequestMapping("/code")
+    @RequestMapping(value = "/code",method = RequestMethod.POST)
     public RequestResult code(@RequestBody Map<String, String> map, HttpServletRequest request) {
         try {
             String phone = map.get("phone");

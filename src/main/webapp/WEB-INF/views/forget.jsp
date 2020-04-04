@@ -17,6 +17,7 @@
     <link href="${APP_PATH}/resources/css/bootsnav.css" type="text/css" rel="stylesheet">
     <link href="${APP_PATH}/resources/css/normalize.css" type="text/css" rel="stylesheet">
     <link href="${APP_PATH}/resources/css/css.css" rel="stylesheet" type="text/css">
+    <link rel="shortcut icon" href="https://8.url.cn/edu/edu_modules/edu-ui/img/nohash/favicon.ico">
     <script src="${APP_PATH}/resources/js/jquery-1.11.0.min.js" type="text/javascript"></script>
     <script src="${APP_PATH}/resources/js/jquery.step.js"></script>
     <script src="${APP_PATH}/resources/js/bootstrap.min.js" type="text/javascript"></script>
@@ -136,7 +137,7 @@
 </html>
 <script type="text/javascript">
     let validCode = true;
-    let phone = /^1[345789]\d{9}$/;
+    let phone = /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\d{8}$/;
 
     //发送验证码
     function Sendpwd(sender) {
@@ -155,7 +156,7 @@
             $("#phone").focus();
             return;
         }
-        let data = {"phone": phones,"type":"forget"};
+        let data = {"phone": phones, "type": "forget"};
         let loadingIndex = layer.msg('处理中', {icon: 16});
         $.ajax({
             url: "${APP_PATH}/index/code",
@@ -170,9 +171,13 @@
                     });
                 }
                 if (result.code === 100) {
-                    console.log("success");
-                    // window.location.href = "main";
+                    layer.msg("获取成功，请注意查收", {time: 1000, icon: 6}, function () {
+                    });
                 }
+            },
+            error: function () {
+                layer.msg("网络异常，请稍后再试", {time: 1500, icon: 5, shift: 6}, function () {
+                });
             }
         });
         let code = $(sender);
@@ -206,7 +211,7 @@
         let request_phone = '';
         let request_code = '';
         let request_password = '';
-        let role="";
+        let role = "";
         let step = $("#myStep").step({
             animate: true,
             initStep: 1,
@@ -265,6 +270,12 @@
                 $("#txtconfirm").focus();
                 return;
             }
+            if (/(^\s*)|(\s*$)/g.test(txtPwd)) {
+                layer.msg("登录密码不能包含空格", {time: 1500, icon: 5, shift: 6}, function () {
+                });
+                $("#txtconfirm").focus();
+                return;
+            }
             if ($.trim(txtPwd).length < 6) {
                 layer.msg("密码长度需大于6", {time: 1500, icon: 5, shift: 6}, function () {
                 });
@@ -275,7 +286,7 @@
             let data = {"phone": request_phone, "code": request_code, "password": request_password};
             let loadingIndex = layer.msg('处理中', {icon: 16});
             $.ajax({
-                url: "${APP_PATH}/"+role+"/findPassword",
+                url: "${APP_PATH}/" + role + "/findPassword",
                 type: "POST",
                 contentType: "application/json",
                 data: JSON.stringify(data),
@@ -287,12 +298,17 @@
                         });
                     }
                     if (result.code === 100) {
-                        console.log("success");
+                        /*layer.msg("密码找回成功", {time: 1000, icon: 6}, function () {
+                        });*/
                         let yes = step.nextStep();
                         $(function () {
                             setTimeout("lazyGo()", 1000);
                         });
                     }
+                },
+                error: function () {
+                    layer.msg("网络异常，请稍后再试", {time: 1500, icon: 5, shift: 6}, function () {
+                    });
                 }
             });
         });

@@ -42,7 +42,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public boolean isExistsByExample(StudentExample example) {
         long l = studentMapper.countByExample(example);
-        if (l!=0){
+        if (l>0){
             return true;
         }
         return false;
@@ -60,6 +60,11 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Integer getIdByTelephone(String phone) {
         return studentMapper.getIdByTelephone(phone);
+    }
+
+    @Override
+    public int insertStudentBatch(List<Student> students) {
+        return studentMapper.insertBatch(students);
     }
 
 }

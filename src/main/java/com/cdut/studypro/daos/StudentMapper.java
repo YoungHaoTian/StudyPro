@@ -32,4 +32,7 @@ public interface StudentMapper {
 
     //根据手机号获取id，该方法可以根据phone查看用户是否存在
     Integer getIdByTelephone(String phone);
+
+    //批量插入数据
+    int insertBatch(@Param("students") List<Student> students);
 }

@@ -9,9 +9,7 @@ import com.cdut.studypro.utils.RequestResult;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -32,8 +30,8 @@ public class TeacherController {
     private TeacherService teacherService;
 
     @ResponseBody
-    @RequestMapping("/login")
-    public RequestResult login(@RequestBody Map<String, String> map) {
+    @PostMapping(value = "/login")
+    public RequestResult login(@RequestBody Map<String, String> map, HttpServletRequest request) {
         System.out.println(map);
         TeacherExample teacherExample = new TeacherExample();
         Criteria criteria = teacherExample.createCriteria();
@@ -54,6 +52,8 @@ public class TeacherController {
             Teacher teacher = teachers.get(0);
             String password = map.get("password");
             if (password.equals(MD5Util.stringToMD5(teacher.getPassword()))) {
+                //登录成功后将教师信息保存在session中
+                request.getSession().setAttribute("user", teacher);
                 return RequestResult.success();
             } else {
                 return RequestResult.failure("密码错误，请稍后重试");
@@ -63,7 +63,7 @@ public class TeacherController {
     }
 
     @ResponseBody
-    @RequestMapping("/findPassword")
+    @PostMapping(value = "/findPassword")
     public RequestResult findPassword(@RequestBody Map<String, String> map, HttpServletRequest request) {
         String code = map.get("code");
         String phone = map.get("phone");

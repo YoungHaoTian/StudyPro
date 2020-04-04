@@ -11,9 +11,7 @@ import com.zhenzi.sms.ZhenziSmsClient;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -38,8 +36,8 @@ public class StudentController {
     private StudentService studentService;
 
     @ResponseBody
-    @RequestMapping("/login")
-    public RequestResult login(@RequestBody Map<String, String> map) {
+    @PostMapping(value = "/login")
+    public RequestResult login(@RequestBody Map<String, String> map, HttpServletRequest request) {
         System.out.println(map);
         StudentExample studentExample = new StudentExample();
         Criteria criteria = studentExample.createCriteria();
@@ -59,16 +57,19 @@ public class StudentController {
             Student student = students.get(0);
             String password = map.get("password");
             if (password.equals(MD5Util.stringToMD5(student.getPassword()))) {
+                //登录成功将学生信息保存在session中
+                request.getSession().setAttribute("user", student);
                 return RequestResult.success();
             } else {
                 return RequestResult.failure("密码错误，请稍后重试");
             }
         }
+
         return RequestResult.failure(message);
     }
 
     @ResponseBody
-    @RequestMapping("/register")
+    @PostMapping(value = "/register")
     public RequestResult register(@RequestBody Map<String, String> map, HttpServletRequest request) {
         String code = map.get("code");
         String phone = map.get("phone");
@@ -110,7 +111,7 @@ public class StudentController {
     }
 
     @ResponseBody
-    @RequestMapping("/findPassword")
+    @PostMapping(value = "/findPassword")
     public RequestResult findPassword(@RequestBody Map<String, String> map, HttpServletRequest request) {
         String code = map.get("code");
         String phone = map.get("phone");

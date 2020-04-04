@@ -24,4 +24,6 @@ public interface StudentService {
     boolean updateStudentByPrimaryKeySelective(Student student);
 
     Integer getIdByTelephone(String phone);
+
+    int insertStudentBatch(List<Student> students);
 }
