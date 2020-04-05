@@ -23,6 +23,16 @@ public class Student {
 //    @Validated()
     private String email;
 
+    private College college;
+
+    public College getCollege() {
+        return college;
+    }
+
+    public void setCollege(College college) {
+        this.college = college;
+    }
+
     public Integer getId() {
         return id;
     }

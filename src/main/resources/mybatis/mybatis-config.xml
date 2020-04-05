@@ -9,23 +9,23 @@
         <setting name="mapUnderscoreToCamelCase" value="true"/>
         <!-- 打开延迟加载的开关 -->
         <setting name="lazyLoadingEnabled" value="true"/>
-		<!-- 将积极加载改为消极加载即按需加载 -->
+        <!-- 将积极加载改为消极加载即按需加载 -->
         <setting name="aggressiveLazyLoading" value="false"/>
 
-        <setting name="logImpl" value="STDOUT_LOGGING" />
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
     </settings>
     <!--别名设置-->
     <typeAliases>
         <!--批量设置别名-->
-        <package name="com.atguigu.ssm.bean"/>
+        <package name="com.cdut.studypro.beans"/>
         <!--单个设置别名-->
-<!--        <typeAlias type="" alias=""/>-->
+        <!--<typeAlias type="" alias=""/>-->
     </typeAliases>
 
     <plugins>
         <plugin interceptor="com.github.pagehelper.PageInterceptor">
             <!--分页参数合理化  -->
-			<property name="reasonable" value="true"/>
+            <property name="reasonable" value="true"/>
         </plugin>
     </plugins>
 </configuration>

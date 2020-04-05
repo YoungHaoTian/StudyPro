@@ -2,12 +2,15 @@ package com.cdut.studypro.controllers;
 
 import com.cdut.studypro.beans.*;
 import com.cdut.studypro.beans.AdminExample.*;
+import com.cdut.studypro.exceptions.StudentNotExistException;
 import com.cdut.studypro.services.AdminService;
 import com.cdut.studypro.services.CollegeService;
 import com.cdut.studypro.services.StudentService;
 import com.cdut.studypro.utils.MD5Util;
 import com.cdut.studypro.utils.POIUtils;
 import com.cdut.studypro.utils.RequestResult;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -29,6 +32,7 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,10 +54,7 @@ public class AdminController {
 
     @Autowired
     private AdminService adminService;
-    @Autowired
-    private CollegeService collegeService;
-    @Autowired
-    private StudentService studentService;
+
 
     @ResponseBody
     @PostMapping(value = "/login")
@@ -100,7 +101,7 @@ public class AdminController {
 
     @RequestMapping("/createStudent")
     public String createStudent(Map<String, Object> map) {
-        List<College> colleges = collegeService.getAllColleges();
+        List<College> colleges = adminService.getAllColleges();
         map.put("colleges", colleges);
         return "admin/createStudent";
     }
@@ -114,7 +115,7 @@ public class AdminController {
         //1、查看学号是否存在
         StudentExample.Criteria criteria = studentExample.createCriteria();
         criteria.andNumberEqualTo(student.getNumber());
-        boolean exists = studentService.isExistsByExample(studentExample);
+        boolean exists = adminService.isStudentExistsByExample(studentExample);
         System.out.println(exists);
         if (exists) {
             return RequestResult.failure("该学号已经存在");
@@ -123,7 +124,7 @@ public class AdminController {
         studentExample.clear();
         criteria = studentExample.createCriteria();
         criteria.andTelephoneEqualTo(student.getTelephone());
-        exists = studentService.isExistsByExample(studentExample);
+        exists = adminService.isStudentExistsByExample(studentExample);
         if (exists) {
             return RequestResult.failure("该电话已经存在");
         }
@@ -131,7 +132,7 @@ public class AdminController {
         studentExample.clear();
         criteria = studentExample.createCriteria();
         criteria.andIdCardNoEqualTo(student.getIdCardNo());
-        exists = studentService.isExistsByExample(studentExample);
+        exists = adminService.isStudentExistsByExample(studentExample);
         if (exists) {
             return RequestResult.failure("该身份证号码已经存在");
         }
@@ -139,7 +140,7 @@ public class AdminController {
         studentExample.clear();
         criteria = studentExample.createCriteria();
         criteria.andAccountEqualTo(student.getAccount());
-        exists = studentService.isExistsByExample(studentExample);
+        exists = adminService.isStudentExistsByExample(studentExample);
         if (exists) {
             return RequestResult.failure("该账号已经存在");
         }
@@ -147,13 +148,13 @@ public class AdminController {
         studentExample.clear();
         criteria = studentExample.createCriteria();
         criteria.andEmailEqualTo(student.getEmail());
-        exists = studentService.isExistsByExample(studentExample);
+        exists = adminService.isStudentExistsByExample(studentExample);
         if (exists) {
             return RequestResult.failure("该邮箱已经存在");
         }
 
         //所有内容都不存在，则符合添加条件
-        boolean b = studentService.insertStudentSelective(student);
+        boolean b = adminService.insertStudentSelective(student);
         if (!b) {
             return RequestResult.failure("学生添加失败");
         }
@@ -168,8 +169,8 @@ public class AdminController {
 
 
     //下载学生模板
-    @RequestMapping("/downloadTemplate")
-    public ResponseEntity<byte[]> downloadTemplate(HttpServletRequest request) throws IOException {
+    @RequestMapping("/downloadStudentTemplate")
+    public ResponseEntity<byte[]> downloadStudentTemplate(HttpServletRequest request) throws IOException {
         String path = request.getServletContext().getRealPath("/excels/");
         String fileName = "Student_Template.xlsx";
         File file = new File(path + fileName);
@@ -190,6 +191,11 @@ public class AdminController {
     }
 
 
+    @ExceptionHandler(StudentNotExistException.class)
+    public String handStudentNotExistException(StudentNotExistException e, Map<String, Object> map) {
+        map.put("exception", e);
+        return "error";
+    }
     //批量上传学生信息
 
     /**
@@ -267,7 +273,10 @@ public class AdminController {
                         System.out.println(student);
                         students.add(student);
                     }
-                    studentService.insertStudentBatch(students);
+                    boolean i = adminService.insertStudentBatch(students);
+                    if (!i) {
+                        return RequestResult.failure("批量导入失败，请稍后再试");
+                    }
                 }
             } catch (IOException e) {
                 return RequestResult.failure("批量导入失败，请稍后再试");
@@ -333,7 +342,10 @@ public class AdminController {
                         System.out.println(student);
                         students.add(student);
                     }
-                    studentService.insertStudentBatch(students);
+                    boolean i = adminService.insertStudentBatch(students);
+                    if (!i) {
+                        return RequestResult.failure("批量导入失败，请稍后再试");
+                    }
                 }
             } catch (IOException e) {
                 return RequestResult.failure("批量导入失败，请稍后再试");
@@ -345,8 +357,242 @@ public class AdminController {
     }
 
     @RequestMapping("/searchStudent")
-    public String searchStudent(Map<String, Object> map) {
+    public String searchStudent(Map<String, Object> map, @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum, HttpSession session) {
+
+        StudentExample studentExample = (StudentExample) session.getAttribute("studentExample");
+        map.put("colleges", adminService.getAllColleges());
+        //加入PageHelper分页插件，在查询之前只需要调用startPage方法
+        //传入页码以及每页显示数据条数
+        PageHelper.startPage(pageNum, 10);
+        //后面的操作就是分页查询
+        List<Student> students = adminService.getAllStudentsWithCollegeByExample(studentExample);
+        //使用PageInfo包装查询结果，PageInfo包含了非常全面的分页属性，只需要将PageInfo交给页面就可以了
+        //navigatePages：连续显示多少页
+        PageInfo<Student> page = new PageInfo(students, 10);
+        map.put("pageInfo", page);
+
         return "admin/searchStudent";
+    }
+
+    @ResponseBody
+    @PostMapping("/deleteStudent")
+    public RequestResult deleteStudent(@RequestParam("id") Integer id) {
+        if (id == null) {
+            return RequestResult.failure("学生删除失败，请稍后再试");
+        }
+        //删除学生信息
+        boolean i = adminService.deleteStudentById(id);
+        if (!i) {
+            return RequestResult.failure("学生删除失败，请稍后再试");
+        }
+        return RequestResult.success();
+    }
+
+    @ResponseBody
+    @PostMapping("/deleteStudentBatch")
+    public RequestResult deleteStudentBatch(@RequestParam("ids") String id) {
+        if (id == null) {
+            return RequestResult.failure("批量删除失败，请稍后再试");
+        }
+        String[] ids = id.split("-");
+        List<Integer> studentIds = new ArrayList<>();
+        for (String s : ids) {
+            studentIds.add(Integer.parseInt(s));
+        }
+        boolean b = adminService.deleteStudentByIdBatch(studentIds);
+        if (!b) {
+            return RequestResult.failure("批量删除失败，请稍后再试");
+        }
+        return RequestResult.success();
+    }
+
+    @ResponseBody
+    @PostMapping("/searchStudentByTerm")
+    public RequestResult searchStudentByTerm(@RequestParam("number") String number, @RequestParam("collegeId") Integer collegeId, HttpSession session) {
+        StudentExample studentExample = new StudentExample();
+        StudentExample.Criteria criteria = studentExample.createCriteria();
+        if ("".equals(number.trim()) && collegeId == 0) {
+            session.setAttribute("studentExample", null);
+        } else if (collegeId == 0) {
+            criteria.andNumberLike("%" + number + "%");
+            session.setAttribute("studentExample", studentExample);
+        } else if ("".equals(number.trim())) {
+            criteria.andCollegeIdEqualTo(collegeId);
+            session.setAttribute("studentExample", studentExample);
+        } else {
+            criteria.andCollegeIdEqualTo(collegeId).andNumberLike("%" + number + "%");
+            session.setAttribute("studentExample", studentExample);
+        }
+        return RequestResult.success();
+    }
+
+    @RequestMapping("/updateStudent/{id}")
+    public String updateStudent(@PathVariable("id") Integer id, Map<String, Object> map, @RequestParam("pageNum") Integer pageNum) {
+        System.out.println(pageNum);
+        //判断id是否存在
+        Student student = adminService.getStudentByPrimaryKey(id);
+        if (student == null) {
+            map.put("exception", new StudentNotExistException("该id对应的学生不存在"));
+            return "error";
+        }
+        map.put("colleges", adminService.getAllColleges());
+        map.put("student", adminService.getStudentByPrimaryKey(id));
+        map.put("pageNum", pageNum);
+        return "admin/updateStudent";
+    }
+
+    @ResponseBody
+    @PostMapping("/editStudent/{id}")
+    public RequestResult editStudent(@PathVariable("id") Integer id, Student student) {
+        if (id == null) {
+            return RequestResult.failure("修改失败，请稍后再试");
+        }
+        student.setId(id);
+        //在保存学生信息之前先查看数据库中是否有重复的数据
+        StudentExample studentExample = new StudentExample();
+        //1、查看学号是否存在
+        StudentExample.Criteria criteria = studentExample.createCriteria();
+        criteria.andNumberEqualTo(student.getNumber());
+        boolean exists = adminService.isStudentExistsByExample(studentExample);
+        System.out.println(exists);
+        if (exists) {
+            return RequestResult.failure("该学号已经存在");
+        }
+        //2、查看联系电话是否存在
+        studentExample.clear();
+        criteria = studentExample.createCriteria();
+        criteria.andTelephoneEqualTo(student.getTelephone());
+        exists = adminService.isStudentExistsByExample(studentExample);
+        if (exists) {
+            return RequestResult.failure("该电话已经存在");
+        }
+        //3、省份证号码是否存在
+        studentExample.clear();
+        criteria = studentExample.createCriteria();
+        criteria.andIdCardNoEqualTo(student.getIdCardNo());
+        exists = adminService.isStudentExistsByExample(studentExample);
+        if (exists) {
+            return RequestResult.failure("该身份证号码已经存在");
+        }
+        //4、查看登录账号是否存在
+        studentExample.clear();
+        criteria = studentExample.createCriteria();
+        criteria.andAccountEqualTo(student.getAccount());
+        exists = adminService.isStudentExistsByExample(studentExample);
+        if (exists) {
+            return RequestResult.failure("该账号已经存在");
+        }
+        //5、查看邮箱是否存在
+        studentExample.clear();
+        criteria = studentExample.createCriteria();
+        criteria.andEmailEqualTo(student.getEmail());
+        exists = adminService.isStudentExistsByExample(studentExample);
+        if (exists) {
+            return RequestResult.failure("该邮箱已经存在");
+        }
+        boolean b = adminService.updateStudentByPrimaryKeySelective(student);
+        if (!b) {
+            return RequestResult.failure("修改失败，请稍后再试");
+        }
+        return RequestResult.success();
+    }
+
+    @RequestMapping("/createTeacher")
+    public String createTeacher(Map<String, Object> map) {
+        List<College> colleges = adminService.getAllColleges();
+        List<Course> courses = adminService.getAllCourses();
+        map.put("colleges", colleges);
+        map.put("courses", courses);
+        return "admin/createTeacher";
+    }
+
+    @ResponseBody
+    @PostMapping("/saveTeacher")
+    public RequestResult saveTeacher(Teacher teacher) {
+        if (teacher == null) {
+            return RequestResult.failure("新增教师失败，请稍后再试");
+        }
+        if (teacher.getPassword() == null || teacher.getAccount() == null ||
+                teacher.getNumber() == null || teacher.getEmail() == null ||
+                teacher.getIdCardNo() == null) {
+            return RequestResult.failure("新增教师失败，请稍后再试");
+        }
+        //在保存教师信息之前先查看数据库中是否有重复的数据
+        TeacherExample teacherExample = new TeacherExample();
+        //1、查看教师编号是否存在
+        TeacherExample.Criteria criteria = teacherExample.createCriteria();
+        criteria.andNumberEqualTo(teacher.getNumber());
+        boolean exists = adminService.isTeacherExistsByExample(teacherExample);
+        if (exists) {
+            return RequestResult.failure("该教师编号已经存在");
+        }
+        //2、查看联系电话是否存在
+        teacherExample.clear();
+        criteria = teacherExample.createCriteria();
+        criteria.andTelephoneEqualTo(teacher.getTelephone());
+        exists = adminService.isTeacherExistsByExample(teacherExample);
+        if (exists) {
+            return RequestResult.failure("该电话已经存在");
+        }
+        //3、省份证号码是否存在
+        teacherExample.clear();
+        criteria = teacherExample.createCriteria();
+        criteria.andIdCardNoEqualTo(teacher.getIdCardNo());
+        exists = adminService.isTeacherExistsByExample(teacherExample);
+        if (exists) {
+            return RequestResult.failure("该身份证号码已经存在");
+        }
+        //4、查看登录账号是否存在
+        teacherExample.clear();
+        criteria = teacherExample.createCriteria();
+        criteria.andAccountEqualTo(teacher.getAccount());
+        exists = adminService.isTeacherExistsByExample(teacherExample);
+        if (exists) {
+            return RequestResult.failure("该账号已经存在");
+        }
+        //5、查看邮箱是否存在
+        teacherExample.clear();
+        criteria = teacherExample.createCriteria();
+        criteria.andEmailEqualTo(teacher.getEmail());
+        exists = adminService.isTeacherExistsByExample(teacherExample);
+        if (exists) {
+            return RequestResult.failure("该邮箱已经存在");
+        }
+
+        //所有内容都不存在，则符合添加条件
+        boolean b = adminService.insertTeacherSelective(teacher);
+        if (!b) {
+            return RequestResult.failure("新增教师失败，请稍后再试");
+        }
+        return RequestResult.success();
+    }
+
+
+    @RequestMapping("/createTeacherBatch")
+    public String createTeacherBatch() {
+        return "admin/createTeacherBatch";
+    }
+
+    @ResponseBody
+    @PostMapping("/teacherDataImport")
+    public RequestResult teacherDataImport(@RequestParam(value = "file") MultipartFile file) {
+        System.out.println(file.getOriginalFilename());
+        return RequestResult.success();
+    }
+
+    //下载教师模板
+    @RequestMapping("/downloadTeacherTemplate")
+    public ResponseEntity<byte[]> downloadTeacherTemplate(HttpServletRequest request) throws IOException {
+        String path = request.getServletContext().getRealPath("/excels/");
+        String fileName = "Teacher_Template.xlsx";
+        File file = new File(path + fileName);
+
+        // 设置响应头通知浏览器下载
+        HttpHeaders headers = new HttpHeaders();
+        // 将对文件做的特殊处理还原
+        headers.setContentDispositionFormData("attachment", fileName);
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.OK);
     }
 
 }

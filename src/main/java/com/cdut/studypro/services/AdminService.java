@@ -1,7 +1,6 @@
 package com.cdut.studypro.services;
 
-import com.cdut.studypro.beans.Admin;
-import com.cdut.studypro.beans.AdminExample;
+import com.cdut.studypro.beans.*;
 
 import java.util.List;
 
@@ -14,5 +13,34 @@ import java.util.List;
  */
 public interface AdminService {
     List<Admin> selectAdminByExample(AdminExample example);
+
     boolean isExistsByExample(AdminExample example);
+
+    List<College> getAllColleges();
+
+    List<Student> getAllStudentsWithCollege();
+
+    List<Student> getAllStudentsWithCollegeByExample(StudentExample example);
+
+    boolean isStudentExistsByExample(StudentExample example);
+
+    boolean insertStudentBatch(List<Student> students);
+
+    boolean deleteStudentById(Integer id);
+
+    boolean deleteStudentByIdBatch(List<Integer> ids);
+
+    Student getStudentByPrimaryKey(Integer id);
+
+    boolean updateStudentByPrimaryKeySelective(Student student);
+
+    boolean insertStudentSelective(Student student);
+
+    List<Course> getAllCourses();
+
+    boolean isTeacherExistsByExample(TeacherExample example);
+
+    boolean insertTeacherSelective(Teacher teacher);
+
+
 }

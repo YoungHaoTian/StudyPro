@@ -12,6 +12,5 @@ import java.util.List;
  * @qq: 1023704092
  */
 public interface CollegeService {
-    List<College> getAllCollegesWithBLOBs();
-    List<College> getAllColleges();
+
 }

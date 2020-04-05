@@ -13,6 +13,11 @@
         <result column="password" jdbcType="VARCHAR" property="password"/>
         <result column="email" jdbcType="VARCHAR" property="email"/>
     </resultMap>
+
+    <!--新增带学院信息的映射-->
+    <resultMap extends="BaseResultMap" id="ResultMapWithCollege" type="com.cdut.studypro.beans.Student">
+        <association property="college" select="com.cdut.studypro.daos.CollegeMapper.selectByPrimaryKeyWithoutBLOBs" column="college_id"/>
+    </resultMap>
     <sql id="Example_Where_Clause">
         <where>
             <foreach collection="oredCriteria" item="criteria" separator="or">
@@ -93,7 +98,29 @@
             order by ${orderByClause}
         </if>
     </select>
+    <!--带学院的条件查询-->
+    <select id="selectByExampleWithCollege" parameterType="com.cdut.studypro.beans.StudentExample" resultMap="ResultMapWithCollege">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from student
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from student
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <!--带学院的查询-->
+    <select id="selectByPrimaryKeyWithCollege" parameterType="java.lang.Integer" resultMap="ResultMapWithCollege">
         select
         <include refid="Base_Column_List"/>
         from student

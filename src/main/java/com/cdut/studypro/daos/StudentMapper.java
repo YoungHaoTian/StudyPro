@@ -35,4 +35,11 @@ public interface StudentMapper {
 
     //批量插入数据
     int insertBatch(@Param("students") List<Student> students);
+
+    //带学院的条件查询
+    List<Student> selectByExampleWithCollege(StudentExample example);
+
+    //带学院的条件查询
+    Student selectByPrimaryKeyWithCollege(Integer id);
+
 }

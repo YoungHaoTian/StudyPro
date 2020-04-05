@@ -25,5 +25,4 @@ public interface StudentService {
 
     Integer getIdByTelephone(String phone);
 
-    int insertStudentBatch(List<Student> students);
 }

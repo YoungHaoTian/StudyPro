@@ -22,7 +22,7 @@
     <div class="col-lg-12">
         <ul class="breadcrumb wk-breadcrumb">
             <li><a href="javascript:void(0)">大学生学习平台</a></li>
-            <li><a href="javascript:void(0)">学生信息管理</a></li>
+            <li><a href="javascript:void(0)">教师信息管理</a></li>
             <li><a href="javascript:void(0)">批量导入信息</a></li>
         </ul>
     </div>
@@ -32,7 +32,7 @@
     <div class="col-lg-12">
         <div class="panel panel-default wk-panel ">
             <div class="panel-heading">
-                批量导入学生 Batch Create Data
+                批量导入教师 Batch Create Data
             </div>
             <form action="" method="POST" enctype="multipart/form-data">
                 <div class="panel-body">
@@ -42,12 +42,11 @@
                             <div class="form-group">
                                 <label for="file" class="control-label wk-filed-label">选择文件: </label>
                                 <div class="input-group">
-                                    <input required="required" name="file" type="file" id="file"
+                                    <input required="required" id="file" name="file" type="file"
                                            class="form-control wk-long-2col-input"/>
-
                                 </div>
                                 <div class="input-group">
-                                    <a class="btn btn-link" href="${APP_PATH}/admin/downloadStudentTemplate">点击下载模板</a>
+                                    <a class="btn btn-link" href="${APP_PATH}/admin/downloadTeacherTemplate">点击下载模板</a>
                                 </div>
                             </div>
                         </div>
@@ -61,6 +60,9 @@
         </div>
     </div>
 </div>
+
+</body>
+</html>
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
 
@@ -83,7 +85,7 @@
         let loadingIndex = layer.msg('处理中', {icon: 16});
         formData.append("file", $("#file")[0].files[0]);
         $.ajax({
-            url: "${APP_PATH}/admin/studentDataImport",
+            url: "${APP_PATH}/admin/teacherDataImport",
             type: 'POST',
             dataType: 'json',
             crossDomain: true, // 如果用到跨域，需要后台开启CORS
@@ -97,7 +99,7 @@
                     });
                 }
                 if (result.code === 100) {
-                    layer.msg("学生批量导入成功", {time: 1000, icon: 1}, function () {
+                    layer.msg("教师批量导入成功", {time: 1000, icon: 1}, function () {
                     });
                 }
             },
@@ -108,5 +110,3 @@
         });
     }
 </script>
-</body>
-</html>

@@ -65,17 +65,17 @@
                         <div id="AMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
                                 <button type="button" class="list-group-item" id="wk-menu-panel-item-createStudent"
-                                        href="admin/createStudent">
+                                        href="${APP_PATH}/admin/createStudent">
                                     新增学生&nbsp;<span class=" glyphicon glyphicon-triangle-right"
                                                     aria-hidden="true"></span>
                                 </button>
                                 <button type="button" class="list-group-item" id="wk-menu-panel-item-createManyStudent"
-                                        href="admin/createStudentBatch">
+                                        href="${APP_PATH}/admin/createStudentBatch">
                                     批量新增学生&nbsp;<span class=" glyphicon glyphicon-triangle-right"
                                                       aria-hidden="true"></span>
                                 </button>
                                 <button type="button" class="list-group-item" id="wk-menu-panel-item-searchStudent"
-                                        href="admin/searchStudent">
+                                        href="${APP_PATH}/admin/searchStudent">
                                     学生信息查询&nbsp;<span class=" glyphicon glyphicon-triangle-right"
                                                       aria-hidden="true"></span>
                                 </button>
@@ -92,11 +92,13 @@
                         </div>
                         <div id="BMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
-                                <button type="button" class="list-group-item" id="wk-menu-panel-item-createTeacher">
+                                <button type="button" class="list-group-item" id="wk-menu-panel-item-createTeacher"
+                                        href="${APP_PATH}/admin/createTeacher">
                                     新增教师&nbsp;<span class=" glyphicon glyphicon-triangle-right"
                                                     aria-hidden="true"></span>
                                 </button>
-                                <button type="button" class="list-group-item" id="wk-menu-panel-item-createManyTeacher">
+                                <button type="button" class="list-group-item" id="wk-menu-panel-item-createManyTeacher"
+                                        href="${APP_PATH}/admin/createTeacherBatch">
                                     批量新增教师&nbsp;<span class=" glyphicon glyphicon-triangle-right"
                                                       aria-hidden="true"></span>
                                 </button>

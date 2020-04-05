@@ -155,7 +155,6 @@
             data: JSON.stringify(data),
             success: function (result) {
                 layer.close(loadingIndex);
-                layer.close(loadingIndex);
                 console.log(result);
                 if (result.code === 200) {
                     layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {

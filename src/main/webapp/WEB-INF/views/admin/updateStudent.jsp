@@ -1,6 +1,6 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -23,14 +23,15 @@
         <ul class="breadcrumb wk-breadcrumb">
             <li><a href="javascript:void(0)">大学生学习平台</a></li>
             <li><a href="javascript:void(0)">学生信息管理</a></li>
-            <li><a href="javascript:void(0)">新增学生</a></li>
+            <li><a href="javascript:void(0)">编辑学生信息</a></li>
         </ul>
     </div>
 </div>
+
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default wk-panel ">
-            <div class="panel-heading">新增学生 Create Data</div>
+            <div class="panel-heading">编辑学生信息 Update Data</div>
             <form id="studentData" action="" method="POST">
                 <div class="panel-body">
                     <div class="row">
@@ -38,9 +39,10 @@
                             <div class="form-group">
                                 <label for="name" class="control-label wk-filed-label">学生姓名:</label>
                                 <div class="input-group">
-                                    <input required="required" id="name" name="name" type="text" maxlength="5"
+                                    <input required="required" id="name" name="name" type="text"
                                            class="form-control wk-normal-input"
-                                           placeholder="请输入学生姓名" value="杨浩天"/>
+                                           value="${student.name.trim()=="0"?"未录入":(student.name.trim()==""?"未录入":student.name) }"
+                                           placeholder="请输入学生姓名"/>
                                 </div>
                             </div>
 
@@ -50,14 +52,22 @@
                                     <input required="required" id="number" name="number"
                                            oninput="value=value.replace(/[^\d]/g,'')" type="text" maxlength="18"
                                            class="form-control wk-normal-input"
-                                           placeholder="请输入学生学号" value="201613161013"/>
+                                           value="${student.number.trim()=="0"?"未录入":(student.number.trim()==""?"未录入":student.number) }"
+                                           placeholder="请输入学生学号"/>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="collegeId" class="control-label wk-filed-label">所属学院:</label>
                                 <select class="selectpicker" id="collegeId" name="collegeId">
-                                    <c:forEach items="${colleges}" var="college">
-                                        <option value="${college.id}">${college.name}</option>
+                                    <c:forEach items="${colleges}" var="var">
+                                        <c:choose>
+                                            <c:when test="${var.id == student.collegeId}">
+                                                <option value="${var.id}" selected="selected">${var.name}</option>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <option value="${var.id}">${var.name}</option>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </c:forEach>
                                 </select>
                             </div>
@@ -67,10 +77,11 @@
                             <div class="form-group">
                                 <label for="telephone" class="control-label wk-filed-label">联系电话:</label>
                                 <div class="input-group">
-                                    <input required="required" id="telephone" name="telephone"
-                                           oninput="value=value.replace(/[^\d]/g,'')" maxlength="11" type="text"
+                                    <input required="required" id="telephone" name="telephone" type="text"
+                                           oninput="value=value.replace(/[^\d]/g,'')" maxlength="11"
                                            class="form-control wk-normal-input"
-                                           placeholder="请输入联系电话" value="15928759418">
+                                           value="${student.telephone.trim()=="0"?"未录入":(student.telephone.trim()==""?"未录入":student.telephone) }"
+                                           placeholder="请输入联系电话"/>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -78,14 +89,23 @@
                                 <div class="input-group">
                                     <input required="required" id="idCardNo" name="idCardNo" maxlength="18" type="text"
                                            class="form-control wk-normal-input"
-                                           placeholder="请输入身份证号" value="513901199806163319"/>
+                                           value="${student.idCardNo.trim()=="0"?"未录入":(student.idCardNo.trim()==""?"未录入":student.idCardNo) }"
+                                           placeholder="请输入身份证号"/>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="gender" class="control-label wk-filed-label">学生性别: </label>
                                 <select class="selectpicker" id="gender" name="gender">
-                                    <option value="0">男</option>
-                                    <option value="1">女</option>
+                                    <c:choose>
+                                        <c:when test="${student.gender == 0}">
+                                            <option value="0" selected="selected">男</option>
+                                            <option value="1">女</option>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <option value="1" selected="selected">女</option>
+                                            <option value="0">男</option>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </select>
                             </div>
                         </div>
@@ -93,9 +113,10 @@
                             <div class="form-group">
                                 <label for="account" class="control-label wk-filed-label">登录账户: </label>
                                 <div class="input-group">
-                                    <input required="required" id="account" name="account" maxlength="18" type="text"
+                                    <input required="required" id="account" name="account" type="text" maxlength="18"
                                            class="form-control wk-normal-input"
-                                           placeholder="请输入登录账户" value="201613161013"/>
+                                           value="${student.account.trim()=="0"?"未录入":(student.account.trim()==""?"未录入":student.account) }"
+                                           placeholder="请输入登录账户"/>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -103,25 +124,28 @@
                                 <div class="input-group">
                                     <input required="required" id="password" name="password" type="text" maxlength="18"
                                            class="form-control wk-normal-input"
-                                           placeholder="请输入登录密码" value="123456789"/>
+                                           value="${student.account.trim()=="0"?"未录入":(student.account.trim()==""?"未录入":student.account) }"
+                                           placeholder="请输入登录密码"/>
                                 </div>
                             </div>
-
                             <div class="form-group">
                                 <label for="email" class="control-label wk-filed-label">邮箱: </label>
                                 <div class="input-group">
                                     <input required="required" id="email" name="email" type="text"
                                            class="form-control wk-normal-input"
-                                           placeholder="请输入邮箱" value="1023074092@qq.com"/>
+                                           value="${student.email.trim()=="0"?"未录入":(student.email.trim()==""?"未录入":student.email) }"
+                                           placeholder="请输入邮箱"/>
                                 </div>
                             </div>
                         </div>
+
+
                     </div>
                 </div>
-
                 <div class="panel-footer wk-panel-footer">
-                    <button type="button" class="btn btn-info" onclick="createStudent()">提&nbsp;&nbsp;交</button>
-                    <%--<button type="submit" class="btn btn-default wk-btn">提&nbsp;&nbsp;交</button>--%>
+                    <button type="button" class="btn btn-info" onclick="updateStudent()">提&nbsp;&nbsp;交</button>
+                    <button type="button" class="btn btn-info" onclick="back()" style="margin-left: 30px">返&nbsp;&nbsp;回
+                    </button>
                 </div>
             </form>
         </div>
@@ -133,6 +157,7 @@
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
     //表单验证
+
     let phones = /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\d{8}$/;
     let han = /^[\u4e00-\u9fa5]{2,5}$/;
     let accounts = /^[a-zA-Z0-9_-]{12,18}$/;
@@ -141,15 +166,11 @@
     let emails = /^(\w+\.)*\w+\@+[0-9a-zA-Z]+\.(com|com.cn|edu|hk|cn|net)$/;
     let passwords = /^[a-zA-Z0-9]{6,18}$/;
 
-    function createStudent() {
+    function updateStudent() {
         //对姓名的验证
         let name = $("#name").val();
         if ($.trim(name) === "") {
             layer.msg("学生姓名不能为空", {time: 1500, icon: 5, shift: 6}, function () {
-            });
-            return;
-        } else if (name.indexOf(" ") !== -1) {
-            layer.msg("学生姓名不能包含空格，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         } else if (!han.test(name)) {
@@ -237,7 +258,7 @@
         data = decodeURIComponent(data);
         // console.log(data);
         $.ajax({
-            url: "${APP_PATH}/admin/saveStudent",
+            url: "${APP_PATH}/admin/editStudent/${student.id}",
             type: "POST",
             // contentType: "application/json",//不使用contentType: “application/json”则data可以是对象,使用contentType: “application/json”则data只能是json字符串
             dataType: "json",
@@ -251,7 +272,7 @@
                 }
                 if (result.code === 100) {
                     console.log("success");
-                    layer.msg("学生添加成功", {time: 1500, icon: 6}, function () {
+                    layer.msg("修改成功成功", {time: 1500, icon: 6}, function () {
                     });
                 }
             },
@@ -260,5 +281,9 @@
                 });
             }
         });
+    }
+    
+    function back() {
+        window.location.href="${APP_PATH}/admin/searchStudent?pageNum="+${pageNum};
     }
 </script>

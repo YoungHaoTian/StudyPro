@@ -22,13 +22,5 @@ public class CollegeServiceImpl implements CollegeService {
     @Autowired
     private CollegeMapper collegeMapper;
 
-    @Override
-    public List<College> getAllCollegesWithBLOBs() {
-        return collegeMapper.selectByExampleWithBLOBs(null);
-    }
 
-    @Override
-    public List<College> getAllColleges() {
-        return collegeMapper.selectByExample(null);
-    }
 }

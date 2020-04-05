@@ -22,6 +22,8 @@ public interface CollegeMapper {
 
     College selectByPrimaryKey(Integer id);
 
+    College selectByPrimaryKeyWithoutBLOBs(Integer id);
+
     int updateByExampleSelective(@Param("record") College record, @Param("example") CollegeExample example);
 
     int updateByExampleWithBLOBs(@Param("record") College record, @Param("example") CollegeExample example);
