@@ -4,8 +4,6 @@ import com.cdut.studypro.beans.*;
 import com.cdut.studypro.beans.AdminExample.*;
 import com.cdut.studypro.exceptions.StudentNotExistException;
 import com.cdut.studypro.services.AdminService;
-import com.cdut.studypro.services.CollegeService;
-import com.cdut.studypro.services.StudentService;
 import com.cdut.studypro.utils.MD5Util;
 import com.cdut.studypro.utils.POIUtils;
 import com.cdut.studypro.utils.RequestResult;
@@ -411,18 +409,13 @@ public class AdminController {
     public RequestResult searchStudentByTerm(@RequestParam("number") String number, @RequestParam("collegeId") Integer collegeId, HttpSession session) {
         StudentExample studentExample = new StudentExample();
         StudentExample.Criteria criteria = studentExample.createCriteria();
-        if ("".equals(number.trim()) && collegeId == 0) {
-            session.setAttribute("studentExample", null);
-        } else if (collegeId == 0) {
-            criteria.andNumberLike("%" + number + "%");
-            session.setAttribute("studentExample", studentExample);
-        } else if ("".equals(number.trim())) {
+        if (collegeId != 0) {
             criteria.andCollegeIdEqualTo(collegeId);
-            session.setAttribute("studentExample", studentExample);
-        } else {
-            criteria.andCollegeIdEqualTo(collegeId).andNumberLike("%" + number + "%");
-            session.setAttribute("studentExample", studentExample);
         }
+        if (!"".equals(number.trim())) {
+            criteria.andNumberLike("%" + number + "%");
+        }
+        session.setAttribute("studentExample", studentExample);
         return RequestResult.success();
     }
 
@@ -436,7 +429,7 @@ public class AdminController {
             return "error";
         }
         map.put("colleges", adminService.getAllColleges());
-        map.put("student", adminService.getStudentByPrimaryKey(id));
+        map.put("student", student);
         map.put("pageNum", pageNum);
         return "admin/updateStudent";
     }
@@ -576,7 +569,150 @@ public class AdminController {
     @ResponseBody
     @PostMapping("/teacherDataImport")
     public RequestResult teacherDataImport(@RequestParam(value = "file") MultipartFile file) {
-        System.out.println(file.getOriginalFilename());
+        String fileName = file.getOriginalFilename();
+        List<Teacher> teachers = new ArrayList<>();
+        //是".xls"格式
+        if (fileName.endsWith(".xls")) {
+            //定义工作簿，一个工作簿可以有多个并做表Sheet
+            HSSFWorkbook hssfWorkbook = null;
+            try (InputStream inputStream = file.getInputStream()) {
+                hssfWorkbook = new HSSFWorkbook(inputStream);
+                //遍历工作表
+                for (int numSheet = 0; numSheet < hssfWorkbook.getNumberOfSheets(); numSheet++) {
+                    //获取到当前工作表
+                    HSSFSheet hssfSheet = hssfWorkbook.getSheetAt(numSheet);
+                    if (hssfSheet == null) {
+                        continue;
+                    }
+                    //获取行
+                    //默认第一行是标题,index=0
+                    HSSFRow titleRow = hssfSheet.getRow(0);
+                    //判断表头是否被修改或换位置
+                    //原表头顺序：姓名、编号、电话、身份证号码、账号、密码、邮箱；使用数组来比较
+                    String[] original_title = new String[]{"姓名", "编号", "电话", "身份证号码", "账号", "密码", "邮箱"};
+                    String[] current_title = new String[7];
+                    for (int cellIndex = 0; cellIndex < 7; cellIndex++) {
+                        String cell = POIUtils.getStringHSSF(titleRow.getCell(cellIndex));
+                        current_title[cellIndex] = cell;
+                    }
+                    //判断两个标题数组的内容是否一致
+                    boolean equals = Arrays.equals(original_title, current_title);
+
+                    if (!equals) {
+                        return RequestResult.failure("导入失败，请检查模板中的表头是否被修改");
+                    }
+                    //获取总行数
+                    int totalRows = POIUtils.getExcelRealRowHSSF(hssfSheet);
+                    //从第二行开始循环读取数据
+                    for (int rowIndex = 1; rowIndex <= totalRows; rowIndex++) {
+                        //获取行对象
+                        HSSFRow hssfRow = hssfSheet.getRow(rowIndex);
+                        if (hssfRow == null) {
+                            continue;
+                        }
+                        //读取列，从第一列开始
+                        Teacher teacher = new Teacher();
+                        String data = POIUtils.getStringHSSF(hssfRow.getCell(0));
+                        HSSFCell cell = hssfRow.getCell(0);
+                        cell.setCellType(CellType.STRING);
+                        teacher.setName(data);
+                        data = POIUtils.getStringHSSF(hssfRow.getCell(1));
+                        teacher.setNumber(data);
+                        data = POIUtils.getStringHSSF(hssfRow.getCell(2));
+                        teacher.setTelephone(data);
+                        data = POIUtils.getStringHSSF(hssfRow.getCell(3));
+                        teacher.setIdCardNo(data);
+                        data = POIUtils.getStringHSSF(hssfRow.getCell(4));
+                        teacher.setAccount(data);
+                        data = POIUtils.getStringHSSF(hssfRow.getCell(5));
+                        teacher.setPassword(data);
+                        data = POIUtils.getStringHSSF(hssfRow.getCell(6));
+                        teacher.setEmail(data);
+                        System.out.println(teacher);
+                        teachers.add(teacher);
+                    }
+//                     System.out.println(teachers);
+                    boolean i = adminService.insertTeacherBatch(teachers);
+                    if (!i) {
+                        return RequestResult.failure("批量导入失败，请稍后再试");
+                    }
+                }
+            } catch (IOException e) {
+                return RequestResult.failure("批量导入失败，请稍后再试");
+            }
+        }
+        //是".xlsx"格式
+        else if (fileName.endsWith(".xlsx")) {
+            //定义工作簿，一个工作簿可以有多个并做表Sheet
+            XSSFWorkbook xssfWorkbook = null;
+            try (InputStream inputStream = file.getInputStream()) {
+                xssfWorkbook = new XSSFWorkbook(inputStream);
+                //遍历工作表
+                for (int numSheet = 0; numSheet < xssfWorkbook.getNumberOfSheets(); numSheet++) {
+                    //获取到当前工作表
+                    XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(numSheet);
+                    if (xssfSheet == null) {
+                        continue;
+                    }
+                    //获取行
+                    //默认第一行是标题,index=0
+                    XSSFRow titleRow = xssfSheet.getRow(0);
+                    //判断表头是否被修改或换位置
+                    //原表头顺序：姓名、编号、电话、身份证号码、账号、密码、邮箱；使用数组来比较
+                    String[] original_title = new String[]{"姓名", "编号", "电话", "身份证号码", "账号", "密码", "邮箱"};
+                    String[] current_title = new String[7];
+                    for (int cellIndex = 0; cellIndex < 7; cellIndex++) {
+                        String cell = POIUtils.getStringXSSF(titleRow.getCell(cellIndex));
+                        current_title[cellIndex] = cell;
+                    }
+                    //判断两个标题数组的内容是否一致
+                    boolean equals = Arrays.equals(original_title, current_title);
+
+                    if (!equals) {
+                        return RequestResult.failure("导入失败，请检查模板中的表头是否被修改");
+                    }
+                    //获取总行数
+                    int totalRows = POIUtils.getExcelRealRowXSSF(xssfSheet);
+                    //从第二行开始循环读取数据
+                    for (int rowIndex = 1; rowIndex <= totalRows; rowIndex++) {
+                        //获取行对象
+                        XSSFRow xssfRow = xssfSheet.getRow(rowIndex);
+                        if (xssfRow == null) {
+                            continue;
+                        }
+                        //读取列，从第一列开始
+                        Teacher teacher = new Teacher();
+                        String data = POIUtils.getStringXSSF(xssfRow.getCell(0));
+                        XSSFCell cell = xssfRow.getCell(0);
+                        cell.setCellType(CellType.STRING);
+                        teacher.setName(data);
+                        data = POIUtils.getStringXSSF(xssfRow.getCell(1));
+                        teacher.setNumber(data);
+                        data = POIUtils.getStringXSSF(xssfRow.getCell(2));
+                        teacher.setTelephone(data);
+                        data = POIUtils.getStringXSSF(xssfRow.getCell(3));
+                        teacher.setIdCardNo(data);
+                        data = POIUtils.getStringXSSF(xssfRow.getCell(4));
+                        teacher.setAccount(data);
+                        data = POIUtils.getStringXSSF(xssfRow.getCell(5));
+                        teacher.setPassword(data);
+                        data = POIUtils.getStringXSSF(xssfRow.getCell(6));
+                        teacher.setEmail(data);
+                        System.out.println(teacher);
+                        teachers.add(teacher);
+                    }
+//                    System.out.println(teachers);
+                    boolean i = adminService.insertTeacherBatch(teachers);
+                    if (!i) {
+                        return RequestResult.failure("批量导入失败，请稍后再试");
+                    }
+                }
+            } catch (IOException e) {
+                return RequestResult.failure("批量导入失败，请稍后再试");
+            }
+        } else {
+            return RequestResult.failure("请上传EXCEL文档");
+        }
         return RequestResult.success();
     }
 
@@ -593,6 +729,148 @@ public class AdminController {
         headers.setContentDispositionFormData("attachment", fileName);
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.OK);
+    }
+
+    @RequestMapping("/searchTeacher")
+    public String searchTeacher(Map<String, Object> map, @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum, HttpSession session) {
+
+        TeacherExample teacherExample = (TeacherExample) session.getAttribute("teacherExample");
+        map.put("colleges", adminService.getAllColleges());
+        map.put("courses", adminService.getAllCourses());
+        //加入PageHelper分页插件，在查询之前只需要调用startPage方法
+        //传入页码以及每页显示数据条数
+        PageHelper.startPage(pageNum, 10);
+        //后面的操作就是分页查询
+        List<Teacher> teachers = adminService.getAllTeachersWithCollegeAndCourseByExample(teacherExample);
+        //使用PageInfo包装查询结果，PageInfo包含了非常全面的分页属性，只需要将PageInfo交给页面就可以了
+        //navigatePages：连续显示多少页
+        PageInfo<Student> page = new PageInfo(teachers, 10);
+        map.put("pageInfo", page);
+        return "admin/searchTeacher";
+    }
+
+
+    @ResponseBody
+    @PostMapping("/deleteTeacher")
+    public RequestResult deleteTeacher(@RequestParam("id") Integer id) {
+        if (id == null) {
+            return RequestResult.failure("教师删除失败，请稍后再试");
+        }
+        //删除教师信息
+        boolean i = adminService.deleteTeacherById(id);
+        if (!i) {
+            return RequestResult.failure("教师删除失败，请稍后再试");
+        }
+        return RequestResult.success();
+    }
+
+    @ResponseBody
+    @PostMapping("/deleteTeacherBatch")
+    public RequestResult deleteTeacherBatch(@RequestParam("ids") String id) {
+        if (id == null) {
+            return RequestResult.failure("批量删除失败，请稍后再试");
+        }
+        String[] ids = id.split("-");
+        List<Integer> teacherIds = new ArrayList<>();
+        for (String s : ids) {
+            teacherIds.add(Integer.parseInt(s));
+        }
+        boolean b = adminService.deleteTeacherByIdBatch(teacherIds);
+        if (!b) {
+            return RequestResult.failure("批量删除失败，请稍后再试");
+        }
+        return RequestResult.success();
+    }
+
+    @ResponseBody
+    @PostMapping("/searchTeacherByTerm")
+    public RequestResult searchTeacherByTerm(@RequestParam("number") String number,
+                                             @RequestParam("collegeId") Integer collegeId,
+                                             @RequestParam("courseId") Integer courseId,
+                                             HttpSession session) {
+        TeacherExample teacherExample = new TeacherExample();
+        TeacherExample.Criteria criteria = teacherExample.createCriteria();
+        if (!"".equals(number.trim())) {
+            criteria.andNumberLike("%" + number + "%");
+        }
+        if (collegeId != 0) {
+            criteria.andCollegeIdEqualTo(collegeId);
+        }
+        if (courseId != 0) {
+            criteria.andCourseIdEqualTo(courseId);
+        }
+        session.setAttribute("teacherExample", teacherExample);
+        return RequestResult.success();
+    }
+
+    @RequestMapping("/updateTeacher/{id}")
+    public String updateTeacher(@PathVariable("id") Integer id, Map<String, Object> map, @RequestParam("pageNum") Integer pageNum) {
+        //判断id是否存在
+        Teacher teacher = adminService.getTeacherByPrimaryKey(id);
+        if (teacher == null) {
+            map.put("exception", new StudentNotExistException("该id对应的老师不存在"));
+            return "error";
+        }
+        map.put("colleges", adminService.getAllColleges());
+        map.put("courses", adminService.getAllCourses());
+        map.put("teacher", teacher);
+        map.put("pageNum", pageNum);
+        return "admin/updateTeacher";
+    }
+
+    @ResponseBody
+    @PostMapping("/editTeacher/{id}")
+    public RequestResult editTeacher(@PathVariable("id") Integer id, Teacher teacher) {
+        if (id == null) {
+            return RequestResult.failure("修改失败，请稍后再试");
+        }
+        teacher.setId(id);
+        //在保存老师信息之前先查看数据库中是否有重复的数据
+        TeacherExample teacherExample = new TeacherExample();
+        //1、查看编号是否存在
+        TeacherExample.Criteria criteria = teacherExample.createCriteria();
+        criteria.andNumberEqualTo(teacher.getNumber());
+        boolean exists = adminService.isTeacherExistsByExample(teacherExample);
+        if (exists) {
+            return RequestResult.failure("该教师编号已经存在");
+        }
+        //2、查看联系电话是否存在
+        teacherExample.clear();
+        criteria = teacherExample.createCriteria();
+        criteria.andTelephoneEqualTo(teacher.getTelephone());
+        exists = adminService.isTeacherExistsByExample(teacherExample);
+        if (exists) {
+            return RequestResult.failure("该电话已经存在");
+        }
+        //3、省份证号码是否存在
+        teacherExample.clear();
+        criteria = teacherExample.createCriteria();
+        criteria.andIdCardNoEqualTo(teacher.getIdCardNo());
+        exists = adminService.isTeacherExistsByExample(teacherExample);
+        if (exists) {
+            return RequestResult.failure("该身份证号码已经存在");
+        }
+        //4、查看登录账号是否存在
+        teacherExample.clear();
+        criteria = teacherExample.createCriteria();
+        criteria.andAccountEqualTo(teacher.getAccount());
+        exists = adminService.isTeacherExistsByExample(teacherExample);
+        if (exists) {
+            return RequestResult.failure("该账号已经存在");
+        }
+        //5、查看邮箱是否存在
+        teacherExample.clear();
+        criteria = teacherExample.createCriteria();
+        criteria.andEmailEqualTo(teacher.getEmail());
+        exists = adminService.isTeacherExistsByExample(teacherExample);
+        if (exists) {
+            return RequestResult.failure("该邮箱已经存在");
+        }
+        boolean b = adminService.updateTeacherByPrimaryKeySelective(teacher);
+        if (!b) {
+            return RequestResult.failure("修改失败，请稍后再试");
+        }
+        return RequestResult.success();
     }
 
 }

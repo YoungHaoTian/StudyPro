@@ -23,6 +23,26 @@ public class Teacher {
 
     private String email;
 
+    private College college;
+
+    private Course course;
+
+    public College getCollege() {
+        return college;
+    }
+
+    public void setCollege(College college) {
+        this.college = college;
+    }
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -113,22 +133,20 @@ public class Teacher {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
-        sb.append(", name=").append(name);
-        sb.append(", gender=").append(gender);
-        sb.append(", collegeId=").append(collegeId);
-        sb.append(", telephone=").append(telephone);
-        sb.append(", idCardNo=").append(idCardNo);
-        sb.append(", account=").append(account);
-        sb.append(", password=").append(password);
-        sb.append(", number=").append(number);
-        sb.append(", courseId=").append(courseId);
-        sb.append(", email=").append(email);
-        sb.append("]");
-        return sb.toString();
+        return "Teacher{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", gender=" + gender +
+                ", collegeId=" + collegeId +
+                ", telephone='" + telephone + '\'' +
+                ", idCardNo='" + idCardNo + '\'' +
+                ", account='" + account + '\'' +
+                ", password='" + password + '\'' +
+                ", number='" + number + '\'' +
+                ", courseId=" + courseId +
+                ", email='" + email + '\'' +
+                ", college=" + college +
+                ", course=" + course +
+                '}';
     }
 }

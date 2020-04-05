@@ -14,6 +14,14 @@
         <result column="course_id" jdbcType="INTEGER" property="courseId"/>
         <result column="email" jdbcType="VARCHAR" property="email"/>
     </resultMap>
+
+    <!--带学院、课程信息的映射-->
+    <resultMap extends="BaseResultMap" id="ResultMapWithCollegeAndCourse" type="com.cdut.studypro.beans.Teacher">
+        <association property="college" select="com.cdut.studypro.daos.CollegeMapper.selectByPrimaryKeyWithoutBLOBs"
+                     column="college_id"/>
+        <association property="course" select="com.cdut.studypro.daos.CourseMapper.selectByPrimaryKeyWithoutBLOBs"
+                     column="course_id"/>
+    </resultMap>
     <sql id="Example_Where_Clause">
         <where>
             <foreach collection="oredCriteria" item="criteria" separator="or">
@@ -95,12 +103,37 @@
             order by ${orderByClause}
         </if>
     </select>
+    <!--带课程和学院的条件查询-->
+    <select id="selectByExampleWithCollegeAndCourse" parameterType="com.cdut.studypro.beans.TeacherExample"
+            resultMap="ResultMapWithCollegeAndCourse">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from teacher
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from teacher
         where id = #{id,jdbcType=INTEGER}
     </select>
+    <!--带课程和学院的主键查询-->
+    <select id="selectByPrimaryKeyWithCollegeAndCourse" parameterType="java.lang.Integer"
+            resultMap="ResultMapWithCollegeAndCourse">
+        select
+        <include refid="Base_Column_List"/>
+        from teacher
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from teacher
     where id = #{id,jdbcType=INTEGER}
@@ -308,4 +341,21 @@
       email = #{email,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+    <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="false">
+        insert into teacher
+        (name,number,telephone,id_card_no,account,password,email)
+        values
+        <foreach collection="teachers" item="teacher" separator=",">
+            (
+            #{teacher.name,jdbcType=VARCHAR},
+            #{teacher.number,jdbcType=VARCHAR},
+            #{teacher.telephone,jdbcType=VARCHAR},
+            #{teacher.idCardNo,jdbcType=VARCHAR},
+            #{teacher.account,jdbcType=VARCHAR},
+            #{teacher.password,jdbcType=VARCHAR},
+            #{teacher.email,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
 </mapper>

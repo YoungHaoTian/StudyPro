@@ -42,5 +42,15 @@ public interface AdminService {
 
     boolean insertTeacherSelective(Teacher teacher);
 
+    boolean insertTeacherBatch(List<Teacher> teachers);
 
+    List<Teacher> getAllTeachersWithCollegeAndCourseByExample(TeacherExample example);
+
+    boolean deleteTeacherById(Integer id);
+
+    boolean deleteTeacherByIdBatch(List<Integer> ids);
+
+    Teacher getTeacherByPrimaryKey(Integer id);
+
+    boolean updateTeacherByPrimaryKeySelective(Teacher teacher);
 }

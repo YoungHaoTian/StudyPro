@@ -102,7 +102,8 @@
                                     批量新增教师&nbsp;<span class=" glyphicon glyphicon-triangle-right"
                                                       aria-hidden="true"></span>
                                 </button>
-                                <button type="button" class="list-group-item" id="wk-menu-panel-item-searchTeacher">
+                                <button type="button" class="list-group-item" id="wk-menu-panel-item-searchTeacher"
+                                        href="${APP_PATH}/admin/searchTeacher">
                                     教师信息查询&nbsp;<span class=" glyphicon glyphicon-triangle-right"
                                                       aria-hidden="true"></span>
                                 </button>

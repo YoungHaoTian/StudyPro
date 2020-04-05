@@ -44,7 +44,6 @@
                                            placeholder="请输入教师姓名"/>
                                 </div>
                             </div>
-
                             <div class="form-group">
                                 <label for="number" class="control-label wk-filed-label">教师编号:</label>
                                 <div class="input-group">
@@ -62,14 +61,7 @@
                                     </c:forEach>
                                 </select>
                             </div>
-                            <div class="form-group">
-                                <label for="email" class="control-label wk-filed-label">邮箱: </label>
-                                <div class="input-group">
-                                    <input required="required" id="email" name="email" type="text"
-                                           class="form-control wk-normal-input" value="10237040922@qq.com"
-                                           placeholder="请输入邮箱"/>
-                                </div>
-                            </div>
+
                         </div>
 
                         <div class="form-inline">
@@ -124,8 +116,16 @@
                                 </select>
                             </div>
                         </div>
-                        <%--<div class="form-inline">
-                        </div>--%>
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <label for="email" class="control-label wk-filed-label">教师邮箱: </label>
+                                <div class="input-group">
+                                    <input required="required" id="email" name="email" type="text" maxlength="20"
+                                           class="form-control wk-normal-input" value="10237040922@qq.com"
+                                           placeholder="请输入邮箱"/>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="panel-footer wk-panel-footer">

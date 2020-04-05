@@ -115,21 +115,18 @@ public class Student {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
-        sb.append(", name=").append(name);
-        sb.append(", number=").append(number);
-        sb.append(", collegeId=").append(collegeId);
-        sb.append(", telephone=").append(telephone);
-        sb.append(", idCardNo=").append(idCardNo);
-        sb.append(", gender=").append(gender);
-        sb.append(", account=").append(account);
-        sb.append(", password=").append(password);
-        sb.append(", email=").append(email);
-        sb.append("]");
-        return sb.toString();
+        return "Student{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", number='" + number + '\'' +
+                ", collegeId=" + collegeId +
+                ", telephone='" + telephone + '\'' +
+                ", idCardNo='" + idCardNo + '\'' +
+                ", gender=" + gender +
+                ", account='" + account + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", college=" + college +
+                '}';
     }
 }

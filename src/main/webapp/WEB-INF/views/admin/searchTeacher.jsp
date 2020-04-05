@@ -26,9 +26,9 @@
 <div class="row">
     <div class="col-lg-12">
         <ul class="breadcrumb wk-breadcrumb">
-            <li><a href="javascript:void(0)">大学生学习平台</a></li>
-            <li><a href="javascript:void(0)">学生信息管理</a></li>
-            <li><a href="javascript:void(0)">学生信息查询</a></li>
+            <li><a href="#">大学生学习平台</a></li>
+            <li><a href="#">教师信息管理</a></li>
+            <li><a href="#">教师信息查询</a></li>
         </ul>
     </div>
 </div>
@@ -43,17 +43,27 @@
             <div style="position: absolute;top: -11px;left: 240px;">
                 <div class="navbar-form navbar-right" role="search">
                     <div class="form-group">
-                        <label for="number" class="control-label wk-filed-label" style="margin-top: 20px">学生学号:</label>
+                        <label for="number" class="control-label wk-filed-label" style="margin-top: 20px">教师编号:</label>
                         <input type="text" oninput="value=value.replace(/[^\d]/g,'')" maxlength="18"
-                               class="form-control" name="number" id="number" placeholder="学生学号">
+                               class="form-control" id="number" name="number" placeholder="教师编号">
                     </div>
                     <div class="form-group">
                         <label for="collegeId" class="control-label wk-filed-label"
                                style="margin-top: 20px">所属学院:</label>
-                        <select class="selectpicker" name="collegeId" id="collegeId">
+                        <select class="selectpicker" id="collegeId" name="collegeId">
                             <option value="0">请选择所属学院</option>
                             <c:forEach items="${colleges}" var="college">
                                 <option value="${college.id}">${college.name}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="courseId" class="control-label wk-filed-label"
+                               style="margin-top: 20px">教授课程:</label>
+                        <select class="selectpicker" id="courseId" name="courseId">
+                            <option value="0">请选择教授课程</option>
+                            <c:forEach items="${courses}" var="course">
+                                <option value="${course.id}">${course.name}</option>
                             </c:forEach>
                         </select>
                     </div>
@@ -73,7 +83,6 @@
                         </button>
                     </div>
                 </div>
-
             </div>
             <!-- 搜索 end -->
         </div>
@@ -90,9 +99,10 @@
                         <input type="checkbox" id="select_all"/>
                         <label for="select_all" style="margin-bottom: 0px;font-weight: 200">全选</label>
                     </th>
-                    <th>学生姓名</th>
-                    <th>学生学号</th>
+                    <th>教师姓名</th>
+                    <th>教师编号</th>
                     <th>所属学院</th>
+                    <th>教授课程</th>
                     <th>联系电话</th>
                     <th>身份证号</th>
                     <th>性别</th>
@@ -102,7 +112,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <c:forEach items="${pageInfo.list}" var="student" varStatus="statu">
+                <c:forEach items="${pageInfo.list}" var="teacher" varStatus="statu">
                     <c:if test="${statu.index%2==0}">
                         <tr class="success">
                     </c:if>
@@ -111,65 +121,73 @@
                     </c:if>
                     <th>
                         <label>
-                            <input stuId="${student.id}" type="checkbox" class="select_item"/>
+                            <input teaId="${teacher.id}" type="checkbox" class="select_item"/>
                         </label>
                     </th>
-                    <c:if test="${student.name!=null}">
-                        <td>${student.name.trim()=="0"?"未录入":(student.name.trim()==""?"未录入":student.name) }</td>
+                    <c:if test="${teacher.name!=null}">
+                        <td>${teacher.name.trim()=="0"?"未录入":(teacher.name.trim()==""?"未录入":teacher.name) }</td>
                     </c:if>
-                    <c:if test="${student.name==null}">
+                    <c:if test="${teacher.name==null}">
                         <td>未录入</td>
                     </c:if>
-                    <c:if test="${student.number!=null}">
-                        <td>${student.number.trim()=="0"?"未录入":(student.number.trim()==""?"未录入":student.number) }</td>
+                    <c:if test="${teacher.number!=null}">
+                        <td>${teacher.number.trim()=="0"?"未录入":(teacher.number.trim()==""?"未录入":teacher.number) }</td>
                     </c:if>
-                    <c:if test="${student.number==null}">
+                    <c:if test="${teacher.number==null}">
                         <td>未录入</td>
                     </c:if>
-                    <c:if test="${student.collegeId!=null}">
-                        <td>${student.collegeId==0?"未录入":student.college.name }</td>
+                    <c:if test="${teacher.collegeId!=null}">
+                        <td>${teacher.collegeId==0?"未录入":teacher.college.name }</td>
                     </c:if>
-                    <c:if test="${student.collegeId==null}">
+                    <c:if test="${teacher.collegeId==null}">
                         <td>未录入</td>
                     </c:if>
-                    <c:if test="${student.telephone!=null}">
-                        <td>${student.telephone.trim()=="0"?"未录入":(student.telephone.trim()==""?"未录入":student.telephone) }</td>
+                    <c:if test="${teacher.courseId!=null}">
+                        <td>${teacher.courseId==0?"未录入":teacher.course.name }</td>
                     </c:if>
-                    <c:if test="${student.telephone==null}">
+                    <c:if test="${teacher.courseId==null}">
                         <td>未录入</td>
                     </c:if>
-                    <c:if test="${student.idCardNo!=null}">
-                        <td>${student.idCardNo.trim()=="0"?"未录入":(student.idCardNo.trim()==""?"未录入":student.idCardNo) }</td>
+                    <c:if test="${teacher.telephone!=null}">
+                        <td>${teacher.telephone.trim()=="0"?"未录入":(teacher.telephone.trim()==""?"未录入":teacher.telephone) }</td>
                     </c:if>
-                    <c:if test="${student.idCardNo==null}">
+                    <c:if test="${teacher.telephone==null}">
                         <td>未录入</td>
                     </c:if>
-                    <c:if test="${student.gender!=null}">
-                        <td>${student.gender==0?"男":"女" }</td>
+                    <c:if test="${teacher.idCardNo!=null}">
+                        <td>${teacher.idCardNo.trim()=="0"?"未录入":(teacher.idCardNo.trim()==""?"未录入":teacher.idCardNo) }</td>
                     </c:if>
-                    <c:if test="${student.gender==null}">
+                    <c:if test="${teacher.idCardNo==null}">
                         <td>未录入</td>
                     </c:if>
-                    <c:if test="${student.account!=null}">
-                        <td>${student.account.trim()=="0"?"未录入":(student.account.trim()==""?"未录入":student.account) }</td>
+                    <c:if test="${teacher.gender!=null}">
+                        <td>${teacher.gender==0?"男":"女" }</td>
                     </c:if>
-                    <c:if test="${student.account==null}">
+                    <c:if test="${teacher.gender==null}">
                         <td>未录入</td>
                     </c:if>
-                    <c:if test="${student.email!=null}">
-                        <td>${student.email.trim()=="0"?"未录入":(student.email.trim()==""?"未录入":student.email) }</td>
+                    <c:if test="${teacher.account!=null}">
+                        <td>${teacher.account.trim()=="0"?"未录入":(teacher.account.trim()==""?"未录入":teacher.account) }</td>
                     </c:if>
-                    <c:if test="${student.email==null}">
+                    <c:if test="${teacher.account==null}">
+                        <td>未录入</td>
+                    </c:if>
+                    <c:if test="${teacher.email!=null}">
+                        <td>${teacher.email.trim()=="0"?"未录入":(teacher.email.trim()==""?"未录入":teacher.email) }</td>
+                    </c:if>
+                    <c:if test="${teacher.email==null}">
                         <td>未录入</td>
                     </c:if>
                     <td>
-                        <button class="btn btn-primary btn-sm edit" data-toggle="tooltip" data-placement="left"
-                                title="编辑当前学生" edit-id="${student.id}" style="margin-right: 20px">
+                        <button class="btn btn-primary btn-sm edit" type="button"
+                                data-toggle="tooltip" data-placement="left"
+                                title="编辑当前教师" edit-id="${teacher.id}" style="margin-right: 20px">
                             <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                             编辑
                         </button>
-                        <a class="btn btn-danger btn-sm delete" data-toggle="tooltip" data-placement="left"
-                           title="删除当前学生" del-id="${student.id}">
+                        <a class="btn btn-danger btn-sm delete" type="button" data-toggle="tooltip"
+                           data-placement="left"
+                           title="删除当前教师" del-id="${teacher.id}">
                             <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                             删除
                         </a>
@@ -177,7 +195,6 @@
                     </tr>
                 </c:forEach>
                 </tbody>
-
             </table>
         </div>
     </div>
@@ -198,8 +215,8 @@
         <nav aria-label="Page navigation">
             <ul class="pagination">
                 <c:if test="${pageInfo.hasPreviousPage }">
-                    <li><a href="${APP_PATH}/admin/searchStudent?pageNum=1">首页</a></li>
-                    <li><a href="${APP_PATH}/admin/searchStudent?pageNum=${pageInfo.pageNum-1}"
+                    <li><a href="${APP_PATH}/admin/searchTeacher?pageNum=1">首页</a></li>
+                    <li><a href="${APP_PATH}/admin/searchTeacher?pageNum=${pageInfo.pageNum-1}"
                            aria-label="Previous"><span aria-hidden="true">&laquo;</span>
                     </a></li>
                 </c:if>
@@ -215,15 +232,15 @@
                         <li class="active"><a href="javascript:void(0)">${page_Num }</a></li>
                     </c:if>
                     <c:if test="${page_Num != pageInfo.pageNum }">
-                        <li><a href="${APP_PATH }/admin/searchStudent?pageNum=${page_Num }">${page_Num }</a></li>
+                        <li><a href="${APP_PATH }/admin/searchTeacher?pageNum=${page_Num }">${page_Num }</a></li>
                     </c:if>
                 </c:forEach>
 
                 <c:if test="${pageInfo.hasNextPage }">
-                    <li><a href="${APP_PATH }/admin/searchStudent?pageNum=${pageInfo.pageNum+1 }"
+                    <li><a href="${APP_PATH }/admin/searchTeacher?pageNum=${pageInfo.pageNum+1 }"
                            aria-label="Next"> <span aria-hidden="true">&raquo;</span>
                     </a></li>
-                    <li><a href="${APP_PATH }/admin/searchStudent?pageNum=${pageInfo.pages}">末页</a></li>
+                    <li><a href="${APP_PATH }/admin/searchTeacher?pageNum=${pageInfo.pages}">末页</a></li>
                 </c:if>
                 <c:if test="${!pageInfo.hasNextPage}">
                     <li><a href="javascript:void(0)" style="pointer-events: none"
@@ -240,40 +257,41 @@
     <div class="col-sm-2 col-md-offset-6">
         <input type="number" class="form-control" id="pageNum" placeholder="跳转到...">
     </div>
-    <button type="button" class="btn btn-success toPage" style="margin-left: 20px">确定跳转</button>
+    <button type="button" class="btn btn-success" onclick="toPage()" style="margin-left: 20px">确定跳转</button>
 </div>
-<div class="modal fade" id="studentDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+
+<div class="modal fade" id="teacherDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">学生删除</h5>
+                <h5 class="modal-title">老师删除</h5>
             </div>
             <div class="modal-body">
 
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary" id="student_delete_btn">确定</button>
+                <button type="button" class="btn btn-primary" id="teacher_delete_btn">确定</button>
             </div>
         </div>
     </div>
 </div>
-<div class="modal fade" id="studentBatchDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+<div class="modal fade" id="teacherBatchDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">学生批量删除</h5>
+                <h5 class="modal-title">老师批量删除</h5>
             </div>
             <div class="modal-body">
 
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary" id="student_batchDelete_btn">确定</button>
+                <button type="button" class="btn btn-primary" id="teacher_batchDelete_btn">确定</button>
             </div>
         </div>
     </div>
@@ -282,28 +300,47 @@
 <script type="text/javascript">
     let ids = "";
     let id ="";
-    //删除单个学生
+    function toPage() {
+        //获取到将要跳转的页面值
+        let pageNum = $("#pageNum").val();
+        let total =${pageInfo.pages };
+        if (pageNum.trim() === "" || total < pageNum || pageNum < 0) {
+            layer.msg("错误的跳转页码，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        window.location.href = "${APP_PATH}/admin/searchTeacher?pageNum=" + pageNum;
+    }
+
+    //编辑教师信息
+    $(".edit").on("click", function () {
+        let id = $(this).attr("edit-id");
+        window.location.href = "${APP_PATH}/admin/updateTeacher/" + id + "?pageNum=${pageInfo.pageNum}";
+    });
+
+    //删除单个教师
     $(".delete").on("click", function () {
         id = $(this).attr("del-id");
         console.log(id);
-        //删除学生时弹出确认框
+        //删除教师时弹出确认框
         let name = $(this).parents("tr").find("td:eq(0)").text();
-        console.log(name);
-        let message = "确定删除学生 【" + name + "】 的信息吗？";
+        let message = "确定删除老师 【" + name + "】 的信息吗？";
         if (name === "未录入") {
-            message = "确定删除该学生的信息吗？";
+            message = "确定删除该老师的信息吗？";
         }
-        $("#studentDeleteModal .modal-body").text(message);
-        $("#studentDeleteModal").modal({
+        $("#teacherDeleteModal .modal-body").text(message);
+        $("#teacherDeleteModal").modal({
                 backdrop: "static"
             }
         );
     });
-    $("#student_delete_btn").on("click", function () {
+    //确认删除教师
+    $("#teacher_delete_btn").on("click", function () {
         let loadingIndex = layer.msg('处理中', {icon: 16});
+        console.log(id);
         //确认，发送ajax请求删除即可
         $.ajax({
-            url: "${APP_PATH}/admin/deleteStudent",
+            url: "${APP_PATH}/admin/deleteTeacher",
             type: "POST",
             dataType: "json",
             data: {
@@ -316,7 +353,7 @@
                     });
                 }
                 if (result.code === 100) {
-                    window.location.href = "${APP_PATH}/admin/searchStudent?pageNum=${pageInfo.pageNum }";
+                    window.location.href = "${APP_PATH}/admin/searchTeacher?pageNum=${pageInfo.pageNum }";
                 }
             },
             error: function () {
@@ -326,21 +363,8 @@
         })
     });
 
-    //页面跳转
-    $(".toPage").on("click", function () {
-        console.log("123")
-        //获取到将要跳转的页面值
-        let pageNum = $("#pageNum").val();
-        let total =${pageInfo.pages };
-        if (pageNum.trim() === "" || total < pageNum || pageNum < 0) {
-            layer.msg("错误的跳转页码，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
-            });
-            return;
-        }
-        window.location.href = "${APP_PATH}/admin/searchStudent?pageNum=" + pageNum;
-    })
 
-    //批量删除学生
+    //批量删除教师
     //全选按钮
     $("#select_all").on("click", (function () {
         //attr获取checked是undefined;
@@ -348,8 +372,6 @@
         //prop修改和读取dom原生属性的值
         $(".select_item").prop("checked", $(this).prop("checked"));
         let checked = $(this).prop("checked");
-        console.log(checked);
-        console.log(checked === true);
         if (checked === true) {
             $(this).parent("th").children("label").text("取消");
         } else {
@@ -363,31 +385,31 @@
     });
     //点击批量删除按钮
     $(".batchDelete").on("click", function () {
-
         $.each($(".select_item:checked"), function () {
-            //组装学生id字符串
-            ids += $(this).attr("stuId") + "-";
+            //组装教师id字符串
+            ids += $(this).attr("teaId") + "-";
         });
         console.log(ids);
         if (ids.trim() === "") {
-            layer.msg("操作失败，你未选择任何学生", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("操作失败，你未选择任何教师", {time: 1500, icon: 5, shift: 6}, function () {
             });
         } else {
             //去除删除的id多余的"-"
             ids = ids.substring(0, ids.length - 1);
             console.log(ids);
 
-            $("#studentBatchDeleteModal .modal-body").text("你确定要删除这些学生信息吗？");
-            $("#studentBatchDeleteModal").modal({
+            $("#teacherBatchDeleteModal .modal-body").text("你确定要删除这些老师信息吗？");
+            $("#teacherBatchDeleteModal").modal({
                 backdrop: "static"
             });
         }
     });
-    $("#student_batchDelete_btn").on("click", function () {
+    //确认批量删除按钮
+    $("#teacher_batchDelete_btn").on("click", function () {
         let loadingIndex = layer.msg('处理中', {icon: 16});
         //发送ajax请求删除
         $.ajax({
-            url: "${APP_PATH}/admin/deleteStudentBatch",
+            url: "${APP_PATH}/admin/deleteTeacherBatch",
             type: "POST",
             dataType: "json",
             data: {
@@ -402,7 +424,7 @@
                 if (result.code === 100) {
                     layer.msg("批量删除成功", {time: 1000, icon: 1}, function () {
                     });
-                    window.location.href = "${APP_PATH}/admin/searchStudent?pageNum=${pageInfo.pageNum }";
+                    window.location.href = "${APP_PATH}/admin/searchTeacher?pageNum=${pageInfo.pageNum }";
                 }
             },
             error: function () {
@@ -414,27 +436,19 @@
 
     //查询按钮
     $("#search").on("click", function () {
-        let number = $("#number").val().trim();
-        /*if (number.trim() === "") {
-            layer.msg("请输入学生学号", {time: 1500, icon: 5, shift: 6}, function () {
-            });
-            return;
-        }*/
+        let number = $("#number").val().trim()
         let collegeId = $("#collegeId").val();
-        /*if (collegeId === "0") {
-            layer.msg("请选择学院", {time: 1500, icon: 5, shift: 6}, function () {
-            });
-            return;
-        }*/
+        let courseId = $("#courseId").val();
         let loadingIndex = layer.msg('处理中', {icon: 16});
         //发送ajax请求
         $.ajax({
-            url: "${APP_PATH}/admin/searchStudentByTerm",
+            url: "${APP_PATH}/admin/searchTeacherByTerm",
             type: "POST",
             dataType: "json",
             data: {
                 "number": number,
-                "collegeId": collegeId
+                "collegeId": collegeId,
+                "courseId": courseId
             },
             success: function (result) {
                 layer.close(loadingIndex);
@@ -445,7 +459,7 @@
                 if (result.code === 100) {
                     layer.msg("查询成功", {time: 1000, icon: 1}, function () {
                     });
-                    window.location.href = "${APP_PATH}/admin/searchStudent";
+                    window.location.href = "${APP_PATH}/admin/searchTeacher";
                 }
             },
             error: function () {
@@ -455,10 +469,10 @@
         });
     });
 
-    //编辑学生信息
+    //编辑教师信息
     $(".edit").on("click", function () {
         let id = $(this).attr("edit-id");
-        window.location.href = "${APP_PATH}/admin/updateStudent/" + id + "?pageNum=${pageInfo.pageNum}";
+        window.location.href = "${APP_PATH}/admin/updateTeacher/" + id + "?pageNum=${pageInfo.pageNum}";
     })
 </script>
 </body>

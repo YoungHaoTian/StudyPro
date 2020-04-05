@@ -40,11 +40,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public boolean isExistsByExample(AdminExample example) {
-        long l = adminMapper.countByExample(example);
-        if (l != 0) {
-            return true;
-        }
-        return false;
+        return adminMapper.countByExample(example) != 0;
     }
 
     @Override
@@ -64,8 +60,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public boolean isStudentExistsByExample(StudentExample example) {
-        long l = studentMapper.countByExample(example);
-        return l > 0;
+        return studentMapper.countByExample(example) > 0;
     }
 
     @Override
@@ -83,8 +78,7 @@ public class AdminServiceImpl implements AdminService {
         StudentExample studentExample = new StudentExample();
         StudentExample.Criteria criteria = studentExample.createCriteria();
         criteria.andIdIn(ids);
-        int i = studentMapper.deleteByExample(studentExample);
-        return i > 0;
+        return studentMapper.deleteByExample(studentExample) > 0;
     }
 
     @Override
@@ -94,14 +88,12 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public boolean updateStudentByPrimaryKeySelective(Student student) {
-        int i = studentMapper.updateByPrimaryKeySelective(student);
-        return i > 0;
+        return studentMapper.updateByPrimaryKeySelective(student) > 0;
     }
 
     @Override
     public boolean insertStudentSelective(Student student) {
-        int i = studentMapper.insertSelective(student);
-        return i > 0;
+        return studentMapper.insertSelective(student) > 0;
     }
 
     @Override
@@ -117,5 +109,38 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public boolean insertTeacherSelective(Teacher teacher) {
         return teacherMapper.insertSelective(teacher) > 0;
+    }
+
+    @Override
+    public boolean insertTeacherBatch(List<Teacher> teachers) {
+        return teacherMapper.insertBatch(teachers) > 0;
+    }
+
+    @Override
+    public List<Teacher> getAllTeachersWithCollegeAndCourseByExample(TeacherExample example) {
+        return teacherMapper.selectByExampleWithCollegeAndCourse(example);
+    }
+
+    @Override
+    public boolean deleteTeacherById(Integer id) {
+        return teacherMapper.deleteByPrimaryKey(id) > 0;
+    }
+
+    @Override
+    public boolean deleteTeacherByIdBatch(List<Integer> ids) {
+        TeacherExample teacherExample = new TeacherExample();
+        TeacherExample.Criteria criteria = teacherExample.createCriteria();
+        criteria.andIdIn(ids);
+        return teacherMapper.deleteByExample(teacherExample) > 0;
+    }
+
+    @Override
+    public Teacher getTeacherByPrimaryKey(Integer id) {
+        return teacherMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public boolean updateTeacherByPrimaryKeySelective(Teacher teacher) {
+        return teacherMapper.updateByPrimaryKeySelective(teacher) > 0;
     }
 }

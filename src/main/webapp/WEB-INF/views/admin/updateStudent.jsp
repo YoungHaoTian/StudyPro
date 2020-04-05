@@ -39,7 +39,7 @@
                             <div class="form-group">
                                 <label for="name" class="control-label wk-filed-label">学生姓名:</label>
                                 <div class="input-group">
-                                    <input required="required" id="name" name="name" type="text"
+                                    <input required="required" id="name" name="name" type="text" maxlength="5"
                                            class="form-control wk-normal-input"
                                            value="${student.name.trim()=="0"?"未录入":(student.name.trim()==""?"未录入":student.name) }"
                                            placeholder="请输入学生姓名"/>
@@ -131,7 +131,7 @@
                             <div class="form-group">
                                 <label for="email" class="control-label wk-filed-label">邮箱: </label>
                                 <div class="input-group">
-                                    <input required="required" id="email" name="email" type="text"
+                                    <input required="required" id="email" name="email" type="text" maxlength="20"
                                            class="form-control wk-normal-input"
                                            value="${student.email.trim()=="0"?"未录入":(student.email.trim()==""?"未录入":student.email) }"
                                            placeholder="请输入邮箱"/>
@@ -144,8 +144,7 @@
                 </div>
                 <div class="panel-footer wk-panel-footer">
                     <button type="button" class="btn btn-info" onclick="updateStudent()">提&nbsp;&nbsp;交</button>
-                    <button type="button" class="btn btn-info" onclick="back()" style="margin-left: 30px">返&nbsp;&nbsp;回
-                    </button>
+                    <button type="button" class="btn btn-info" onclick="back()" style="margin-left: 30px">返&nbsp;&nbsp;回</button>
                 </div>
             </form>
         </div>
@@ -157,7 +156,6 @@
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
     //表单验证
-
     let phones = /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\d{8}$/;
     let han = /^[\u4e00-\u9fa5]{2,5}$/;
     let accounts = /^[a-zA-Z0-9_-]{12,18}$/;
@@ -272,7 +270,7 @@
                 }
                 if (result.code === 100) {
                     console.log("success");
-                    layer.msg("修改成功成功", {time: 1500, icon: 6}, function () {
+                    layer.msg("修改成功", {time: 1500, icon: 6}, function () {
                     });
                 }
             },

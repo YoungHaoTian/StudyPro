@@ -39,7 +39,7 @@ a:focus, a:hover {
 	margin:0px;}
 
 .bootstrap-select.btn-group .dropdown-menu {
-	width: 250px;
+	/*width: 250px;*/
 }
 
 .dropdown-menu > li > a:focus, .dropdown-menu > li > a:hover {

@@ -1,5 +1,6 @@
 package com.cdut.studypro.daos;
 
+import com.cdut.studypro.beans.Student;
 import com.cdut.studypro.beans.Teacher;
 import com.cdut.studypro.beans.TeacherExample;
 
@@ -31,4 +32,10 @@ public interface TeacherMapper {
     int updateByPrimaryKey(Teacher record);
 
     Integer getIdByTelephone(String phone);
+
+    //批量插入数据
+    int insertBatch(@Param("teachers") List<Teacher> teachers);
+
+    //带学院和课程的条件查询
+    List<Teacher> selectByExampleWithCollegeAndCourse(TeacherExample example);
 }

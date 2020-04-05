@@ -53,7 +53,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="panel-footer wk-panel-footer">
                     <button class="btn btn-info" type="button" onclick="upload()">提&nbsp;&nbsp;交</button>
                 </div>
