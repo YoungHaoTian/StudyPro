@@ -187,4 +187,14 @@ public class AdminServiceImpl implements AdminService {
     public boolean updateCollegeByPrimaryKeySelective(College college) {
         return collegeMapper.updateByPrimaryKeySelective(college) > 0;
     }
+
+    @Override
+    public boolean isCourseExistsByExample(CourseExample example) {
+        return courseMapper.countByExample(example) > 0;
+    }
+
+    @Override
+    public boolean insertCourseSelective(Course course) {
+        return courseMapper.insertSelective(course) > 0;
+    }
 }

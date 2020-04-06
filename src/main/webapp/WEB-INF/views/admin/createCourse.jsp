@@ -32,36 +32,34 @@
     <div class="col-lg-12">
         <div class="panel panel-default wk-panel ">
             <div class="panel-heading">新增课程 Create Data</div>
-            <form action="" method="POST">
+            <form id="courseData" action="" method="POST">
                 <div class="panel-body">
                     <div class="row">
                         <div class="form-inline">
                             <div class="form-group">
-                                <label for="name" class="control-label wk-filed-label">课程名称:
-                                </label>
+                                <label for="name" class="control-label wk-filed-label">课程名称:</label>
                                 <div class="input-group">
-                                    <input required="required" id="name" name="name" type="text"
+                                    <input required="required" id="name" name="name" type="text" maxlength="20"
                                            class="form-control wk-normal-input"
                                            placeholder="请输入课程名称"/>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label for="number" class="control-label wk-filed-label">课程编号:
-                                </label>
+                                <label for="number" class="control-label wk-filed-label">课程编号:</label>
                                 <div class="input-group">
-                                    <input required="required" id="number" name="number" type="text"
+                                    <input required="required" id="number" name="number" type="text" maxlength="18"
                                            class="form-control wk-normal-input"
                                            placeholder="请输入课程编号"/>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="collegeId" class="control-label wk-filed-label">所属学院:
-                                </label> <select class="selectpicker" id="collegeId" name="collegeId">
-                                <c:forEach items="${colleges}" var="college">
-                                    <option value="${college.id}">${college.name}</option>
-                                </c:forEach>
-                            </select>
+                                <label for="collegeId" class="control-label wk-filed-label">所属学院:</label>
+                                <select class="selectpicker" id="collegeId" name="collegeId">
+                                    <c:forEach items="${colleges}" var="college">
+                                        <option value="${college.id}">${college.name}</option>
+                                    </c:forEach>
+                                </select>
                             </div>
                         </div>
 
@@ -70,7 +68,7 @@
                                 <label for="intro" class="control-label wk-filed-label">课程介绍:</label>
                                 <div class="input-group">
                                     <textarea required="required" id="intro" name="intro" type="text"
-                                           class="form-control wk-long-2col-input"
+                                              class="form-control wk-long-2col-input"
                                               placeholder="请输入课程介绍"></textarea>
                                 </div>
                             </div>
@@ -92,8 +90,68 @@
 </html>
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
+    let numbers = /^[a-zA-Z0-9]{6,18}$/;
 
     function createCourse() {
-
+        let name = $("#name").val();
+        let number = $("#number").val();
+        let intro = $("#intro").val();
+        if (name.trim() === "") {
+            layer.msg("课程名称不能为空", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        if (name.indexOf(" ") !== -1) {
+            layer.msg("课程名称不能包含空格，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        if (number.trim() === "") {
+            layer.msg("课程编号不能为空", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        if (number.indexOf(" ") !== -1) {
+            layer.msg("课程编号不能包含空格，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        if (!numbers.test(number)) {
+            layer.msg("课程编号由6-18位字母和数字组成，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        if (intro.trim() === "") {
+            layer.msg("学院介绍不能为空", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        let loadingIndex = layer.msg('处理中', {icon: 16});
+        let data = $("#courseData").serialize();
+        data = decodeURIComponent(data);
+        $.ajax({
+            url: "${APP_PATH}/admin/saveCourse",
+            type: "POST",
+            // contentType: "application/json",//不使用contentType: “application/json”则data可以是对象,使用contentType: “application/json”则data只能是json字符串
+            dataType: "json",
+            data: data,
+            success: function (result) {
+                layer.close(loadingIndex);
+                console.log(result);
+                if (result.code === 200) {
+                    layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
+                    });
+                }
+                if (result.code === 100) {
+                    console.log("success");
+                    layer.msg("课程添加成功", {time: 1500, icon: 6}, function () {
+                    });
+                }
+            },
+            error: function () {
+                layer.msg("网络异常，请稍后再试", {time: 1500, icon: 5, shift: 6}, function () {
+                });
+            }
+        });
     }
 </script>

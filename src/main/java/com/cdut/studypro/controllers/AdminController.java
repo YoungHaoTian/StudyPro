@@ -975,6 +975,12 @@ public class AdminController {
     @ResponseBody
     @PostMapping("/saveCollege")
     private RequestResult saveCollege(College college) {
+        if (college == null) {
+            return RequestResult.failure("新增学院失败，请稍后再试");
+        }
+        if (college.getName() == null || college.getIntro() == null) {
+            return RequestResult.failure("新增学院失败，请稍后再试");
+        }
         //先判断该学院名称是否已经存在了
         CollegeExample collegeExample = new CollegeExample();
         CollegeExample.Criteria criteria = collegeExample.createCriteria();
@@ -1100,31 +1106,34 @@ public class AdminController {
     }
 
     @RequestMapping("/createCourse")
-    private String createCourse(Map<String,Object> map){
-        map.put("colleges",adminService.getAllColleges());
+    private String createCourse(Map<String, Object> map) {
+        map.put("colleges", adminService.getAllColleges());
         return "admin/createCourse";
     }
 
     @ResponseBody
     @PostMapping("/saveCourse")
     private RequestResult saveCourse(Course course) {
-        //先判断该课程编号是否已经存在了
-        /*CourseExample courseExample = new CourseExample();
-        CourseExample.Criteria criteria = courseExample.createCriteria();
-        criteria.andNameEqualTo(course.getNum());
-        boolean exists = adminService.isCollegeExistsByExample(collegeExample);
-        if (exists) {
-            return RequestResult.failure("该学院已经存在了");
+        if (course == null) {
+            return RequestResult.failure("新增学院失败，请稍后再试");
         }
-        boolean b = adminService.insertCollegeSelective(college);
+        if (course.getName() == null || course.getIntro() == null || course.getCollegeId() == null || course.getNumber() == null) {
+            return RequestResult.failure("新增学院失败，请稍后再试");
+        }
+        //先判断该课程编号是否已经存在了
+        CourseExample courseExample = new CourseExample();
+        CourseExample.Criteria criteria = courseExample.createCriteria();
+        criteria.andNumberEqualTo(course.getNumber());
+        boolean exists = adminService.isCourseExistsByExample(courseExample);
+        if (exists) {
+            return RequestResult.failure("该课程编号已经存在了");
+        }
+        boolean b = adminService.insertCourseSelective(course);
         if (!b) {
-            return RequestResult.failure("学院添加失败，请稍后再试");
-        }*/
+            return RequestResult.failure("课程添加失败，请稍后再试");
+        }
         return RequestResult.success();
     }
-
-
-
     @RequestMapping("/searchCourse")
     private String searchCourses() {
         return "admin/searchCourse";

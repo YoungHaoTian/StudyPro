@@ -48,17 +48,17 @@
         </sqlMapGenerator>
 
         <!-- javaClientGenerator:指定mapper接口所在的位置 -->
-        <javaClientGenerator type="XMLMAPPER" targetPackage="${targetMapperPackage}"
+        <!--<javaClientGenerator type="XMLMAPPER" targetPackage="${targetMapperPackage}"
                              targetProject="${targetJavaProject}">
             <property name="enableSubPackages" value="true" />
-        </javaClientGenerator>
+        </javaClientGenerator>-->
 
         <!-- 指定要逆向分析哪些表：根据表要创建javaBean -->
-        <table tableName="admin" domainObjectName="Admin"/>
+       <!-- <table tableName="admin" domainObjectName="Admin"/>
         <table tableName="collect" domainObjectName="Collect"/>
-        <table tableName="college" domainObjectName="College"/>
+        <table tableName="college" domainObjectName="College"/>-->
         <table tableName="course" domainObjectName="Course"/>
-        <table tableName="course_file" domainObjectName="CourseFile"/>
+        <!--<table tableName="course_file" domainObjectName="CourseFile"/>
         <table tableName="course_video" domainObjectName="CourseVideo"/>
         <table tableName="discuss" domainObjectName="Discuss"/>
         <table tableName="discuss_post" domainObjectName="DiscussPost"/>
@@ -67,6 +67,6 @@
         <table tableName="student_task" domainObjectName="StudentTask"/>
         <table tableName="task" domainObjectName="Task"/>
         <table tableName="task_question" domainObjectName="TaskQuestion"/>
-        <table tableName="teacher" domainObjectName="Teacher"/>
+        <table tableName="teacher" domainObjectName="Teacher"/>-->
     </context>
 </generatorConfiguration>

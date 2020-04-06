@@ -68,6 +68,9 @@ public interface AdminService {
 
     College getCollegeByPrimaryKey(Integer id);
 
-
     boolean updateCollegeByPrimaryKeySelective(College college);
+
+    boolean isCourseExistsByExample(CourseExample example);
+
+    boolean insertCourseSelective(Course course);
 }
