@@ -7,9 +7,9 @@ package com.cdut.studypro.exceptions;
  * @email: no.bugs@foxmail.com
  * @qq: 1023704092
  */
-public class StudentNotExistException extends Exception {
+public class NotExistException extends Exception {
 
-    public StudentNotExistException(String message){
+    public NotExistException(String message){
         super(message);
     }
 }

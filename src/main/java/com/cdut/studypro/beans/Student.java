@@ -2,6 +2,8 @@ package com.cdut.studypro.beans;
 
 import org.springframework.validation.annotation.Validated;
 
+import java.util.Objects;
+
 public class Student {
     private Integer id;
 
@@ -128,5 +130,27 @@ public class Student {
                 ", email='" + email + '\'' +
                 ", college=" + college +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Student student = (Student) o;
+        return Objects.equals(id, student.id) &&
+                Objects.equals(name, student.name) &&
+                Objects.equals(number, student.number) &&
+                Objects.equals(collegeId, student.collegeId) &&
+                Objects.equals(telephone, student.telephone) &&
+                Objects.equals(idCardNo, student.idCardNo) &&
+                Objects.equals(gender, student.gender) &&
+                Objects.equals(account, student.account) &&
+                Objects.equals(password, student.password) &&
+                Objects.equals(email, student.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, number, collegeId, telephone, idCardNo, gender, account, password, email);
     }
 }

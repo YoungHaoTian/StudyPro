@@ -143,4 +143,47 @@ public class AdminServiceImpl implements AdminService {
     public boolean updateTeacherByPrimaryKeySelective(Teacher teacher) {
         return teacherMapper.updateByPrimaryKeySelective(teacher) > 0;
     }
+
+    @Override
+    public List<College> getAllCollegesWithBLOBs() {
+        return collegeMapper.selectByExampleWithBLOBs(null);
+    }
+
+    @Override
+    public List<College> getAllCollegesWithBLOBsByExample(CollegeExample example) {
+        return collegeMapper.selectByExampleWithBLOBs(example);
+    }
+
+    @Override
+    public boolean isCollegeExistsByExample(CollegeExample example) {
+        return collegeMapper.countByExample(example) > 0;
+    }
+
+    @Override
+    public boolean insertCollegeSelective(College college) {
+        return collegeMapper.insertSelective(college) > 0;
+    }
+
+    @Override
+    public boolean deleteCollegeById(Integer id) {
+        return collegeMapper.deleteByPrimaryKey(id) > 0;
+    }
+
+    @Override
+    public boolean deleteCollegeByIdBatch(List<Integer> ids) {
+        CollegeExample collegeExample = new CollegeExample();
+        CollegeExample.Criteria criteria = collegeExample.createCriteria();
+        criteria.andIdIn(ids);
+        return collegeMapper.deleteByExample(collegeExample) > 0;
+    }
+
+    @Override
+    public College getCollegeByPrimaryKey(Integer id) {
+        return collegeMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public boolean updateCollegeByPrimaryKeySelective(College college) {
+        return collegeMapper.updateByPrimaryKeySelective(college) > 0;
+    }
 }

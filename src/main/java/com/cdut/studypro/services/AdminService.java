@@ -53,4 +53,21 @@ public interface AdminService {
     Teacher getTeacherByPrimaryKey(Integer id);
 
     boolean updateTeacherByPrimaryKeySelective(Teacher teacher);
+
+    List<College> getAllCollegesWithBLOBs();
+
+    List<College> getAllCollegesWithBLOBsByExample(CollegeExample example);
+
+    boolean isCollegeExistsByExample(CollegeExample example);
+
+    boolean insertCollegeSelective(College college);
+
+    boolean deleteCollegeById(Integer id);
+
+    boolean deleteCollegeByIdBatch(List<Integer> ids);
+
+    College getCollegeByPrimaryKey(Integer id);
+
+
+    boolean updateCollegeByPrimaryKeySelective(College college);
 }

@@ -1,5 +1,7 @@
 package com.cdut.studypro.beans;
 
+import java.util.Objects;
+
 public class Teacher {
     private Integer id;
 
@@ -148,5 +150,28 @@ public class Teacher {
                 ", college=" + college +
                 ", course=" + course +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Teacher teacher = (Teacher) o;
+        return Objects.equals(id, teacher.id) &&
+                Objects.equals(name, teacher.name) &&
+                Objects.equals(gender, teacher.gender) &&
+                Objects.equals(collegeId, teacher.collegeId) &&
+                Objects.equals(telephone, teacher.telephone) &&
+                Objects.equals(idCardNo, teacher.idCardNo) &&
+                Objects.equals(account, teacher.account) &&
+                Objects.equals(password, teacher.password) &&
+                Objects.equals(number, teacher.number) &&
+                Objects.equals(courseId, teacher.courseId) &&
+                Objects.equals(email, teacher.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, gender, collegeId, telephone, idCardNo, account, password, number, courseId, email);
     }
 }

@@ -121,11 +121,13 @@
 
                         <div id="CMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
-                                <button type="button" class="list-group-item" id="wk-menu-panel-item-createCollege">
+                                <button type="button" class="list-group-item" id="wk-menu-panel-item-createCollege"
+                                        href="${APP_PATH}/admin/createCollege">
                                     新增学院&nbsp;<span class=" glyphicon glyphicon-triangle-right"
                                                     aria-hidden="true"></span>
                                 </button>
-                                <button type="button" class="list-group-item" id="wk-menu-panel-item-searchCollege">
+                                <button type="button" class="list-group-item" id="wk-menu-panel-item-searchCollege"
+                                        href="${APP_PATH}/admin/searchCollege">
                                     学院信息查询&nbsp;<span class=" glyphicon glyphicon-triangle-right"
                                                       aria-hidden="true"></span>
                                 </button>

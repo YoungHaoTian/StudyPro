@@ -45,7 +45,8 @@
                     <div class="form-group">
                         <label for="number" class="control-label wk-filed-label" style="margin-top: 20px">教师编号:</label>
                         <input type="text" oninput="value=value.replace(/[^\d]/g,'')" maxlength="18"
-                               class="form-control" id="number" name="number" placeholder="教师编号">
+                               class="form-control" id="number" name="number" placeholder="教师编号"
+                               value="${sessionScope.teacherQueryCriteria.get("number")}">
                     </div>
                     <div class="form-group">
                         <label for="collegeId" class="control-label wk-filed-label"
@@ -53,7 +54,14 @@
                         <select class="selectpicker" id="collegeId" name="collegeId">
                             <option value="0">请选择所属学院</option>
                             <c:forEach items="${colleges}" var="college">
-                                <option value="${college.id}">${college.name}</option>
+                                <c:choose>
+                                    <c:when test="${college.id == sessionScope.teacherQueryCriteria.get('collegeId')}">
+                                        <option value="${college.id}" selected="selected">${college.name}</option>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <option value="${college.id}">${college.name}</option>
+                                    </c:otherwise>
+                                </c:choose>
                             </c:forEach>
                         </select>
                     </div>
@@ -63,18 +71,26 @@
                         <select class="selectpicker" id="courseId" name="courseId">
                             <option value="0">请选择教授课程</option>
                             <c:forEach items="${courses}" var="course">
-                                <option value="${course.id}">${course.name}</option>
+                                <%--<option value="${course.id}">${course.name}</option>--%>
+                                <c:choose>
+                                    <c:when test="${course.id == sessionScope.teacherQueryCriteria.get('courseId')}">
+                                        <option value="${course.id}" selected="selected">${course.name}</option>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <option value="${course.id}">${course.name}</option>
+                                    </c:otherwise>
+                                </c:choose>
                             </c:forEach>
                         </select>
                     </div>
-                    <div class="form-group" style="margin-left: 50px">
+                    <div class="form-group">
                         <button type="button" id="search" class="btn btn-success search" data-toggle="tooltip"
                                 data-placement="left" title="查询学生" style="margin-right: 20px">
                             <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                             查询
                         </button>
                     </div>
-                    <div class="form-group" style="margin-left: 50px">
+                    <div class="form-group">
                         <button type="button" class="btn btn-danger batchDelete" data-toggle="tooltip"
                                 data-placement="left"
                                 title="批量删除学生">
@@ -113,12 +129,12 @@
                 </thead>
                 <tbody>
                 <c:forEach items="${pageInfo.list}" var="teacher" varStatus="statu">
-                    <c:if test="${statu.index%2==0}">
+                    <%--<c:if test="${statu.index%2==0}">
                         <tr class="success">
                     </c:if>
                     <c:if test="${statu.index%2!=0}">
                         <tr class="warning">
-                    </c:if>
+                    </c:if>--%>
                     <th>
                         <label>
                             <input teaId="${teacher.id}" type="checkbox" class="select_item"/>
@@ -299,7 +315,8 @@
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
     let ids = "";
-    let id ="";
+    let id = "";
+
     function toPage() {
         //获取到将要跳转的页面值
         let pageNum = $("#pageNum").val();
