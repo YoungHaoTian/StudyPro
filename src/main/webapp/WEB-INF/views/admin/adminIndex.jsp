@@ -145,11 +145,13 @@
                         </div>
                         <div id="DMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
-                                <button type="button" class="list-group-item" id="wk-menu-panel-item-createCourse">
+                                <button type="button" class="list-group-item" id="wk-menu-panel-item-createCourse"
+                                        href="${APP_PATH}/admin/createCourse">
                                     新增课程&nbsp;<span class=" glyphicon glyphicon-triangle-right"
                                                     aria-hidden="true"></span>
                                 </button>
-                                <button type="button" class="list-group-item" id="wk-menu-panel-item-searchCourse">
+                                <button type="button" class="list-group-item" id="wk-menu-panel-item-searchCourse"
+                                        href="${APP_PATH}/admin/searchCourse">
                                     课程信息查询&nbsp;<span class=" glyphicon glyphicon-triangle-right"
                                                       aria-hidden="true"></span>
                                 </button>

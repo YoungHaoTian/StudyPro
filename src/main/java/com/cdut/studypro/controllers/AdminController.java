@@ -196,6 +196,7 @@ public class AdminController {
 
 
     //批量上传学生信息
+
     /**
      * @description: 1、POI 提供了对2003版本的Excel的支持 ---- HSSFWorkbook(.xls格式)
      * 2、POI 提供了对2007版本以及更高版本的支持 ---- XSSFWorkbook(.xlsx格式)
@@ -1078,23 +1079,56 @@ public class AdminController {
         }
         //检查学院是否已经存在
         if (!college1.getName().equals(college.getName())) {
-            CollegeExample collegeExample=new CollegeExample();
+            CollegeExample collegeExample = new CollegeExample();
             CollegeExample.Criteria criteria = collegeExample.createCriteria();
             criteria.andNameEqualTo(college.getName());
             boolean exists = adminService.isCollegeExistsByExample(collegeExample);
-            if (exists){
+            if (exists) {
                 return RequestResult.failure("该学院名称已经存在");
             }
-        }else{
+        } else {
             college.setName(null);
         }
-        if (college1.getIntro().equals(college.getIntro())){
+        if (college1.getIntro().equals(college.getIntro())) {
             college.setIntro(null);
         }
         boolean b = adminService.updateCollegeByPrimaryKeySelective(college);
-        if (!b){
+        if (!b) {
             return RequestResult.failure("修改失败，请稍后再试");
         }
         return RequestResult.success();
     }
+
+    @RequestMapping("/createCourse")
+    private String createCourse(Map<String,Object> map){
+        map.put("colleges",adminService.getAllColleges());
+        return "admin/createCourse";
+    }
+
+    @ResponseBody
+    @PostMapping("/saveCourse")
+    private RequestResult saveCourse(Course course) {
+        //先判断该课程编号是否已经存在了
+        /*CourseExample courseExample = new CourseExample();
+        CourseExample.Criteria criteria = courseExample.createCriteria();
+        criteria.andNameEqualTo(course.getNum());
+        boolean exists = adminService.isCollegeExistsByExample(collegeExample);
+        if (exists) {
+            return RequestResult.failure("该学院已经存在了");
+        }
+        boolean b = adminService.insertCollegeSelective(college);
+        if (!b) {
+            return RequestResult.failure("学院添加失败，请稍后再试");
+        }*/
+        return RequestResult.success();
+    }
+
+
+
+    @RequestMapping("/searchCourse")
+    private String searchCourses() {
+        return "admin/searchCourse";
+    }
+
+
 }

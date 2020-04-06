@@ -7,7 +7,7 @@ public class Course {
 
     private Integer collegeId;
 
-    private String num;
+    private String number;
 
     private String intro;
 
@@ -35,12 +35,12 @@ public class Course {
         this.collegeId = collegeId;
     }
 
-    public String getNum() {
-        return num;
+    public String getNumber() {
+        return number;
     }
 
-    public void setNum(String num) {
-        this.num = num == null ? null : num.trim();
+    public void setNumber(String number) {
+        this.number = number == null ? null : number.trim();
     }
 
     public String getIntro() {
@@ -60,7 +60,7 @@ public class Course {
         sb.append(", id=").append(id);
         sb.append(", name=").append(name);
         sb.append(", collegeId=").append(collegeId);
-        sb.append(", num=").append(num);
+        sb.append(", number=").append(number);
         sb.append(", intro=").append(intro);
         sb.append("]");
         return sb.toString();

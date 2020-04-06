@@ -294,73 +294,73 @@ public class CourseExample {
             return (Criteria) this;
         }
 
-        public Criteria andNumIsNull() {
-            addCriterion("num is null");
+        public Criteria andNumberIsNull() {
+            addCriterion("number is null");
             return (Criteria) this;
         }
 
-        public Criteria andNumIsNotNull() {
-            addCriterion("num is not null");
+        public Criteria andNumberIsNotNull() {
+            addCriterion("number is not null");
             return (Criteria) this;
         }
 
-        public Criteria andNumEqualTo(String value) {
-            addCriterion("num =", value, "num");
+        public Criteria andNumberEqualTo(String value) {
+            addCriterion("number =", value, "number");
             return (Criteria) this;
         }
 
-        public Criteria andNumNotEqualTo(String value) {
-            addCriterion("num <>", value, "num");
+        public Criteria andNumberNotEqualTo(String value) {
+            addCriterion("number <>", value, "number");
             return (Criteria) this;
         }
 
-        public Criteria andNumGreaterThan(String value) {
-            addCriterion("num >", value, "num");
+        public Criteria andNumberGreaterThan(String value) {
+            addCriterion("number >", value, "number");
             return (Criteria) this;
         }
 
-        public Criteria andNumGreaterThanOrEqualTo(String value) {
-            addCriterion("num >=", value, "num");
+        public Criteria andNumberGreaterThanOrEqualTo(String value) {
+            addCriterion("number >=", value, "number");
             return (Criteria) this;
         }
 
-        public Criteria andNumLessThan(String value) {
-            addCriterion("num <", value, "num");
+        public Criteria andNumberLessThan(String value) {
+            addCriterion("number <", value, "number");
             return (Criteria) this;
         }
 
-        public Criteria andNumLessThanOrEqualTo(String value) {
-            addCriterion("num <=", value, "num");
+        public Criteria andNumberLessThanOrEqualTo(String value) {
+            addCriterion("number <=", value, "number");
             return (Criteria) this;
         }
 
-        public Criteria andNumLike(String value) {
-            addCriterion("num like", value, "num");
+        public Criteria andNumberLike(String value) {
+            addCriterion("number like", value, "number");
             return (Criteria) this;
         }
 
-        public Criteria andNumNotLike(String value) {
-            addCriterion("num not like", value, "num");
+        public Criteria andNumberNotLike(String value) {
+            addCriterion("number not like", value, "number");
             return (Criteria) this;
         }
 
-        public Criteria andNumIn(List<String> values) {
-            addCriterion("num in", values, "num");
+        public Criteria andNumberIn(List<String> values) {
+            addCriterion("number in", values, "number");
             return (Criteria) this;
         }
 
-        public Criteria andNumNotIn(List<String> values) {
-            addCriterion("num not in", values, "num");
+        public Criteria andNumberNotIn(List<String> values) {
+            addCriterion("number not in", values, "number");
             return (Criteria) this;
         }
 
-        public Criteria andNumBetween(String value1, String value2) {
-            addCriterion("num between", value1, value2, "num");
+        public Criteria andNumberBetween(String value1, String value2) {
+            addCriterion("number between", value1, value2, "number");
             return (Criteria) this;
         }
 
-        public Criteria andNumNotBetween(String value1, String value2) {
-            addCriterion("num not between", value1, value2, "num");
+        public Criteria andNumberNotBetween(String value1, String value2) {
+            addCriterion("number not between", value1, value2, "number");
             return (Criteria) this;
         }
     }

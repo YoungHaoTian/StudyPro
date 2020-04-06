@@ -2,9 +2,7 @@ package com.cdut.studypro.daos;
 
 import com.cdut.studypro.beans.Course;
 import com.cdut.studypro.beans.CourseExample;
-
 import java.util.List;
-
 import org.apache.ibatis.annotations.Param;
 
 public interface CourseMapper {
@@ -23,8 +21,6 @@ public interface CourseMapper {
     List<Course> selectByExample(CourseExample example);
 
     Course selectByPrimaryKey(Integer id);
-
-    Course selectByPrimaryKeyWithoutBLOBs(Integer id);
 
     int updateByExampleSelective(@Param("record") Course record, @Param("example") CourseExample example);
 
