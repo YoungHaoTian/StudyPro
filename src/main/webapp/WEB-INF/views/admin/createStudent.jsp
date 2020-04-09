@@ -40,7 +40,7 @@
                                 <div class="input-group">
                                     <input required="required" id="name" name="name" type="text" maxlength="5"
                                            class="form-control wk-normal-input"
-                                           placeholder="请输入学生姓名" value="杨浩天"/>
+                                           placeholder="请输入学生姓名" value=""/>
                                 </div>
                             </div>
 
@@ -50,7 +50,7 @@
                                     <input required="required" id="number" name="number"
                                            oninput="value=value.replace(/[^\d]/g,'')" type="text" maxlength="18"
                                            class="form-control wk-normal-input"
-                                           placeholder="请输入学生学号" value="201613161013"/>
+                                           placeholder="请输入学生学号" value=""/>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -70,7 +70,7 @@
                                     <input required="required" id="telephone" name="telephone"
                                            oninput="value=value.replace(/[^\d]/g,'')" maxlength="11" type="text"
                                            class="form-control wk-normal-input"
-                                           placeholder="请输入联系电话" value="15928759418">
+                                           placeholder="请输入联系电话" value="">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -78,7 +78,7 @@
                                 <div class="input-group">
                                     <input required="required" id="idCardNo" name="idCardNo" maxlength="18" type="text"
                                            class="form-control wk-normal-input"
-                                           placeholder="请输入身份证号" value="513901199806163319"/>
+                                           placeholder="请输入身份证号" value=""/>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -95,7 +95,7 @@
                                 <div class="input-group">
                                     <input required="required" id="account" name="account" maxlength="18" type="text"
                                            class="form-control wk-normal-input"
-                                           placeholder="请输入登录账户" value="201613161013"/>
+                                           placeholder="请输入登录账户" value=""/>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -103,7 +103,7 @@
                                 <div class="input-group">
                                     <input required="required" id="password" name="password" type="text" maxlength="18"
                                            class="form-control wk-normal-input"
-                                           placeholder="请输入登录密码" value="123456789"/>
+                                           placeholder="请输入登录密码" value=""/>
                                 </div>
                             </div>
 
@@ -112,7 +112,7 @@
                                 <div class="input-group">
                                     <input required="required" id="email" name="email" type="text" maxlength="20"
                                            class="form-control wk-normal-input"
-                                           placeholder="请输入邮箱" value="1023074092@qq.com"/>
+                                           placeholder="请输入邮箱" value=""/>
                                 </div>
                             </div>
                         </div>
@@ -121,7 +121,6 @@
 
                 <div class="panel-footer wk-panel-footer">
                     <button type="button" class="btn btn-info" onclick="createStudent()">提&nbsp;&nbsp;交</button>
-                    <%--<button type="submit" class="btn btn-default wk-btn">提&nbsp;&nbsp;交</button>--%>
                 </div>
             </form>
         </div>
