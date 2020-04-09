@@ -27,4 +27,6 @@ public interface CourseVideoMapper {
     int updateByPrimaryKeySelective(CourseVideo record);
 
     int updateByPrimaryKey(CourseVideo record);
+
+
 }

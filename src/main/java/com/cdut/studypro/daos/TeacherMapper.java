@@ -1,10 +1,10 @@
 package com.cdut.studypro.daos;
 
-import com.cdut.studypro.beans.Student;
 import com.cdut.studypro.beans.Teacher;
 import com.cdut.studypro.beans.TeacherExample;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -23,6 +23,8 @@ public interface TeacherMapper {
 
     Teacher selectByPrimaryKey(Integer id);
 
+    List<Teacher> selectByExampleWithIdNameAndCollege(TeacherExample example);
+
     int updateByExampleSelective(@Param("record") Teacher record, @Param("example") TeacherExample example);
 
     int updateByExample(@Param("record") Teacher record, @Param("example") TeacherExample example);
@@ -38,4 +40,9 @@ public interface TeacherMapper {
 
     //带学院和课程的条件查询
     List<Teacher> selectByExampleWithCollegeAndCourse(TeacherExample example);
+
+    Teacher selectByPrimaryKeyWithIdNameAndCollege(Integer id);
+
+    //根据教师姓名返回其主键值
+    List<Integer> selectIdsByExample(TeacherExample example);
 }

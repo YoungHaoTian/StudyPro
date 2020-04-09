@@ -1,6 +1,7 @@
 package com.cdut.studypro.services;
 
 
+import com.cdut.studypro.beans.DiscussPost;
 import com.cdut.studypro.beans.Teacher;
 import com.cdut.studypro.beans.TeacherExample;
 
@@ -21,4 +22,12 @@ public interface TeacherService {
      boolean updateTeacherByPrimaryKeySelective(Teacher teacher);
 
      Integer getIdByTelephone(String phone);
+
+
+    List<DiscussPost> getDiscussPostByDiscussId(Integer id);
+
+    boolean deleteDiscussPostByIdBatch(List<Integer> ids);
+
+
+    boolean insertDiscussPostSelective(DiscussPost discussPost);
 }

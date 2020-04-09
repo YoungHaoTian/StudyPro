@@ -23,7 +23,7 @@
         <ul class="breadcrumb wk-breadcrumb">
             <li><a href="javascript:void(0)">大学生学习平台</a></li>
             <li><a href="javascript:void(0)">课程信息管理</a></li>
-            <li><a href="javascript:void(0)">新增课程</a></li>
+            <li><a href="javascript:void(0)">编辑课程信息</a></li>
         </ul>
     </div>
 </div>
@@ -31,7 +31,7 @@
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default wk-panel ">
-            <div class="panel-heading">新增课程 Create Data</div>
+            <div class="panel-heading">编辑课程信息 Update Data</div>
             <form id="courseData" action="" method="POST">
                 <div class="panel-body">
                     <div class="row">
@@ -39,8 +39,9 @@
                             <div class="form-group">
                                 <label for="name" class="control-label wk-filed-label">课程名称:</label>
                                 <div class="input-group">
-                                    <input required="required" id="name" name="name" type="text" maxlength="20"
+                                    <input required="required" id="name" name="name" type="text"
                                            class="form-control wk-normal-input"
+                                           value="${course.name.trim()=="0"?"":(course.name.trim()==""?"":course.name) }"
                                            placeholder="请输入课程名称"/>
                                 </div>
                             </div>
@@ -48,8 +49,9 @@
                             <div class="form-group">
                                 <label for="number" class="control-label wk-filed-label">课程编号:</label>
                                 <div class="input-group">
-                                    <input required="required" id="number" name="number" type="text" maxlength="18"
+                                    <input required="required" id="number" name="number" type="text"
                                            class="form-control wk-normal-input"
+                                           value="${course.number.trim()=="0"?"":(course.number.trim()==""?"":course.number) }"
                                            placeholder="请输入课程编号"/>
                                 </div>
                             </div>
@@ -58,7 +60,15 @@
                                 <select class="selectpicker" id="collegeId" name="collegeId">
                                     <option value="0">请选择所属学院</option>
                                     <c:forEach items="${colleges}" var="college">
-                                        <option value="${college.id}">${college.name}</option>
+                                        <c:choose>
+                                            <c:when test="${college.id == course.collegeId}">
+                                                <option value="${college.id}"
+                                                        selected="selected">${college.name.trim()}</option>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <option value="${college.id}">${college.name.trim()}</option>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </c:forEach>
                                 </select>
                             </div>
@@ -67,28 +77,37 @@
                                 <select class="selectpicker" id="teacherId" name="teacherId">
                                     <option value="0">请选择授课教师</option>
                                     <c:forEach items="${teachers}" var="teacher">
-                                        <option value="${teacher.id}">${teacher.name}:${teacher.college.name}</option>
+                                        <c:choose>
+                                            <c:when test="${teacher.id == course.teacherId}">
+                                                <option value="${teacher.id}"
+                                                        selected="selected">${teacher.name}:${teacher.college.name}</option>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <option value="${teacher.id}">${teacher.name}:${teacher.college.name}</option>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </c:forEach>
                                 </select>
                             </div>
                         </div>
+
                         <div class="form-inline">
                             <div class="form-group">
                                 <label for="intro" class="control-label wk-filed-label">课程介绍:</label>
                                 <div class="input-group">
-                                    <textarea required="required" id="intro" name="intro" type="text"
+                                    <textarea required="required" id="intro" name="intro" type="tel"
                                               class="form-control wk-long-2col-input"
-                                              placeholder="请输入课程介绍"></textarea>
+                                              placeholder="请输入课程介绍">${course.intro.trim()=="0"?"":(course.intro.trim()==""?"":course.name) }</textarea>
                                 </div>
                             </div>
-
                         </div>
-
                     </div>
                 </div>
-
                 <div class="panel-footer wk-panel-footer">
-                    <button type="button" class="btn btn-info" onclick="createCourse()">提&nbsp;&nbsp;交</button>
+                    <button type="button" class="btn btn-info" onclick="updateCourse()">提&nbsp;&nbsp;交</button>
+                    <button type="button" class="btn btn-info" onclick="back();" style="margin-left: 30px">
+                        返&nbsp;&nbsp;回
+                    </button>
                 </div>
             </form>
         </div>
@@ -102,11 +121,12 @@
     let numbers = /^[a-zA-Z0-9]{6,18}$/;
     let names = /^[a-zA-Z0-9\u0020\u3000\u4e00-\u9fa5]+$/;
 
-    function createCourse() {
+    function updateCourse() {
         let name = $("#name").val();
-        let number = $("#number").val();
         let intro = $("#intro").val();
+        let number = $("#number").val();
         let collegeId = $("#collegeId").val();
+        let teacherId = $("#teacherId").val();
         if (name.trim() === "") {
             layer.msg("课程名称不能为空", {time: 1500, icon: 5, shift: 6}, function () {
             });
@@ -142,6 +162,11 @@
             });
             return;
         }
+        if (teacherId === "0") {
+            layer.msg("请选择授课教师", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
         if (intro.trim() === "") {
             layer.msg("学院介绍不能为空", {time: 1500, icon: 5, shift: 6}, function () {
             });
@@ -151,7 +176,7 @@
         let data = $("#courseData").serialize();
         data = decodeURIComponent(data);
         $.ajax({
-            url: "${APP_PATH}/admin/saveCourse",
+            url: "${APP_PATH}/admin/editCourse/${course.id}",
             type: "POST",
             // contentType: "application/json",//不使用contentType: “application/json”则data可以是对象,使用contentType: “application/json”则data只能是json字符串
             dataType: "json",
@@ -165,7 +190,7 @@
                 }
                 if (result.code === 100) {
                     console.log("success");
-                    layer.msg("课程添加成功", {time: 1500, icon: 6}, function () {
+                    layer.msg("修改成功", {time: 1500, icon: 6}, function () {
                     });
                 }
             },
@@ -174,5 +199,9 @@
                 });
             }
         });
+    }
+
+    function back() {
+        window.location.href = "${APP_PATH}/admin/searchCourse?&pageNum=${pageNum}";
     }
 </script>

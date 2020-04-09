@@ -34,6 +34,8 @@ import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -161,6 +163,7 @@ public class AdminController {
 
     @RequestMapping("/createStudentBatch")
     public String createStudentBatch(Map<String, Object> map) {
+        map.put("colleges", adminService.getAllColleges());
         return "admin/createStudentBatch";
     }
 
@@ -189,7 +192,7 @@ public class AdminController {
 
 
     @ExceptionHandler(NotExistException.class)
-    public String studentNotExistException(NotExistException e, Map<String, Object> map) {
+    public String notExistException(NotExistException e, Map<String, Object> map) {
         map.put("exception", e);
         return "error";
     }
@@ -203,7 +206,7 @@ public class AdminController {
      */
     @ResponseBody
     @PostMapping("/studentDataImport")
-    public RequestResult studentDataImport(@RequestParam(value = "file") MultipartFile file, HttpServletRequest request) {
+    public RequestResult studentDataImport(@RequestParam(value = "file") MultipartFile file, @RequestParam("collegeId") Integer collegeId) {
         String fileName = file.getOriginalFilename();
         List<Student> students = new ArrayList<>();
         //是".xls"格式
@@ -263,6 +266,9 @@ public class AdminController {
                         student.setPassword(data);
                         data = POIUtils.getStringHSSF(hssfRow.getCell(6));
                         student.setEmail(data);
+                        if (collegeId != 0) {//选择了学院
+                            student.setCollegeId(collegeId);
+                        }
                         System.out.println(student);
                         students.add(student);
                     }
@@ -332,6 +338,9 @@ public class AdminController {
                         student.setPassword(data);
                         data = POIUtils.getStringXSSF(xssfRow.getCell(6));
                         student.setEmail(data);
+                        if (collegeId != 0) {//选择了学院
+                            student.setCollegeId(collegeId);
+                        }
                         System.out.println(student);
                         students.add(student);
                     }
@@ -537,7 +546,7 @@ public class AdminController {
         List<College> colleges = adminService.getAllColleges();
         List<Course> courses = adminService.getAllCourses();
         map.put("colleges", colleges);
-        map.put("courses", courses);
+        /*map.put("courses", courses);*/
         return "admin/createTeacher";
     }
 
@@ -602,15 +611,15 @@ public class AdminController {
         return RequestResult.success();
     }
 
-
     @RequestMapping("/createTeacherBatch")
-    public String createTeacherBatch() {
+    public String createTeacherBatch(Map<String, Object> map) {
+        map.put("colleges", adminService.getAllColleges());
         return "admin/createTeacherBatch";
     }
 
     @ResponseBody
     @PostMapping("/teacherDataImport")
-    public RequestResult teacherDataImport(@RequestParam(value = "file") MultipartFile file) {
+    public RequestResult teacherDataImport(@RequestParam(value = "file") MultipartFile file, @RequestParam("collegeId") Integer collegeId) {
         String fileName = file.getOriginalFilename();
         List<Teacher> teachers = new ArrayList<>();
         //是".xls"格式
@@ -670,6 +679,9 @@ public class AdminController {
                         teacher.setPassword(data);
                         data = POIUtils.getStringHSSF(hssfRow.getCell(6));
                         teacher.setEmail(data);
+                        if (collegeId != 0) {//选择了学院
+                            teacher.setCollegeId(collegeId);
+                        }
                         System.out.println(teacher);
                         teachers.add(teacher);
                     }
@@ -740,6 +752,9 @@ public class AdminController {
                         teacher.setPassword(data);
                         data = POIUtils.getStringXSSF(xssfRow.getCell(6));
                         teacher.setEmail(data);
+                        if (collegeId != 0) {
+                            teacher.setCollegeId(collegeId);
+                        }
                         System.out.println(teacher);
                         teachers.add(teacher);
                     }
@@ -778,7 +793,6 @@ public class AdminController {
 
         TeacherExample teacherExample = (TeacherExample) session.getAttribute("teacherExample");
         map.put("colleges", adminService.getAllColleges());
-        map.put("courses", adminService.getAllCourses());
         //加入PageHelper分页插件，在查询之前只需要调用startPage方法
         //传入页码以及每页显示数据条数
         PageHelper.startPage(pageNum, 10);
@@ -826,28 +840,37 @@ public class AdminController {
 
     @ResponseBody
     @PostMapping("/searchTeacherByTerm")
-    public RequestResult searchTeacherByTerm(@RequestParam("number") String number,
+    public RequestResult searchTeacherByTerm(@RequestParam("name") String name,
                                              @RequestParam("collegeId") Integer collegeId,
-                                             @RequestParam("courseId") Integer courseId,
+                                             @RequestParam("course") String course,
                                              HttpSession session) {
         //将查询条件存放进session中，以回显查询条件
         Map<String, Object> map = new HashMap<>();
+        map.put("name", null);
+        map.put("collegeId", null);
+        map.put("course", null);
         TeacherExample teacherExample = new TeacherExample();
         TeacherExample.Criteria criteria = teacherExample.createCriteria();
-        if (!"".equals(number.trim())) {
-            criteria.andNumberLike("%" + number.trim() + "%");
-            map.put("number", Integer.parseInt(number.trim()));
+        if (!"".equals(name.trim())) {
+            map.put("name", name.trim());
+            criteria.andNameLike("%" + name.trim() + "%");
         }
         if (collegeId != 0) {
-            criteria.andCollegeIdEqualTo(collegeId);
             map.put("collegeId", collegeId);
+            criteria.andCollegeIdEqualTo(collegeId);
         }
-        if (courseId != 0) {
-            criteria.andCourseIdEqualTo(courseId);
-            map.put("courseId", courseId);
+        if (!"".equals(course.trim())) {
+            map.put("course", course);
+            CourseExample courseExample = new CourseExample();
+            CourseExample.Criteria criteria1 = courseExample.createCriteria();
+            criteria1.andNameLike("%" + course.trim() + "%");
+            courseExample.setDistinct(true);
+            List<Integer> teacherId = adminService.getTeacherIdByCourseExample(courseExample);
+            criteria.andIdIn(teacherId);
+
         }
-        session.setAttribute("teacherExample", teacherExample);
         session.setAttribute("teacherQueryCriteria", map);
+        session.setAttribute("teacherExample", teacherExample);
         return RequestResult.success();
     }
 
@@ -860,15 +883,28 @@ public class AdminController {
             return "error";
         }
         map.put("colleges", adminService.getAllColleges());
-        map.put("courses", adminService.getAllCourses());
         map.put("teacher", teacher);
         map.put("pageNum", pageNum);
         return "admin/updateTeacher";
     }
 
     @ResponseBody
+    @PostMapping("/unbindCourse")
+    public RequestResult unbindCourse(@RequestParam("courseId") Integer courseId) {
+        Course course = new Course();
+        course.setId(courseId);
+        course.setTeacherId(0);
+        boolean b = adminService.unbindCourse(course);
+        if (!b) {
+            return RequestResult.failure("解除绑定失败，请稍后再试");
+        }
+        return RequestResult.success();
+    }
+
+    @ResponseBody
     @PostMapping("/editTeacher/{id}")
     public RequestResult editTeacher(@PathVariable("id") Integer id, Teacher teacher) {
+        System.out.println(teacher);
         if (id == null) {
             return RequestResult.failure("修改失败，请稍后再试");
         }
@@ -879,7 +915,7 @@ public class AdminController {
         }
         teacher.setId(id);
         if (teacher1.equals(teacher)) {
-            return RequestResult.failure("未修改任何数据");
+            return RequestResult.failure("未修改任何基本数据");
         }
         //在保存老师信息之前先查看数据库中是否有重复的数据
         TeacherExample teacherExample = new TeacherExample();
@@ -952,9 +988,6 @@ public class AdminController {
         }
         if (teacher1.getCollegeId().equals(teacher.getCollegeId())) {
             teacher.setCollegeId(null);
-        }
-        if (teacher1.getCourseId().equals(teacher.getCourseId())) {
-            teacher.setCourseId(null);
         }
         if (teacher1.getPassword().equals(teacher.getPassword())) {
             teacher.setPassword(null);
@@ -1080,6 +1113,8 @@ public class AdminController {
             return RequestResult.failure("修改失败，请稍后再试");
         }
         college.setId(id);
+        college.setIntro(college.getIntro().trim());
+        college.setName(college.getName().trim());
         if (college1.equals(college)) {
             return RequestResult.failure("未修改任何数据");
         }
@@ -1108,6 +1143,7 @@ public class AdminController {
     @RequestMapping("/createCourse")
     private String createCourse(Map<String, Object> map) {
         map.put("colleges", adminService.getAllColleges());
+        map.put("teachers", adminService.getAllTeachersWithIdNameAndCollege());
         return "admin/createCourse";
     }
 
@@ -1115,10 +1151,10 @@ public class AdminController {
     @PostMapping("/saveCourse")
     private RequestResult saveCourse(Course course) {
         if (course == null) {
-            return RequestResult.failure("新增学院失败，请稍后再试");
+            return RequestResult.failure("新增课程失败，请稍后再试");
         }
         if (course.getName() == null || course.getIntro() == null || course.getCollegeId() == null || course.getNumber() == null) {
-            return RequestResult.failure("新增学院失败，请稍后再试");
+            return RequestResult.failure("新增课程失败，请稍后再试");
         }
         //先判断该课程编号是否已经存在了
         CourseExample courseExample = new CourseExample();
@@ -1134,10 +1170,504 @@ public class AdminController {
         }
         return RequestResult.success();
     }
+
+
     @RequestMapping("/searchCourse")
-    private String searchCourses() {
+    private String searchCourses(Map<String, Object> map, @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum, HttpSession session) {
+        CourseExample courseExample = (CourseExample) session.getAttribute("courseExample");
+        PageHelper.startPage(pageNum, 10);
+        List<Course> courses = adminService.getAllCoursesWithBLOBsCollegeAndTeacherByExample(courseExample);
+        PageInfo<Student> page = new PageInfo(courses, 10);
+        map.put("pageInfo", page);
+        map.put("colleges", adminService.getAllColleges());
+        map.put("courses", courses);
         return "admin/searchCourse";
     }
 
+    @ResponseBody
+    @PostMapping("/deleteCourse")
+    public RequestResult deleteCourse(@RequestParam("id") Integer id) {
+        if (id == null) {
+            return RequestResult.failure("删除课程信息失败，请稍后再试");
+        }
+        //删除课程信息
+        boolean i = adminService.deleteCourseById(id);
+        if (!i) {
+            return RequestResult.failure("删除课程信息失败，请稍后再试");
+        }
+        return RequestResult.success();
+    }
 
+    @ResponseBody
+    @PostMapping("/deleteCourseBatch")
+    public RequestResult deleteCourseBatch(@RequestParam("ids") String id) {
+        if (id == null) {
+            return RequestResult.failure("批量删除失败，请稍后再试");
+        }
+        String[] ids = id.split("-");
+        List<Integer> courseIds = new ArrayList<>();
+        for (String s : ids) {
+            courseIds.add(Integer.parseInt(s));
+        }
+        boolean b = adminService.deleteCourseByIdBatch(courseIds);
+        if (!b) {
+            return RequestResult.failure("批量删除失败，请稍后再试");
+        }
+        return RequestResult.success();
+    }
+
+    @ResponseBody
+    @PostMapping("/searchCourseByTerm")
+    private RequestResult searchCourseByTerm(@RequestParam("name") String name, @RequestParam("collegeId") Integer collegeId, @RequestParam("teacher") String teacher, HttpSession session) {
+        //将查询条件存放进session中，以回显查询条件
+        Map<String, Object> map = new HashMap<>();
+        CourseExample courseExample = new CourseExample();
+        CourseExample.Criteria criteria = courseExample.createCriteria();
+        if (!"".equals(name.trim())) {
+            criteria.andNameLike("%" + name.trim() + "%");
+            map.put("name", name.trim());
+        }
+        if (!"".equals(teacher.trim())) {
+            TeacherExample teacherExample = new TeacherExample();
+            TeacherExample.Criteria criteria1 = teacherExample.createCriteria();
+            criteria1.andNameLike("%" + teacher.trim() + "%");
+            List<Integer> ids = adminService.getTeacherIdByTeacherExample(teacherExample);
+            criteria.andTeacherIdIn(ids);
+            map.put("teacher", teacher.trim());
+        }
+        if (collegeId != 0) {
+            criteria.andCollegeIdEqualTo(collegeId);
+            map.put("collegeId", collegeId);
+        }
+        session.setAttribute("courseExample", courseExample);
+        session.setAttribute("courseQueryCriteria", map);
+        return RequestResult.success();
+    }
+
+    @RequestMapping("/updateCourse/{id}")
+    public String updateCourse(@PathVariable("id") Integer id, Map<String, Object> map, @RequestParam("pageNum") Integer pageNum) {
+        //判断id是否存在
+        Course course = adminService.getCourseByPrimaryKey(id);
+        if (course == null) {
+            map.put("exception", new NotExistException("该id对应的课程不存在"));
+            return "error";
+        }
+        map.put("course", course);
+        map.put("colleges", adminService.getAllColleges());
+        map.put("teachers", adminService.getAllTeachersWithIdNameAndCollege());
+        map.put("pageNum", pageNum);
+        return "admin/updateCourse";
+    }
+
+    @ResponseBody
+    @PostMapping("/editCourse/{id}")
+    public RequestResult editCourse(@PathVariable("id") Integer id, Course course) {
+        if (id == null) {
+            return RequestResult.failure("修改失败，请稍后再试");
+        }
+        if (course == null) {
+            return RequestResult.failure("修改失败，请稍后再试");
+        }
+        course.setName(course.getName().trim());
+        course.setNumber(course.getNumber().trim());
+        course.setIntro(course.getIntro().trim());
+        //判断是否修改数据
+        Course course1 = adminService.getCourseByPrimaryKeyWithoutTeacherAndCollege(id);
+        if (course1 == null) {
+            return RequestResult.failure("修改失败，请稍后再试");
+        }
+        course.setId(id);
+        if (course1.equals(course)) {
+            return RequestResult.failure("未修改任何数据");
+        }
+        //检查课程编号是否已经存在
+        if (!course1.getNumber().equals(course.getNumber())) {
+            CourseExample courseExample = new CourseExample();
+            CourseExample.Criteria criteria = courseExample.createCriteria();
+            criteria.andNameEqualTo(course1.getNumber());
+            boolean exists = adminService.isCourseExistsByExample(courseExample);
+            if (exists) {
+                return RequestResult.failure("该课程编号已经存在");
+            }
+        } else {
+            course.setNumber(null);
+        }
+        if (course1.getIntro().equals(course.getIntro())) {
+            course.setIntro(null);
+        }
+        if (course1.getName().equals(course.getName())) {
+            course.setName(null);
+        }
+        if (course1.getCollegeId().equals(course.getCollegeId())) {
+            course.setCollegeId(null);
+        }
+        if (course1.getTeacherId().equals(course.getTeacherId())) {
+            course.setTeacherId(null);
+        }
+        boolean b = adminService.updateCourseByPrimaryKeySelective(course);
+        if (!b) {
+            return RequestResult.failure("修改失败，请稍后再试");
+        }
+        return RequestResult.success();
+    }
+
+
+    @RequestMapping("/searchDiscuss")
+    public String searchDiscussInfo(Map<String, Object> map, @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum, HttpSession session) {
+        DiscussExample discussExample = (DiscussExample) session.getAttribute("discussExample");
+        PageHelper.startPage(pageNum, 10);
+        List<Discuss> discusses = adminService.getAllDiscussWithBLOBsAndTeacherAndCourseByExample(discussExample);
+        PageInfo<Student> page = new PageInfo(discusses, 10);
+        map.put("pageInfo", page);
+        return "admin/searchDiscuss";
+    }
+
+    @ResponseBody
+    @PostMapping("/searchDiscussByTerm")
+    public RequestResult searchDiscussInfoByTerm(@RequestParam("course") String course, @RequestParam("teacher") String teacher, @RequestParam("title") String title, HttpSession session) {
+        //将查询条件存放进session中，以回显查询条件
+        Map<String, Object> map = new HashMap<>();
+        map.put("course", null);
+        map.put("teacher", null);
+        map.put("title", null);
+        DiscussExample discussExample = new DiscussExample();
+        DiscussExample.Criteria discussCriteria = discussExample.createCriteria();
+        if (!"".equals(course.trim())) {
+            CourseExample courseExample = new CourseExample();
+            CourseExample.Criteria courseCriteria = courseExample.createCriteria();
+            courseCriteria.andNameLike("%" + course.trim() + "%");
+            List<Integer> id = adminService.getCourseIdByCourseExample(courseExample);
+            discussCriteria.andCourseIdIn(id);
+            map.put("course", course.trim());
+        }
+        if (!"".equals(teacher.trim())) {
+            TeacherExample teacherExample = new TeacherExample();
+            TeacherExample.Criteria teacherCriteria = teacherExample.createCriteria();
+            teacherCriteria.andNameLike("%" + teacher.trim() + "%");
+            List<Integer> id = adminService.getTeacherIdByTeacherExample(teacherExample);
+            CourseExample courseExample = new CourseExample();
+            CourseExample.Criteria courseCriteria = courseExample.createCriteria();
+            courseCriteria.andTeacherIdIn(id);
+            List<Integer> ids = adminService.getCourseIdByCourseExample(courseExample);
+            discussCriteria.andCourseIdIn(ids);
+            map.put("teacher", teacher.trim());
+        }
+        if (!"".equals(title.trim())) {
+            discussCriteria.andTitleLike("%" + title.trim() + "%");
+            map.put("title", title.trim());
+        }
+        session.setAttribute("discussExample", discussExample);
+        session.setAttribute("discussQueryCriteria", map);
+        return RequestResult.success();
+    }
+
+    @RequestMapping("/updateDiscuss/{id}")
+    public String updateDiscuss(@PathVariable("id") Integer id, Map<String, Object> map, @RequestParam("pageNum") Integer pageNum) {
+        //判断id是否存在
+        Discuss discuss = adminService.getDiscussByPrimaryKey(id);
+        if (discuss == null) {
+            map.put("exception", new NotExistException("该id对应的讨论不存在"));
+            return "error";
+        }
+        map.put("courses", adminService.getAllCoursesWithWithCollegeAndTeacher());
+        map.put("discuss", discuss);
+        map.put("pageNum", pageNum);
+        return "admin/updateDiscuss";
+    }
+
+    @ResponseBody
+    @PostMapping("/editDiscuss/{id}")
+    public RequestResult editDiscuss(@PathVariable("id") Integer id, Discuss discuss) {
+        if (id == null) {
+            return RequestResult.failure("修改失败，请稍后再试");
+        }
+        if (discuss == null) {
+            return RequestResult.failure("修改失败，请稍后再试");
+        }
+        discuss.setContent(discuss.getContent().trim());
+        discuss.setTitle(discuss.getTitle().trim());
+        //判断是否修改数据
+        Discuss discuss1 = adminService.getDiscussByPrimaryKey(id);
+        System.out.println(discuss);
+        System.out.println(discuss1);
+        if (discuss1 == null) {
+            return RequestResult.failure("修改失败，请稍后再试");
+        }
+        discuss.setId(id);
+        if (discuss1.equals(discuss)) {
+            return RequestResult.failure("未修改任何数据");
+        }
+        if (discuss1.getTitle().equals(discuss.getTitle())) {
+            discuss.setTitle(null);
+        }
+        if (discuss1.getContent().equals(discuss.getContent())) {
+            discuss.setContent(null);
+        }
+        if (discuss1.getCourseId().equals(discuss.getCourseId())) {
+            discuss.setCourseId(null);
+        }
+        boolean b = adminService.updateDiscussByPrimaryKeySelective(discuss);
+        if (!b) {
+            return RequestResult.failure("修改失败，请稍后再试");
+        }
+        return RequestResult.success();
+    }
+
+    @ResponseBody
+    @PostMapping("/deleteDiscussBatch")
+    public RequestResult deleteDiscussBatch(@RequestParam("ids") String id) {
+
+        if (id == null) {
+            return RequestResult.failure("批量删除失败，请稍后再试");
+        }
+        String[] ids = id.split("-");
+        List<Integer> discussIds = new ArrayList<>();
+        for (String s : ids) {
+            discussIds.add(Integer.parseInt(s));
+        }
+        boolean b = adminService.deleteDiscussByIdBatch(discussIds);
+        if (!b) {
+            return RequestResult.failure("批量删除失败，请稍后再试");
+        }
+        return RequestResult.success();
+
+    }
+
+
+    @RequestMapping("/createNotice")
+    public String createNotice() {
+        return "admin/createNotice";
+    }
+
+    @ResponseBody
+    @PostMapping("/saveNotice")
+    public RequestResult saveNotice(Notice notice) {
+        if (notice == null) {
+            return RequestResult.failure("添加公告失败，请稍后再试");
+        }
+        notice.setRecordTime(new Date());
+        boolean b = adminService.insertNoticeSelective(notice);
+        if (!b) {
+            return RequestResult.failure("添加公告失败，请稍后再试");
+        }
+        return RequestResult.success();
+    }
+
+    @RequestMapping("/searchNotice")
+    public String searchNotice(Map<String, Object> map, @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum, HttpSession session) {
+        NoticeExample noticeExample = (NoticeExample) session.getAttribute("noticeExample");
+        PageHelper.startPage(pageNum, 10);
+        List<Notice> notices = adminService.getAllNoticesByExample(noticeExample);
+        PageInfo<Student> page = new PageInfo(notices, 10);
+        map.put("pageInfo", page);
+        return "admin/searchNotice";
+    }
+
+    @ResponseBody
+    @PostMapping("/deleteNotice")
+    public RequestResult deleteNotice(@RequestParam("id") Integer id) {
+        if (id == null) {
+            return RequestResult.failure("删除公告信息失败，请稍后再试");
+        }
+        //删除公告信息
+        boolean i = adminService.deleteNoticeById(id);
+        if (!i) {
+            return RequestResult.failure("删除课程信息失败，请稍后再试");
+        }
+        return RequestResult.success();
+    }
+
+    @ResponseBody
+    @PostMapping("/deleteNoticeBatch")
+    public RequestResult deleteNoticeBatch(@RequestParam("ids") String id) {
+        if (id == null) {
+            return RequestResult.failure("批量删除失败，请稍后再试");
+        }
+        String[] ids = id.split("-");
+        List<Integer> noticeIds = new ArrayList<>();
+        for (String s : ids) {
+            noticeIds.add(Integer.parseInt(s));
+        }
+        boolean b = adminService.deleteNoticeByIdBatch(noticeIds);
+        if (!b) {
+            return RequestResult.failure("批量删除失败，请稍后再试");
+        }
+        return RequestResult.success();
+    }
+
+    @ResponseBody
+    @PostMapping("/searchNoticeByTerm")
+    public RequestResult searchNoticeByTerm(@RequestParam("title") String title, @RequestParam("minTime") String minTime, @RequestParam("maxTime") String maxTime, HttpSession session) {
+        try {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            //将查询条件存放进session中，以回显查询条件
+            Map<String, Object> map = new HashMap<>();
+            map.put("title", null);
+            map.put("minTime", null);
+            map.put("maxTime", null);
+            NoticeExample noticeExample = new NoticeExample();
+            NoticeExample.Criteria criteria = noticeExample.createCriteria();
+            if (!"".equals(title.trim())) {
+                criteria.andTitleLike("%" + title.trim() + "%");
+                map.put("title", title.trim());
+            }
+            if (!"".equals(minTime.trim())) {
+                Date min = simpleDateFormat.parse(minTime);
+                criteria.andRecordTimeGreaterThanOrEqualTo(min);
+                map.put("minTime", minTime);
+            }
+            if (!"".equals(maxTime.trim())) {
+                Date max = simpleDateFormat.parse(maxTime);
+                criteria.andRecordTimeLessThanOrEqualTo(max);
+                map.put("minTime", maxTime);
+            }
+            session.setAttribute("noticeExample", noticeExample);
+            session.setAttribute("noticeQueryCriteria", map);
+        } catch (Exception e) {
+            return RequestResult.failure("查询失败，请稍后再试");
+        }
+        return RequestResult.success();
+    }
+
+    @RequestMapping("/updateNotice/{id}")
+    public String updateNotice(@PathVariable("id") Integer id, Map<String, Object> map, @RequestParam("pageNum") Integer pageNum) {
+        //判断id是否存在
+        Notice notice = adminService.getNoticeByPrimaryKey(id);
+        if (notice == null) {
+            map.put("exception", new NotExistException("该id对应的公告不存在"));
+            return "error";
+        }
+        map.put("notice", notice);
+        map.put("pageNum", pageNum);
+        return "admin/updateNotice";
+    }
+
+    @ResponseBody
+    @PostMapping("/editNotice/{id}")
+    public RequestResult editNotice(@PathVariable("id") Integer id, Notice notice) {
+        if (id == null) {
+            return RequestResult.failure("修改失败，请稍后再试");
+        }
+        if (notice == null) {
+            return RequestResult.failure("修改失败，请稍后再试");
+        }
+        notice.setContent(notice.getContent().trim());
+        notice.setTitle(notice.getTitle().trim());
+        //判断是否修改数据
+        Notice notice1 = adminService.getNoticeByPrimaryKey(id);
+        System.out.println(notice);
+        System.out.println(notice1);
+        if (notice1 == null) {
+            return RequestResult.failure("修改失败，请稍后再试");
+        }
+        notice.setId(id);
+        if (notice1.equals(notice)) {
+            return RequestResult.failure("未修改任何数据");
+        }
+        if (notice1.getTitle().equals(notice.getTitle())) {
+            notice.setTitle(null);
+        }
+        if (notice1.getContent().equals(notice.getContent())) {
+            notice.setContent(null);
+        }
+        boolean b = adminService.updateNoticeByPrimaryKeySelective(notice);
+        if (!b) {
+            return RequestResult.failure("修改失败，请稍后再试");
+        }
+        return RequestResult.success();
+    }
+
+    @RequestMapping("/viewAdminInfo")
+    public String viewAdminInfo(HttpSession session, Map<String, Object> map) {
+        /*Admin admin = (Admin) session.getAttribute("user");
+        map.put("admin",adminService.getAdminById(admin.getId()));*/
+        map.put("admin", adminService.getAdminById(1));
+        return "admin/viewAdminInfo";
+    }
+
+    @RequestMapping("/updateAdminInfo")
+    public String updateAdminInfo(HttpSession session, Map<String, Object> map) {
+        /*Admin admin = (Admin) session.getAttribute("user");
+        map.put("admin",adminService.getAdminById(admin.getId()));*/
+        map.put("admin", adminService.getAdminById(1));
+        return "admin/updateAdminInfo";
+    }
+
+    @ResponseBody
+    @PostMapping("/editAdminInfo/{id}")
+    public RequestResult editAdminInfo(@PathVariable("id") Integer id, Admin admin) {
+        if (id == null) {
+            return RequestResult.failure("信息更新失败，请稍后再试");
+        }
+        if (admin == null) {
+            return RequestResult.failure("信息更新失败，请稍后再试");
+        }
+        Admin admin1 = adminService.getAdminById(id);
+        System.out.println(admin);
+        System.out.println(admin1);
+        if (admin1 == null) {
+            return RequestResult.failure("信息更新失败，请稍后再试");
+        }
+        admin.setAccount(admin.getAccount().trim());
+        admin.setEmail(admin.getEmail().trim());
+        admin.setName(admin.getName().trim());
+        admin.setPassword(admin.getPassword().trim());
+        admin.setTelephone(admin.getTelephone().trim());
+        admin.setId(id);
+        if (admin1.equals(admin)) {
+            return RequestResult.failure("未修改任何信息");
+        }
+        //判断手机号、邮箱、登录账户是否存在
+        AdminExample adminExample = new AdminExample();
+        Criteria criteria = adminExample.createCriteria();
+        if (!admin.getTelephone().equals(admin1.getTelephone())) {//修改了手机号
+            criteria.andTelephoneEqualTo(admin.getTelephone());
+            boolean exists = adminService.isExistsByExample(adminExample);
+            if (exists) {
+                return RequestResult.failure("该手机号已经存在");
+            }
+        } else {
+            admin.setTelephone(null);
+        }
+        if (!admin.getEmail().equals(admin1.getEmail())) {//修改了邮箱
+            adminExample.clear();
+            criteria = adminExample.createCriteria();
+            criteria.andEmailEqualTo(admin.getEmail());
+            boolean exists = adminService.isExistsByExample(adminExample);
+            if (exists) {
+                return RequestResult.failure("该邮箱已经存在");
+            }
+        } else {
+            admin.setEmail(null);
+        }
+        if (!admin.getAccount().equals(admin1.getAccount())) {//修改了登录账户
+            adminExample.clear();
+            criteria = adminExample.createCriteria();
+            criteria.andAccountEqualTo(admin.getAccount());
+            boolean exists = adminService.isExistsByExample(adminExample);
+            if (exists) {
+                return RequestResult.failure("该账号已经存在");
+            }
+        } else {
+            admin.setAccount(null);
+        }
+        if (admin.getPassword().equals(admin1.getPassword())) {
+            admin.setPassword(null);
+        }
+        if (admin.getName().equals(admin1.getName())) {
+            admin.setName(null);
+        }
+        boolean b = adminService.updateAdminByPrimaryKeySelective(admin);
+        if (!b) {
+            return RequestResult.failure("信息更新失败，请稍后再试");
+        }
+        return RequestResult.success();
+    }
+
+    @ResponseBody
+    @PostMapping("/logout")
+    public RequestResult logout(HttpSession session) {
+        session.invalidate();
+        return RequestResult.success();
+    }
 }

@@ -2,6 +2,7 @@
          pageEncoding="UTF-8" %>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,16 +12,20 @@
     <link rel="shortcut icon" href="https://8.url.cn/edu/edu_modules/edu-ui/img/nohash/favicon.ico">
     <link rel="stylesheet" href="${APP_PATH}/resources1/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="${APP_PATH}/resources1/bootstrap/css/bootstrap-theme.min.css">
-    <script type="text/javascript" src="${APP_PATH}/resources1/js/jquery-3.1.1.js"></script>
-    <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="${APP_PATH}/resources1/css/wukong-ui.css">
     <link rel="stylesheet" href="${APP_PATH}/resources1/bootstrap/css/bootstrap-select.min.css">
+    <script type="text/javascript" src="${APP_PATH}/resources1/js/jquery-3.1.1.js"></script>
     <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap.min.js"></script>
     <style>
         th, td {
             text-align: center;
             height: 30px;
             border: #CCCCCC 1px solid;
+        }
+
+        td {
+            word-wrap: break-word;
         }
     </style>
 </head>
@@ -29,9 +34,9 @@
 <div class="row">
     <div class="col-lg-12">
         <ul class="breadcrumb wk-breadcrumb">
-            <li><a href="javascript:void(0)">大学生学习平台</a></li>
-            <li><a href="javascript:void(0)">学院信息管理</a></li>
-            <li><a href="javascript:void(0)">学院信息查询</a></li>
+            <li><a href="javascript:void(0);">大学生学习平台</a></li>
+            <li><a href="javascript:void(0);">公告信息管理</a></li>
+            <li><a href="javascript:void(0);">公告信息查询</a></li>
         </ul>
     </div>
 </div>
@@ -42,31 +47,41 @@
             <div class="panel-heading">
                 工具栏 Tools
             </div>
+            <!-- 搜索 start -->
             <div style="position: absolute;top: -11px;left: 240px;">
-                <div class="navbar-form navbar-right" role="search">
+                <form class="navbar-form navbar-right" role="search"
+                      action="" method="post">
                     <div class="form-group">
-                        <label for="name" class="control-label wk-filed-label" style="margin-top: 20px">学院名称:</label>
-                        <input type="text" maxlength="20"
-                               class="form-control" name="name" id="name" placeholder="学院名称"
-                               value="${sessionScope.collegeQueryCriteria.get("name")}">
+                        <label for="title" class="control-label wk-filed-label" style="margin-top: 20px">公告标题:</label>
+                        <input type="text" class="form-control" name="title" id="title" placeholder="公告标题"
+                               value="${sessionScope.noticeQueryCriteria.get("title")}">
                     </div>
-                    <div class="form-group" style="margin-left: 50px">
+                    <div class="form-group">
+                        <label for="minTime" class="control-label wk-filed-label" style="margin-top: 20px">发布时间:</label>
+                        <input type="date" class="form-control" name="name" id="minTime"
+                               value="${sessionScope.noticeQueryCriteria.get("minTime")}"/>
+                        <label for="maxTime" class="control-label wk-filed-label" style="margin-top: 20px">到:</label>
+                        <input type="date" class="form-control" name="name" id="maxTime"
+                               value="${sessionScope.noticeQueryCriteria.get("maxTime")}"/>
+                    </div>
+                    <div class="form-group" style="margin-left: 20px">
                         <button type="button" id="search" class="btn btn-success search" data-toggle="tooltip"
-                                data-placement="left" title="查询学院" style="margin-right: 20px">
+                                data-placement="left" title="查询课程" style="margin-right: 20px">
                             <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                             查询
                         </button>
                     </div>
-                    <div class="form-group" style="margin-left: 50px">
+                    <div class="form-group">
                         <button type="button" class="btn btn-danger batchDelete" data-toggle="tooltip"
                                 data-placement="left"
-                                title="批量删除所选学院">
+                                title="批量删除课程">
                             <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                             批量删除
                         </button>
                     </div>
-                </div>
+                </form>
             </div>
+            <!-- 搜索 end -->
         </div>
     </div>
 </div>
@@ -81,39 +96,31 @@
                         <input type="checkbox" id="select_all"/>
                         <label for="select_all" style="margin-bottom: 0px;font-weight: 200">全选</label>
                     </th>
-                    <th style="width: 250px">学院名称</th>
-                    <th>学院介绍</th>
-                    <th style="width: 250px">选择操作</th>
+                    <th>公告标题</th>
+                    <th>公告内容</th>
+                    <th>发布时间</th>
+                    <th>选择操作</th>
                 </tr>
                 </thead>
                 <tbody>
-                <c:forEach items="${pageInfo.list}" var="college">
+                <c:forEach items="${pageInfo.list}" var="notice">
                     <tr>
                         <th>
                             <label>
-                                <input collId="${college.id}" type="checkbox" class="select_item"/>
+                                <input noticeId="${notice.id}" type="checkbox" class="select_item"/>
                             </label>
                         </th>
-                        <c:if test="${college.name!=null}">
-                            <td>${college.name.trim()=="0"?"未录入":(college.name.trim()==""?"未录入":college.name) }</td>
-                        </c:if>
-                        <c:if test="${college.name==null}">
-                            <td>未录入</td>
-                        </c:if>
-                        <c:if test="${college.intro!=null}">
-                            <td>${college.intro.trim()=="0"?"未录入":(college.intro.trim()==""?"未录入":college.intro) }</td>
-                        </c:if>
-                        <c:if test="${college.intro==null}">
-                            <td>未录入</td>
-                        </c:if>
+                        <td>${notice.title}</td>
+                        <td>${notice.content}</td>
+                        <td><fmt:formatDate value="${notice.recordTime}" pattern="yyyy-MM-dd  HH:mm:ss"/></td>
                         <td>
                             <button class="btn btn-primary btn-sm edit" data-toggle="tooltip" data-placement="left"
-                                    title="编辑当前学院" edit-id="${college.id}" style="margin-right: 20px">
+                                    title="编辑当前公告" edit-id="${notice.id}" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                                 编辑
                             </button>
                             <a class="btn btn-danger btn-sm delete" data-toggle="tooltip" data-placement="left"
-                               title="删除当前学院" del-id="${college.id}">
+                               title="删除当前公告" del-id="${notice.id}">
                                 <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                                 删除
                             </a>
@@ -121,7 +128,6 @@
                     </tr>
                 </c:forEach>
                 </tbody>
-
             </table>
         </div>
     </div>
@@ -143,8 +149,8 @@
             <nav aria-label="Page navigation">
                 <ul class="pagination">
                     <c:if test="${pageInfo.hasPreviousPage }">
-                        <li><a href="${APP_PATH}/admin/searchCollege?pageNum=1">首页</a></li>
-                        <li><a href="${APP_PATH}/admin/searchCollege?pageNum=${pageInfo.pageNum-1}"
+                        <li><a href="${APP_PATH}/admin/searchNotice?pageNum=1">首页</a></li>
+                        <li><a href="${APP_PATH}/admin/searchNotice?pageNum=${pageInfo.pageNum-1}"
                                aria-label="Previous"><span aria-hidden="true">&laquo;</span>
                         </a></li>
                     </c:if>
@@ -160,15 +166,15 @@
                             <li class="active"><a href="javascript:void(0)">${page_Num }</a></li>
                         </c:if>
                         <c:if test="${page_Num != pageInfo.pageNum }">
-                            <li><a href="${APP_PATH }/admin/searchCollege?pageNum=${page_Num }">${page_Num }</a></li>
+                            <li><a href="${APP_PATH }/admin/searchNotice?pageNum=${page_Num }">${page_Num }</a></li>
                         </c:if>
                     </c:forEach>
 
                     <c:if test="${pageInfo.hasNextPage }">
-                        <li><a href="${APP_PATH }/admin/searchCollege?pageNum=${pageInfo.pageNum+1 }"
+                        <li><a href="${APP_PATH }/admin/searchNotice?pageNum=${pageInfo.pageNum+1 }"
                                aria-label="Next"> <span aria-hidden="true">&raquo;</span>
                         </a></li>
-                        <li><a href="${APP_PATH }/admin/searchCollege?pageNum=${pageInfo.pages}">末页</a></li>
+                        <li><a href="${APP_PATH }/admin/searchNotice?pageNum=${pageInfo.pages}">末页</a></li>
                     </c:if>
                     <c:if test="${!pageInfo.hasNextPage}">
                         <li><a href="javascript:void(0)" style="pointer-events: none"
@@ -188,68 +194,66 @@
         <button type="button" class="btn btn-success toPage" style="margin-left: 20px">确定跳转</button>
     </div>
 </c:if>
-<div class="modal fade" id="collegeDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+<div class="modal fade" id="noticeDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">学院删除</h5>
+                <h5 class="modal-title">公告删除</h5>
             </div>
             <div class="modal-body">
 
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary" id="college_delete_btn">确定</button>
+                <button type="button" class="btn btn-primary" id="notice_delete_btn">确定</button>
             </div>
         </div>
     </div>
 </div>
-<div class="modal fade" id="collegeBatchDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+<div class="modal fade" id="noticeBatchDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">学院批量删除</h5>
+                <h5 class="modal-title">公告批量删除</h5>
             </div>
             <div class="modal-body">
 
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary" id="college_batchDelete_btn">确定</button>
+                <button type="button" class="btn btn-primary" id="notice_batchDelete_btn">确定</button>
             </div>
         </div>
     </div>
 </div>
+
+</body>
+</html>
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
     let ids = "";
     let id = "";
-    //删除单个学院
+    //删除单个公告
     $(".delete").on("click", function () {
         id = $(this).attr("del-id");
         console.log(id);
-        //删除学院时弹出确认框
-        let name = $(this).parents("tr").find("td:eq(0)").text();
-        console.log(name);
-        let message = "确定删除学院 【" + name + "】 的信息吗？";
-        if (name === "未录入") {
-            message = "确定删除该学院的信息吗？";
-        }
-        $("#collegeDeleteModal .modal-body").text(message);
-        $("#collegeDeleteModal").modal({
+        //删除公告时弹出确认框
+        let message = "确定删除该公告的信息吗？";
+        $("#courseDeleteModal .modal-body").text(message);
+        $("#courseDeleteModal").modal({
                 backdrop: "static"
             }
         );
     });
-    $("#college_delete_btn").on("click", function () {
+    $("#notice_delete_btn").on("click", function () {
         let loadingIndex = layer.msg('处理中', {icon: 16});
         //确认，发送ajax请求删除即可
         $.ajax({
-            url: "${APP_PATH}/admin/deleteCollege",
+            url: "${APP_PATH}/admin/deleteNotice",
             type: "POST",
             dataType: "json",
             data: {
@@ -262,7 +266,7 @@
                     });
                 }
                 if (result.code === 100) {
-                    window.location.href = "${APP_PATH}/admin/searchCollege?pageNum=${pageInfo.pageNum }";
+                    window.location.href = "${APP_PATH}/admin/searchNotice?pageNum=${pageInfo.pageNum }";
                 }
             },
             error: function () {
@@ -271,7 +275,6 @@
             }
         })
     });
-
     //页面跳转
     $(".toPage").on("click", function () {
         //获取到将要跳转的页面值
@@ -282,11 +285,10 @@
             });
             return;
         }
-        window.location.href = "${APP_PATH}/admin/searchCollege?pageNum=" + pageNum;
+        window.location.href = "${APP_PATH}/admin/searchNotice?pageNum=" + pageNum;
     });
 
-
-    //批量删除学院
+    //批量删除公告
     //全选按钮
     $("#select_all").on("click", (function () {
         $(".select_item").prop("checked", $(this).prop("checked"));
@@ -306,31 +308,30 @@
     });
     //点击批量删除按钮
     $(".batchDelete").on("click", function () {
-
         $.each($(".select_item:checked"), function () {
-            //组装学院id字符串
-            ids += $(this).attr("collId") + "-";
+            //组装公告id字符串
+            ids += $(this).attr("noticeId") + "-";
         });
         console.log(ids);
         if (ids.trim() === "") {
-            layer.msg("操作失败，你未选择任何学院", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("操作失败，你未选择任何公告信息", {time: 1500, icon: 5, shift: 6}, function () {
             });
         } else {
             //去除删除的id多余的"-"
             ids = ids.substring(0, ids.length - 1);
             console.log(ids);
 
-            $("#collegeBatchDeleteModal .modal-body").text("你确定要删除这些学院的信息吗？");
-            $("#collegeBatchDeleteModal").modal({
+            $("#noticeBatchDeleteModal .modal-body").text("你确定要删除这些公告的信息吗？");
+            $("#noticeBatchDeleteModal").modal({
                 backdrop: "static"
             });
         }
     });
-    $("#college_batchDelete_btn").on("click", function () {
+    $("#notice_batchDelete_btn").on("click", function () {
         let loadingIndex = layer.msg('处理中', {icon: 16});
         //发送ajax请求删除
         $.ajax({
-            url: "${APP_PATH}/admin/deleteCollegeBatch",
+            url: "${APP_PATH}/admin/deleteNoticeBatch",
             type: "POST",
             dataType: "json",
             data: {
@@ -345,7 +346,7 @@
                 if (result.code === 100) {
                     layer.msg("批量删除成功", {time: 1000, icon: 1}, function () {
                     });
-                    window.location.href = "${APP_PATH}/admin/searchCollege?pageNum=${pageInfo.pageNum }";
+                    window.location.href = "${APP_PATH}/admin/searchNotice?pageNum=${pageInfo.pageNum }";
                 }
             },
             error: function () {
@@ -357,15 +358,19 @@
 
     //查询按钮
     $("#search").on("click", function () {
-        let name = $("#name").val().trim();
+        let title = $("#title").val().trim();
+        let minTime = $("#minTime").val();
+        let maxTime = $("#maxTime").val().trim();
         let loadingIndex = layer.msg('处理中', {icon: 16});
         //发送ajax请求
         $.ajax({
-            url: "${APP_PATH}/admin/searchCollegeByTerm",
+            url: "${APP_PATH}/admin/searchNoticeByTerm",
             type: "POST",
             dataType: "json",
             data: {
-                "name": name,
+                "title": title,
+                "minTime": minTime,
+                "maxTime": maxTime
             },
             success: function (result) {
                 layer.close(loadingIndex);
@@ -376,7 +381,7 @@
                 if (result.code === 100) {
                     layer.msg("查询成功", {time: 1000, icon: 1}, function () {
                     });
-                    window.location.href = "${APP_PATH}/admin/searchCollege";
+                    window.location.href = "${APP_PATH}/admin/searchNotice";
                 }
             },
             error: function () {
@@ -385,12 +390,9 @@
             }
         });
     });
-
-    //编辑学院信息
+    //编辑公告信息
     $(".edit").on("click", function () {
         let id = $(this).attr("edit-id");
-        window.location.href = "${APP_PATH}/admin/updateCollege/" + id + "?pageNum=${pageInfo.pageNum}";
+        window.location.href = "${APP_PATH}/admin/updateNotice/" + id+"?pageNum=${pageInfo.pageNum}";
     })
 </script>
-</body>
-</html>

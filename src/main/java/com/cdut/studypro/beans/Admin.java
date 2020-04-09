@@ -1,5 +1,7 @@
 package com.cdut.studypro.beans;
 
+import java.util.Objects;
+
 public class Admin {
     private Integer id;
 
@@ -63,17 +65,31 @@ public class Admin {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
-        sb.append(", name=").append(name);
-        sb.append(", account=").append(account);
-        sb.append(", password=").append(password);
-        sb.append(", email=").append(email);
-        sb.append(", telephone=").append(telephone);
-        sb.append("]");
-        return sb.toString();
+        return "Admin{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", account='" + account + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", telephone='" + telephone + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Admin admin = (Admin) o;
+        return Objects.equals(id, admin.id) &&
+                Objects.equals(name, admin.name) &&
+                Objects.equals(account, admin.account) &&
+                Objects.equals(password, admin.password) &&
+                Objects.equals(email, admin.email) &&
+                Objects.equals(telephone, admin.telephone);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, account, password, email, telephone);
     }
 }

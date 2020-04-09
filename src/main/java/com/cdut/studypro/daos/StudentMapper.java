@@ -42,4 +42,7 @@ public interface StudentMapper {
     //带学院的条件查询
     Student selectByPrimaryKeyWithCollege(Integer id);
 
+    //带id和name的查询
+    Student selectByPrimaryKeyWithIdAndName(Integer id);
+
 }

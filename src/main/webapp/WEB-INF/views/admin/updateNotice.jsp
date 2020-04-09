@@ -9,20 +9,20 @@
     <link rel="shortcut icon" href="https://8.url.cn/edu/edu_modules/edu-ui/img/nohash/favicon.ico">
     <link rel="stylesheet" href="${APP_PATH}/resources1/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="${APP_PATH}/resources1/bootstrap/css/bootstrap-theme.min.css">
-    <script type="text/javascript" src="${APP_PATH}/resources1/js/jquery-3.1.1.js"></script>
-    <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="${APP_PATH}/resources1/css/wukong-ui.css">
     <link rel="stylesheet" href="${APP_PATH}/resources1/bootstrap/css/bootstrap-select.min.css">
+    <script type="text/javascript" src="${APP_PATH}/resources1/js/jquery-3.1.1.js"></script>
     <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap.min.js"></script>
 </head>
 
 <body>
 <div class="row">
     <div class="col-lg-12">
         <ul class="breadcrumb wk-breadcrumb">
-            <li><a href="javascript:void(0)">大学生学习平台</a></li>
-            <li><a href="javascript:void(0)">学院信息管理</a></li>
-            <li><a href="javascript:void(0)">新增学院</a></li>
+            <li><a href="#">大学生学习平台</a></li>
+            <li><a href="#">公告信息管理</a></li>
+            <li><a href="#">编辑公告</a></li>
         </ul>
     </div>
 </div>
@@ -31,34 +31,40 @@
     <div class="col-lg-12">
         <div class="panel panel-default wk-panel ">
             <div class="panel-heading">
-                新增学院 Create Data
+                编辑公告 Create Data
             </div>
-            <form id="collegeData" action="" method="POST">
+            <form id="noticeData" action="" method="POST">
                 <div class="panel-body">
                     <div class="row">
                         <div class="form-inline">
                             <div class="form-group">
-                                <label for="name" class="control-label wk-filed-label">学院名称: </label>
+                                <label for="title" class="control-label wk-filed-label">公告标题: </label>
                                 <div class="input-group">
-                                    <input required="required" id="name" name="name" type="text" maxlength="20"
-                                           class="form-control wk-normal-input" placeholder="请输入学院名称"/>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="intro" class="control-label wk-filed-label">学院介绍: </label>
-                                <div class="input-group">
-                                    <textarea required="required" id="intro" name="intro" rows="3"
-                                              class="form-control wk-long-2col-input" placeholder="请输入学院简介"></textarea>
+                                    <input required="required" id="title" name="title" type="text"
+                                           class="form-control wk-long-2col-input" value="${notice.title}"
+                                           placeholder="请输入公告标题"/>
                                 </div>
                             </div>
                         </div>
-
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <label for="content" class="control-label wk-filed-label">公告内容: </label>
+                                <div class="input-group">
+                                    <textarea required="required" id="content" name="content"
+                                              class="form-control wk-long-2col-input"
+                                              placeholder="请输入公告内容">${notice.content}</textarea>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="panel-footer wk-panel-footer">
-                    <button type="button" class="btn btn-info" onclick="createCollege()">提&nbsp;&nbsp;交</button>
+                    <button type="button" class="btn btn-info" onclick="updateNotice()">提&nbsp;&nbsp;交</button>
+                    <button type="button" class="btn btn-info" onclick="back();"
+                            style="margin-left: 30px">
+                        返&nbsp;&nbsp;回
+                    </button>
                 </div>
             </form>
         </div>
@@ -69,36 +75,29 @@
 </html>
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
-    let names = /^[a-zA-Z0-9\u0020\u3000\u4e00-\u9fa5]+$/;
-
-    function createCollege() {
-        let name = $("#name").val();
-        let intro = $("#intro").val();
-        if (name.trim() === "") {
-            layer.msg("学院名称不能为空", {time: 1500, icon: 5, shift: 6}, function () {
+    function updateNotice() {
+        let title = $("#title").val();
+        let content = $("#content").val();
+        if (title.trim() === "") {
+            layer.msg("公告标题不能为空", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
-        if (name.indexOf(" ") === 0) {
-            layer.msg("学院名称不能以空格开头，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+        if (title.indexOf(" ") === 0) {
+            layer.msg("公告标题不能以空格开头，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
-        if (!names.test(name)) {
-            layer.msg("学院名称由数字、字母、中文组成", {time: 1500, icon: 5, shift: 6}, function () {
-            });
-            return;
-        }
-        if (intro.trim() === "") {
-            layer.msg("学院介绍不能为空", {time: 1500, icon: 5, shift: 6}, function () {
+        if (content.trim() === "") {
+            layer.msg("公告内容不能为空", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
         let loadingIndex = layer.msg('处理中', {icon: 16});
-        let data = $("#collegeData").serialize();
+        let data = $("#noticeData").serialize();
         data = decodeURIComponent(data);
         $.ajax({
-            url: "${APP_PATH}/admin/saveCollege",
+            url: "${APP_PATH}/admin/editNotice/${notice.id}",
             type: "POST",
             // contentType: "application/json",//不使用contentType: “application/json”则data可以是对象,使用contentType: “application/json”则data只能是json字符串
             dataType: "json",
@@ -112,7 +111,7 @@
                 }
                 if (result.code === 100) {
                     console.log("success");
-                    layer.msg("学院添加成功", {time: 1500, icon: 6}, function () {
+                    layer.msg("修改成功", {time: 1500, icon: 6}, function () {
                     });
                 }
             },
@@ -121,5 +120,8 @@
                 });
             }
         });
+    }
+    function back() {
+        window.location.href="${APP_PATH}/admin/searchNotice?&pageNum=${pageNum}";
     }
 </script>

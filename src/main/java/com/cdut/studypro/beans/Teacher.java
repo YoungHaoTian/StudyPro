@@ -1,5 +1,6 @@
 package com.cdut.studypro.beans;
 
+import java.util.List;
 import java.util.Objects;
 
 public class Teacher {
@@ -21,13 +22,11 @@ public class Teacher {
 
     private String number;
 
-    private Integer courseId;
-
     private String email;
 
     private College college;
 
-    private Course course;
+    private List<Course> courses;
 
     public College getCollege() {
         return college;
@@ -37,12 +36,12 @@ public class Teacher {
         this.college = college;
     }
 
-    public Course getCourse() {
-        return course;
+    public List<Course> getCourses() {
+        return courses;
     }
 
-    public void setCourse(Course course) {
-        this.course = course;
+    public void setCourses(List<Course> courses) {
+        this.courses = courses;
     }
 
     public Integer getId() {
@@ -117,14 +116,6 @@ public class Teacher {
         this.number = number == null ? null : number.trim();
     }
 
-    public Integer getCourseId() {
-        return courseId;
-    }
-
-    public void setCourseId(Integer courseId) {
-        this.courseId = courseId;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -145,10 +136,9 @@ public class Teacher {
                 ", account='" + account + '\'' +
                 ", password='" + password + '\'' +
                 ", number='" + number + '\'' +
-                ", courseId=" + courseId +
                 ", email='" + email + '\'' +
                 ", college=" + college +
-                ", course=" + course +
+                ", courses=" + courses +
                 '}';
     }
 
@@ -166,12 +156,11 @@ public class Teacher {
                 Objects.equals(account, teacher.account) &&
                 Objects.equals(password, teacher.password) &&
                 Objects.equals(number, teacher.number) &&
-                Objects.equals(courseId, teacher.courseId) &&
                 Objects.equals(email, teacher.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, gender, collegeId, telephone, idCardNo, account, password, number, courseId, email);
+        return Objects.hash(id, name, gender, collegeId, telephone, idCardNo, account, password, number, email);
     }
 }

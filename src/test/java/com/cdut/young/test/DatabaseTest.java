@@ -40,5 +40,6 @@ public class DatabaseTest {
         String[] current_title = new String[]{"姓名","学号","电话","身份证号码","账号","密码","邮箱"};
         boolean equals = Arrays.equals(original_title, current_title);
         System.out.println(equals);
+
     }
 }

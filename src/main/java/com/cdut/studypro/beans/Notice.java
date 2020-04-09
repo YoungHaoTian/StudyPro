@@ -1,6 +1,7 @@
 package com.cdut.studypro.beans;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class Notice {
     private Integer id;
@@ -45,15 +46,26 @@ public class Notice {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
-        sb.append(", title=").append(title);
-        sb.append(", recordTime=").append(recordTime);
-        sb.append(", content=").append(content);
-        sb.append("]");
-        return sb.toString();
+        return "Notice{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", recordTime=" + recordTime +
+                ", content='" + content + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Notice notice = (Notice) o;
+        return Objects.equals(id, notice.id) &&
+                Objects.equals(title, notice.title) &&
+                Objects.equals(content, notice.content);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, content);
     }
 }

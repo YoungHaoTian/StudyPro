@@ -16,6 +16,14 @@
     <link rel="stylesheet" href="${APP_PATH}/resources1/css/wukong-ui.css">
     <link rel="stylesheet" href="${APP_PATH}/resources1/bootstrap/css/bootstrap-select.min.css">
     <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap-select.min.js"></script>
+    <style>
+        th, td {
+            /*vertical-align: middle;*/
+            text-align: center;
+            height: 30px;
+            border: #CCCCCC 1px solid;
+        }
+    </style>
 </head>
 
 <body>
@@ -28,6 +36,7 @@
         </ul>
     </div>
 </div>
+
 
 <div class="row">
     <div class="col-lg-12">
@@ -42,7 +51,7 @@
                                 <div class="input-group">
                                     <input required="required" id="name" name="name" type="text" maxlength="5"
                                            class="form-control wk-normal-input"
-                                           value="${teacher.name.trim()=="0"?"未录入":(teacher.name.trim()==""?"未录入":teacher.name) }"
+                                           value="${teacher.name.trim()=="0"?"":(teacher.name.trim()==""?"":teacher.name) }"
                                            placeholder=" 请输入学生姓名"/>
                                 </div>
                             </div>
@@ -53,21 +62,22 @@
                                     <input required="required" id="number" name="number"
                                            oninput="value=value.replace(/[^\d]/g,'')" type="text" maxlength="18"
                                            class="form-control wk-normal-input"
-                                           value="${teacher.number.trim()=="0"?"未录入":(teacher.number.trim()==""?"未录入":teacher.number) }"
+                                           value="${teacher.number.trim()=="0"?"":(teacher.number.trim()==""?"":teacher.number) }"
                                            placeholder="请输入学生学号"/>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="collegeId" class="control-label wk-filed-label">所属学院:</label>
                                 <select class="selectpicker" id="collegeId" name="collegeId">
+                                    <option value="0">请选择所属学院</option>
                                     <c:forEach items="${colleges}" var="college">
                                         <c:choose>
                                             <c:when test="${college.id == teacher.collegeId}">
                                                 <option value="${college.id}"
-                                                        selected="selected">${college.name}</option>
+                                                        selected="selected">${college.name.trim()}</option>
                                             </c:when>
                                             <c:otherwise>
-                                                <option value="${college.id}">${college.name}</option>
+                                                <option value="${college.id}">${college.name.trim()}</option>
                                             </c:otherwise>
                                         </c:choose>
                                     </c:forEach>
@@ -81,7 +91,7 @@
                                     <input required="required" id="telephone" name="telephone"
                                            oninput="value=value.replace(/[^\d]/g,'')" type="text" maxlength="11"
                                            class="form-control wk-normal-input"
-                                           value="${teacher.telephone.trim()=="0"?"未录入":(teacher.telephone.trim()==""?"未录入":teacher.telephone) }"
+                                           value="${teacher.telephone.trim()=="0"?"":(teacher.telephone.trim()==""?"":teacher.telephone) }"
                                            placeholder="请输入联系电话"/>
                                 </div>
                             </div>
@@ -89,9 +99,10 @@
                                 <label for="idCardNo" class="control-label wk-filed-label">身份证号:
                                 </label>
                                 <div class="input-group">
-                                    <input required="required" id="idCardNo" name="idCardNo" type="text" maxlength="18"
+                                    <input required="required" id="idCardNo" name="idCardNo" type="text"
+                                           maxlength="18"
                                            class="form-control wk-normal-input"
-                                           value="${teacher.idCardNo.trim()=="0"?"未录入":(teacher.idCardNo.trim()==""?"未录入":teacher.idCardNo) }"
+                                           value="${teacher.idCardNo.trim()=="0"?"":(teacher.idCardNo.trim()==""?"":teacher.idCardNo) }"
                                            placeholder="请输入身份证号"/>
                                 </div>
                             </div>
@@ -115,56 +126,78 @@
                             <div class="form-group">
                                 <label for="account" class="control-label wk-filed-label">登录账户: </label>
                                 <div class="input-group">
-                                    <input required="required" id="account" name="account" type="text" maxlength="18"
+                                    <input required="required" id="account" name="account" type="text"
+                                           maxlength="18"
                                            class="form-control wk-normal-input"
-                                           value="${teacher.account.trim()=="0"?"未录入":(teacher.account.trim()==""?"未录入":teacher.account) }"
+                                           value="${teacher.account.trim()=="0"?"":(teacher.account.trim()==""?"":teacher.account) }"
                                            placeholder="请输入登录账户"/>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="password" class="control-label wk-filed-label">登录密码: </label>
                                 <div class="input-group">
-                                    <input required="required" id="password" name="password" type="text" maxlength="18"
+                                    <input required="required" id="password" name="password" type="text"
+                                           maxlength="18"
                                            class="form-control wk-normal-input"
-                                           value="${teacher.account.trim()=="0"?"未录入":(teacher.account.trim()==""?"未录入":teacher.account) }"
+                                           value="${teacher.account.trim()=="0"?"":(teacher.account.trim()==""?"":teacher.account) }"
                                            placeholder="请输入登录密码"/>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="courseId" class="control-label wk-filed-label">教授课程:</label>
-                                <select class="selectpicker" id="courseId" name="courseId">
-                                    <c:forEach items="${courses}" var="course">
-                                        <c:choose>
-                                            <c:when test="${course.id == teacher.courseId}">
-                                                <option value="${course.id}" selected="selected">${course.name}</option>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <option value="${course.id}">${course.name}</option>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </c:forEach>
-                                </select>
+                                <label for="email" class="control-label wk-filed-label">教师邮箱:</label>
+                                <div class="input-group">
+                                    <input required="required" id="email" name="email" type="text" maxlength="20"
+                                           class="form-control wk-normal-input"
+                                           value="${teacher.email.trim()=="0"?"":(teacher.email.trim()==""?"":teacher.email) }"
+                                           placeholder="请输入教师邮箱"/>
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-inline">
-                            <label for="email" class="control-label wk-filed-label">教师邮箱:</label>
-                            <div class="input-group">
-                                <input required="required" id="email" name="email" type="text" maxlength="20"
-                                       class="form-control wk-normal-input"
-                                       value="${teacher.email.trim()=="0"?"未录入":(teacher.email.trim()==""?"未录入":teacher.email) }"
-                                       placeholder="请输入教师邮箱"/>
-                            </div>
-
                         </div>
                     </div>
                 </div>
-                <div class="panel-footer wk-panel-footer">
-                    <button type="button" class="btn btn-info" onclick="updateTeacher()">提&nbsp;&nbsp;交</button>
-                    <button type="button" class="btn btn-info" onclick="back()" style="margin-left: 30px">
-                        返&nbsp;&nbsp;回
-                    </button>
-                </div>
             </form>
+        </div>
+        <c:if test="${!empty teacher.courses}">
+            <div class="panel panel-default wk-panel">
+                <div class="row">
+                    <table class="table table-striped table-hover table-bordered"
+                           style="width: 500px;margin: 0 auto">
+                        <thead>
+                        <tr class="danger">
+                            <th colspan=3>所选课程</th>
+                        </tr>
+                        <tr class="info">
+                            <th>序号</th>
+                            <th>课程名称</th>
+                            <th>选择操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <c:forEach items="${teacher.courses}" var="course" varStatus="statu">
+                            <tr>
+                                <td>${statu.index+1}</td>
+                                <td>${course.name}</td>
+                                <td>
+                                    <button class="btn btn-danger btn-sm unbind" type="button" data-toggle="tooltip"
+                                            data-placement="left"
+                                            title="解除与当前课程的绑定" courseId="${course.id}">
+                                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                        删除绑定
+                                    </button>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </c:if>
+        <div class="panel-footer wk-panel-footer">
+            <button type="button" class="btn btn-info" onclick="updateTeacher()">提&nbsp;&nbsp;交</button>
+            <button type="button" class="btn btn-info" onclick="back()" style="margin-left: 30px">
+                返&nbsp;&nbsp;回
+            </button>
         </div>
     </div>
 </div>
@@ -187,6 +220,39 @@
         window.location.href = "${APP_PATH}/admin/searchTeacher?pageNum=" +${pageNum};
     }
 
+    //解除绑定课程按钮
+    $(".unbind").on("click", function () {
+        let courseId = $(this).attr("courseId");
+        let loadingIndex = layer.msg('处理中', {icon: 16});
+        $.ajax({
+            url: "${APP_PATH}/admin/unbindCourse",
+            type: "POST",
+            // contentType: "application/json",//不使用contentType: “application/json”则data可以是对象,使用contentType: “application/json”则data只能是json字符串
+            dataType: "json",
+            data: {
+                "courseId": courseId
+            },
+            success: function (result) {
+                layer.close(loadingIndex);
+                console.log(result);
+                if (result.code === 200) {
+                    layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
+                    });
+                }
+                if (result.code === 100) {
+                    console.log("success");
+                    layer.msg("解除绑定成功", {time: 1500, icon: 6}, function () {
+                    });
+                    window.location.href = "${APP_PATH}/admin/updateTeacher/${teacher.id}?pageNum=${pageNum}";
+                }
+            },
+            error: function () {
+                layer.msg("网络异常，请稍后再试", {time: 1500, icon: 5, shift: 6}, function () {
+                });
+            }
+        });
+    });
+
     function updateTeacher() {
         //对姓名的验证
         let name = $("#name").val();
@@ -199,7 +265,7 @@
             });
             return;
         }
-        //对学号的验证
+        //对编号的验证
         let number = $("#number").val();
         if ($.trim(number) === "") {
             layer.msg("教师编号不能为空", {time: 1500, icon: 5, shift: 6}, function () {
@@ -207,6 +273,13 @@
             return;
         } else if (!numbers.test(number)) {
             layer.msg("请输入正确的教师编号", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        //对学院的验证
+        let collegeId = $("#collegeId").val();
+        if (collegeId === "0") {
+            layer.msg("请选择所属学院", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }

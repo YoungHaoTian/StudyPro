@@ -40,6 +40,15 @@
 
                         <div class="form-inline">
                             <div class="form-group">
+                                <label for="collegeId" class="control-label wk-filed-label">所属学院:</label>
+                                <select class="selectpicker" id="collegeId" name="collegeId">
+                                    <option value="0">请选择所属学院</option>
+                                    <c:forEach items="${colleges}" var="var">
+                                        <option value="${var.id}">${var.name}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="form-group">
                                 <label for="file" class="control-label wk-filed-label">选择文件: </label>
                                 <div class="input-group">
                                     <input required="required" name="file" type="file" id="file"
@@ -49,6 +58,11 @@
                                 <div class="input-group">
                                     <a class="btn btn-link" href="${APP_PATH}/admin/downloadStudentTemplate">点击下载模板</a>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="form-inline">
+                            <div class="form-group" style="margin-left: 30px">
+                                <span style="color: red">注：不选择所属学院，则不会为学生设置学院</span>
                             </div>
                         </div>
                     </div>
@@ -65,6 +79,7 @@
 
     function upload() {
         let file = $("#file").val();
+        let collegeId = $("#collegeId").val();
         if (file === "") {
             layer.msg("请选择需要上传的文件", {time: 1500, icon: 5, shift: 6}, function () {
             });
@@ -81,6 +96,7 @@
         let formData = new FormData();
         let loadingIndex = layer.msg('处理中', {icon: 16});
         formData.append("file", $("#file")[0].files[0]);
+        formData.append("collegeId", collegeId);
         $.ajax({
             url: "${APP_PATH}/admin/studentDataImport",
             type: 'POST',

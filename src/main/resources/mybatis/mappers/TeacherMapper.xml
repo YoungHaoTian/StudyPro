@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cdut.studypro.daos.TeacherMapper">
+    <resultMap id="BriefResultMap" type="com.cdut.studypro.beans.Teacher">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+    </resultMap>
+    <resultMap id="MiddleResultMap" type="com.cdut.studypro.beans.Teacher">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="college_id" jdbcType="INTEGER" property="collegeId"/>
+        <association property="college" select="com.cdut.studypro.daos.CollegeMapper.selectByPrimaryKeyWithIdAndName"
+                     column="college_id"/>
+    </resultMap>
     <resultMap id="BaseResultMap" type="com.cdut.studypro.beans.Teacher">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
@@ -11,16 +22,15 @@
         <result column="account" jdbcType="VARCHAR" property="account"/>
         <result column="password" jdbcType="VARCHAR" property="password"/>
         <result column="number" jdbcType="VARCHAR" property="number"/>
-        <result column="course_id" jdbcType="INTEGER" property="courseId"/>
         <result column="email" jdbcType="VARCHAR" property="email"/>
     </resultMap>
-
     <!--带学院、课程信息的映射-->
     <resultMap extends="BaseResultMap" id="ResultMapWithCollegeAndCourse" type="com.cdut.studypro.beans.Teacher">
-        <association property="college" select="com.cdut.studypro.daos.CollegeMapper.selectByPrimaryKeyWithoutBLOBs"
+        <association property="college" select="com.cdut.studypro.daos.CollegeMapper.selectByPrimaryKeyWithIdAndName"
                      column="college_id"/>
-        <association property="course" select="com.cdut.studypro.daos.CourseMapper.selectByPrimaryKeyWithoutBLOBs"
-                     column="course_id"/>
+        <collection property="courses" ofType="com.cdut.studypro.beans.Course"
+                    select="com.cdut.studypro.daos.CourseMapper.selectByTeacherIdWithIdAndName"
+                    column="id"/>
     </resultMap>
     <sql id="Example_Where_Clause">
         <where>
@@ -83,12 +93,8 @@
         </where>
     </sql>
     <sql id="Base_Column_List">
-    id, name, gender, college_id, telephone, id_card_no, account, password, number, course_id, 
-    email
+    id, name, gender, college_id, telephone, id_card_no, account, password, number, email
   </sql>
-    <select id="getIdByTelephone" parameterType="string" resultType="java.lang.Integer">
-        select id from teacher where telephone = #{phone,jdbcType=VARCHAR}
-    </select>
     <select id="selectByExample" parameterType="com.cdut.studypro.beans.TeacherExample" resultMap="BaseResultMap">
         select
         <if test="distinct">
@@ -103,14 +109,12 @@
             order by ${orderByClause}
         </if>
     </select>
-    <!--带课程和学院的条件查询-->
-    <select id="selectByExampleWithCollegeAndCourse" parameterType="com.cdut.studypro.beans.TeacherExample"
-            resultMap="ResultMapWithCollegeAndCourse">
+    <select id="selectIdsByExample" parameterType="com.cdut.studypro.beans.TeacherExample" resultType="java.lang.Integer">
         select
         <if test="distinct">
             distinct
         </if>
-        <include refid="Base_Column_List"/>
+        id
         from teacher
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
@@ -119,21 +123,33 @@
             order by ${orderByClause}
         </if>
     </select>
-    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from teacher
-        where id = #{id,jdbcType=INTEGER}
-    </select>
-    <!--带课程和学院的主键查询-->
-    <select id="selectByPrimaryKeyWithCollegeAndCourse" parameterType="java.lang.Integer"
-            resultMap="ResultMapWithCollegeAndCourse">
-        select
-        <include refid="Base_Column_List"/>
-        from teacher
-        where id = #{id,jdbcType=INTEGER}
-    </select>
 
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithCollegeAndCourse">
+        select
+        <include refid="Base_Column_List"/>
+        from teacher
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+     <select id="selectByPrimaryKeyWithIdNameAndCollege" parameterType="java.lang.Integer" resultMap="MiddleResultMap">
+        select
+        id,name,college_id
+        from teacher
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectByExampleWithIdNameAndCollege" parameterType="java.lang.Integer" resultMap="MiddleResultMap">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        id,name,college_id
+        from teacher
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from teacher
     where id = #{id,jdbcType=INTEGER}
@@ -148,11 +164,11 @@
     insert into teacher (id, name, gender, 
       college_id, telephone, id_card_no, 
       account, password, number, 
-      course_id, email)
+      email)
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{gender,jdbcType=INTEGER}, 
       #{collegeId,jdbcType=INTEGER}, #{telephone,jdbcType=VARCHAR}, #{idCardNo,jdbcType=VARCHAR}, 
       #{account,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{number,jdbcType=VARCHAR}, 
-      #{courseId,jdbcType=INTEGER}, #{email,jdbcType=VARCHAR})
+      #{email,jdbcType=VARCHAR})
   </insert>
     <insert id="insertSelective" parameterType="com.cdut.studypro.beans.Teacher">
         insert into teacher
@@ -183,9 +199,6 @@
             </if>
             <if test="number != null">
                 number,
-            </if>
-            <if test="courseId != null">
-                course_id,
             </if>
             <if test="email != null">
                 email,
@@ -218,9 +231,6 @@
             </if>
             <if test="number != null">
                 #{number,jdbcType=VARCHAR},
-            </if>
-            <if test="courseId != null">
-                #{courseId,jdbcType=INTEGER},
             </if>
             <if test="email != null">
                 #{email,jdbcType=VARCHAR},
@@ -263,9 +273,6 @@
             <if test="record.number != null">
                 number = #{record.number,jdbcType=VARCHAR},
             </if>
-            <if test="record.courseId != null">
-                course_id = #{record.courseId,jdbcType=INTEGER},
-            </if>
             <if test="record.email != null">
                 email = #{record.email,jdbcType=VARCHAR},
             </if>
@@ -285,7 +292,6 @@
         account = #{record.account,jdbcType=VARCHAR},
         password = #{record.password,jdbcType=VARCHAR},
         number = #{record.number,jdbcType=VARCHAR},
-        course_id = #{record.courseId,jdbcType=INTEGER},
         email = #{record.email,jdbcType=VARCHAR}
         <if test="_parameter != null">
             <include refid="Update_By_Example_Where_Clause"/>
@@ -318,9 +324,6 @@
             <if test="number != null">
                 number = #{number,jdbcType=VARCHAR},
             </if>
-            <if test="courseId != null">
-                course_id = #{courseId,jdbcType=INTEGER},
-            </if>
             <if test="email != null">
                 email = #{email,jdbcType=VARCHAR},
             </if>
@@ -337,18 +340,18 @@
       account = #{account,jdbcType=VARCHAR},
       password = #{password,jdbcType=VARCHAR},
       number = #{number,jdbcType=VARCHAR},
-      course_id = #{courseId,jdbcType=INTEGER},
       email = #{email,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 
     <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="false">
         insert into teacher
-        (name,number,telephone,id_card_no,account,password,email)
+        (name,college_id,number,telephone,id_card_no,account,password,email)
         values
         <foreach collection="teachers" item="teacher" separator=",">
             (
             #{teacher.name,jdbcType=VARCHAR},
+            #{teacher.collegeId,jdbcType=INTEGER},
             #{teacher.number,jdbcType=VARCHAR},
             #{teacher.telephone,jdbcType=VARCHAR},
             #{teacher.idCardNo,jdbcType=VARCHAR},
@@ -358,4 +361,24 @@
             )
         </foreach>
     </insert>
+    <!--带课程和学院的条件查询-->
+    <select id="selectByExampleWithCollegeAndCourse" parameterType="com.cdut.studypro.beans.TeacherExample"
+            resultMap="ResultMapWithCollegeAndCourse">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from teacher
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+     <select id="getIdByTelephone" parameterType="string" resultType="java.lang.Integer">
+        select id from teacher where telephone = #{phone,jdbcType=VARCHAR}
+    </select>
+
 </mapper>

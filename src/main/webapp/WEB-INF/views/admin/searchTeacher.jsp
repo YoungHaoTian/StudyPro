@@ -17,7 +17,10 @@
     <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap-select.min.js"></script>
     <style>
         th, td {
+            /*vertical-align: middle;*/
             text-align: center;
+            height: 30px;
+            border: #CCCCCC 1px solid;
         }
     </style>
 </head>
@@ -26,9 +29,9 @@
 <div class="row">
     <div class="col-lg-12">
         <ul class="breadcrumb wk-breadcrumb">
-            <li><a href="#">大学生学习平台</a></li>
-            <li><a href="#">教师信息管理</a></li>
-            <li><a href="#">教师信息查询</a></li>
+            <li><a href="javascript:void(0)">大学生学习平台</a></li>
+            <li><a href="javascript:void(0)">教师信息管理</a></li>
+            <li><a href="javascript:void(0)">教师信息查询</a></li>
         </ul>
     </div>
 </div>
@@ -43,10 +46,10 @@
             <div style="position: absolute;top: -11px;left: 240px;">
                 <div class="navbar-form navbar-right" role="search">
                     <div class="form-group">
-                        <label for="number" class="control-label wk-filed-label" style="margin-top: 20px">教师编号:</label>
-                        <input type="text" oninput="value=value.replace(/[^\d]/g,'')" maxlength="18"
-                               class="form-control" id="number" name="number" placeholder="教师编号"
-                               value="${sessionScope.teacherQueryCriteria.get("number")}">
+                        <label for="name" class="control-label wk-filed-label" style="margin-top: 20px">教师姓名:</label>
+                        <input type="text"  maxlength="5"
+                               class="form-control" id="name" name="name" placeholder="教师姓名"
+                               value="${sessionScope.teacherQueryCriteria.get("name")}">
                     </div>
                     <div class="form-group">
                         <label for="collegeId" class="control-label wk-filed-label"
@@ -66,24 +69,14 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="courseId" class="control-label wk-filed-label"
+                        <label for="course" class="control-label wk-filed-label"
                                style="margin-top: 20px">教授课程:</label>
-                        <select class="selectpicker" id="courseId" name="courseId">
-                            <option value="0">请选择教授课程</option>
-                            <c:forEach items="${courses}" var="course">
-                                <%--<option value="${course.id}">${course.name}</option>--%>
-                                <c:choose>
-                                    <c:when test="${course.id == sessionScope.teacherQueryCriteria.get('courseId')}">
-                                        <option value="${course.id}" selected="selected">${course.name}</option>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <option value="${course.id}">${course.name}</option>
-                                    </c:otherwise>
-                                </c:choose>
-                            </c:forEach>
-                        </select>
+                        <input type="text" maxlength="18"
+                               class="form-control" id="course" name="course" placeholder="请输入教授课程"
+                               value="${sessionScope.teacherQueryCriteria.get("course")}">
+
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="margin-left: 20px">
                         <button type="button" id="search" class="btn btn-success search" data-toggle="tooltip"
                                 data-placement="left" title="查询学生" style="margin-right: 20px">
                             <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
@@ -111,17 +104,17 @@
             <table class="table table-striped table-hover">
                 <thead>
                 <tr class="info">
-                    <th>
+                    <th style="width: 80px">
                         <input type="checkbox" id="select_all"/>
                         <label for="select_all" style="margin-bottom: 0px;font-weight: 200">全选</label>
                     </th>
-                    <th>教师姓名</th>
-                    <th>教师编号</th>
+                    <th style="width: 80px">教师姓名</th>
+                    <th style="width: 100px">教师编号</th>
                     <th>所属学院</th>
                     <th>教授课程</th>
-                    <th>联系电话</th>
-                    <th>身份证号</th>
-                    <th>性别</th>
+                    <th style="width: 100px">联系电话</th>
+                    <th style="width: 200px">身份证号</th>
+                    <th style="width: 50px">性别</th>
                     <th>登录账户</th>
                     <th>邮箱</th>
                     <th>选择操作</th>
@@ -135,79 +128,88 @@
                     <c:if test="${statu.index%2!=0}">
                         <tr class="warning">
                     </c:if>--%>
-                    <th>
-                        <label>
-                            <input teaId="${teacher.id}" type="checkbox" class="select_item"/>
-                        </label>
-                    </th>
-                    <c:if test="${teacher.name!=null}">
-                        <td>${teacher.name.trim()=="0"?"未录入":(teacher.name.trim()==""?"未录入":teacher.name) }</td>
-                    </c:if>
-                    <c:if test="${teacher.name==null}">
-                        <td>未录入</td>
-                    </c:if>
-                    <c:if test="${teacher.number!=null}">
-                        <td>${teacher.number.trim()=="0"?"未录入":(teacher.number.trim()==""?"未录入":teacher.number) }</td>
-                    </c:if>
-                    <c:if test="${teacher.number==null}">
-                        <td>未录入</td>
-                    </c:if>
-                    <c:if test="${teacher.collegeId!=null}">
-                        <td>${teacher.collegeId==0?"未录入":teacher.college.name }</td>
-                    </c:if>
-                    <c:if test="${teacher.collegeId==null}">
-                        <td>未录入</td>
-                    </c:if>
-                    <c:if test="${teacher.courseId!=null}">
-                        <td>${teacher.courseId==0?"未录入":teacher.course.name }</td>
-                    </c:if>
-                    <c:if test="${teacher.courseId==null}">
-                        <td>未录入</td>
-                    </c:if>
-                    <c:if test="${teacher.telephone!=null}">
-                        <td>${teacher.telephone.trim()=="0"?"未录入":(teacher.telephone.trim()==""?"未录入":teacher.telephone) }</td>
-                    </c:if>
-                    <c:if test="${teacher.telephone==null}">
-                        <td>未录入</td>
-                    </c:if>
-                    <c:if test="${teacher.idCardNo!=null}">
-                        <td>${teacher.idCardNo.trim()=="0"?"未录入":(teacher.idCardNo.trim()==""?"未录入":teacher.idCardNo) }</td>
-                    </c:if>
-                    <c:if test="${teacher.idCardNo==null}">
-                        <td>未录入</td>
-                    </c:if>
-                    <c:if test="${teacher.gender!=null}">
-                        <td>${teacher.gender==0?"男":"女" }</td>
-                    </c:if>
-                    <c:if test="${teacher.gender==null}">
-                        <td>未录入</td>
-                    </c:if>
-                    <c:if test="${teacher.account!=null}">
-                        <td>${teacher.account.trim()=="0"?"未录入":(teacher.account.trim()==""?"未录入":teacher.account) }</td>
-                    </c:if>
-                    <c:if test="${teacher.account==null}">
-                        <td>未录入</td>
-                    </c:if>
-                    <c:if test="${teacher.email!=null}">
-                        <td>${teacher.email.trim()=="0"?"未录入":(teacher.email.trim()==""?"未录入":teacher.email) }</td>
-                    </c:if>
-                    <c:if test="${teacher.email==null}">
-                        <td>未录入</td>
-                    </c:if>
-                    <td>
-                        <button class="btn btn-primary btn-sm edit" type="button"
-                                data-toggle="tooltip" data-placement="left"
-                                title="编辑当前教师" edit-id="${teacher.id}" style="margin-right: 20px">
-                            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-                            编辑
-                        </button>
-                        <a class="btn btn-danger btn-sm delete" type="button" data-toggle="tooltip"
-                           data-placement="left"
-                           title="删除当前教师" del-id="${teacher.id}">
-                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                            删除
-                        </a>
-                    </td>
+                    <tr>
+                        <th>
+                            <label>
+                                <input teaId="${teacher.id}" type="checkbox" class="select_item"/>
+                            </label>
+                        </th>
+                        <c:if test="${teacher.name!=null}">
+                            <td>${teacher.name.trim()=="0"?"未录入":(teacher.name.trim()==""?"未录入":teacher.name) }</td>
+                        </c:if>
+                        <c:if test="${teacher.name==null}">
+                            <td>未录入</td>
+                        </c:if>
+                        <c:if test="${teacher.number!=null}">
+                            <td>${teacher.number.trim()=="0"?"未录入":(teacher.number.trim()==""?"未录入":teacher.number) }</td>
+                        </c:if>
+                        <c:if test="${teacher.number==null}">
+                            <td>未录入</td>
+                        </c:if>
+                        <c:if test="${teacher.college!=null}">
+                            <td>${teacher.college.name.trim()=="0"?"学院未设置名称":(teacher.college.name.trim()==""?"学院未设置名称":teacher.college.name) }</td>
+                        </c:if>
+                        <c:if test="${teacher.college==null}">
+                            <td>未录入</td>
+                        </c:if>
+                        <c:if test="${teacher.courses!=null}">
+                            <td>
+                                <c:forEach items="${teacher.courses}" var="course" varStatus="statu">
+                                    <span style="color: red; "> ${statu.index+1}：</span>${course.name}
+                                    <c:if test="${!statu.last}">
+                                        <br>
+                                    </c:if>
+                                </c:forEach>
+
+                            </td>
+                        </c:if>
+                        <c:if test="${teacher.courses==null}">
+                            <td>未录入</td>
+                        </c:if>
+                        <c:if test="${teacher.telephone!=null}">
+                            <td>${teacher.telephone.trim()=="0"?"未录入":(teacher.telephone.trim()==""?"未录入":teacher.telephone) }</td>
+                        </c:if>
+                        <c:if test="${teacher.telephone==null}">
+                            <td>未录入</td>
+                        </c:if>
+                        <c:if test="${teacher.idCardNo!=null}">
+                            <td>${teacher.idCardNo.trim()=="0"?"未录入":(teacher.idCardNo.trim()==""?"未录入":teacher.idCardNo) }</td>
+                        </c:if>
+                        <c:if test="${teacher.idCardNo==null}">
+                            <td>未录入</td>
+                        </c:if>
+                        <c:if test="${teacher.gender!=null}">
+                            <td>${teacher.gender==0?"男":"女" }</td>
+                        </c:if>
+                        <c:if test="${teacher.gender==null}">
+                            <td>未录入</td>
+                        </c:if>
+                        <c:if test="${teacher.account!=null}">
+                            <td>${teacher.account.trim()=="0"?"未录入":(teacher.account.trim()==""?"未录入":teacher.account) }</td>
+                        </c:if>
+                        <c:if test="${teacher.account==null}">
+                            <td>未录入</td>
+                        </c:if>
+                        <c:if test="${teacher.email!=null}">
+                            <td>${teacher.email.trim()=="0"?"未录入":(teacher.email.trim()==""?"未录入":teacher.email) }</td>
+                        </c:if>
+                        <c:if test="${teacher.email==null}">
+                            <td>未录入</td>
+                        </c:if>
+                        <td>
+                            <button class="btn btn-primary btn-sm edit" type="button"
+                                    data-toggle="tooltip" data-placement="left"
+                                    title="编辑当前教师" edit-id="${teacher.id}" style="margin-right: 20px">
+                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                                编辑
+                            </button>
+                            <button class="btn btn-danger btn-sm delete" type="button" data-toggle="tooltip"
+                               data-placement="left"
+                               title="删除当前教师" del-id="${teacher.id}">
+                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                删除
+                            </button>
+                        </td>
                     </tr>
                 </c:forEach>
                 </tbody>
@@ -215,67 +217,68 @@
         </div>
     </div>
 </div>
-<!--显示分页信息-->
-<div class="row">
-    <!--分页文字信息  -->
-    <div class="col-md-6 col-md-offset-2">当前
-        <kbd>${pageInfo.pageNum }</kbd>
-        页，总<kbd>${pageInfo.pages }</kbd>
-        页，总<kbd>${pageInfo.total }</kbd>
-        条记录
+<c:if test="${!empty pageInfo.list}">
+    <!--显示分页信息-->
+    <div class="row">
+        <!--分页文字信息  -->
+        <div class="col-md-6 col-md-offset-2">当前
+            <kbd>${pageInfo.pageNum }</kbd>
+            页，总<kbd>${pageInfo.pages }</kbd>
+            页，总<kbd>${pageInfo.total }</kbd>
+            条记录
+        </div>
     </div>
-</div>
-<!-- 分页条信息 -->
-<div class="row">
-    <div class="col-md-6 col-md-offset-6">
-        <nav aria-label="Page navigation">
-            <ul class="pagination">
-                <c:if test="${pageInfo.hasPreviousPage }">
-                    <li><a href="${APP_PATH}/admin/searchTeacher?pageNum=1">首页</a></li>
-                    <li><a href="${APP_PATH}/admin/searchTeacher?pageNum=${pageInfo.pageNum-1}"
-                           aria-label="Previous"><span aria-hidden="true">&laquo;</span>
-                    </a></li>
-                </c:if>
-                <c:if test="${!pageInfo.hasPreviousPage}">
-                    <li><a href="javascript:void(0)" style="pointer-events: none">首页</a></li>
-                    <li><a href="javascript:void(0)" style="pointer-events: none"
-                           aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
-                    </a></li>
-                </c:if>
-
-                <c:forEach items="${pageInfo.navigatepageNums }" var="page_Num">
-                    <c:if test="${page_Num == pageInfo.pageNum }">
-                        <li class="active"><a href="javascript:void(0)">${page_Num }</a></li>
+    <!-- 分页条信息 -->
+    <div class="row">
+        <div class="col-md-6 col-md-offset-6">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <c:if test="${pageInfo.hasPreviousPage }">
+                        <li><a href="${APP_PATH}/admin/searchTeacher?pageNum=1">首页</a></li>
+                        <li><a href="${APP_PATH}/admin/searchTeacher?pageNum=${pageInfo.pageNum-1}"
+                               aria-label="Previous"><span aria-hidden="true">&laquo;</span>
+                        </a></li>
                     </c:if>
-                    <c:if test="${page_Num != pageInfo.pageNum }">
-                        <li><a href="${APP_PATH }/admin/searchTeacher?pageNum=${page_Num }">${page_Num }</a></li>
+                    <c:if test="${!pageInfo.hasPreviousPage}">
+                        <li><a href="javascript:void(0)" style="pointer-events: none">首页</a></li>
+                        <li><a href="javascript:void(0)" style="pointer-events: none"
+                               aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
+                        </a></li>
                     </c:if>
-                </c:forEach>
 
-                <c:if test="${pageInfo.hasNextPage }">
-                    <li><a href="${APP_PATH }/admin/searchTeacher?pageNum=${pageInfo.pageNum+1 }"
-                           aria-label="Next"> <span aria-hidden="true">&raquo;</span>
-                    </a></li>
-                    <li><a href="${APP_PATH }/admin/searchTeacher?pageNum=${pageInfo.pages}">末页</a></li>
-                </c:if>
-                <c:if test="${!pageInfo.hasNextPage}">
-                    <li><a href="javascript:void(0)" style="pointer-events: none"
-                           aria-label="Next"> <span aria-hidden="true">&raquo;</span>
-                    </a></li>
-                    <li><a href="javascript:void(0)" style="pointer-events: none">末页</a></li>
-                </c:if>
-            </ul>
-        </nav>
-    </div>
-</div>
-<!-- 页面跳转信息 -->
-<div class="row">
-    <div class="col-sm-2 col-md-offset-6">
-        <input type="number" class="form-control" id="pageNum" placeholder="跳转到...">
-    </div>
-    <button type="button" class="btn btn-success" onclick="toPage()" style="margin-left: 20px">确定跳转</button>
-</div>
+                    <c:forEach items="${pageInfo.navigatepageNums }" var="page_Num">
+                        <c:if test="${page_Num == pageInfo.pageNum }">
+                            <li class="active"><a href="javascript:void(0)">${page_Num }</a></li>
+                        </c:if>
+                        <c:if test="${page_Num != pageInfo.pageNum }">
+                            <li><a href="${APP_PATH }/admin/searchTeacher?pageNum=${page_Num }">${page_Num }</a></li>
+                        </c:if>
+                    </c:forEach>
 
+                    <c:if test="${pageInfo.hasNextPage }">
+                        <li><a href="${APP_PATH }/admin/searchTeacher?pageNum=${pageInfo.pageNum+1 }"
+                               aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+                        </a></li>
+                        <li><a href="${APP_PATH }/admin/searchTeacher?pageNum=${pageInfo.pages}">末页</a></li>
+                    </c:if>
+                    <c:if test="${!pageInfo.hasNextPage}">
+                        <li><a href="javascript:void(0)" style="pointer-events: none"
+                               aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+                        </a></li>
+                        <li><a href="javascript:void(0)" style="pointer-events: none">末页</a></li>
+                    </c:if>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <!-- 页面跳转信息 -->
+    <div class="row">
+        <div class="col-sm-2 col-md-offset-6">
+            <input type="number" class="form-control" id="pageNum" placeholder="跳转到...">
+        </div>
+        <button type="button" class="btn btn-success" onclick="toPage()" style="margin-left: 20px">确定跳转</button>
+    </div>
+</c:if>
 <div class="modal fade" id="teacherDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
@@ -321,7 +324,7 @@
         //获取到将要跳转的页面值
         let pageNum = $("#pageNum").val();
         let total =${pageInfo.pages };
-        if (pageNum.trim() === "" || total < pageNum || pageNum < 0) {
+        if (pageNum.trim() === "" || total < pageNum || pageNum <= 0) {
             layer.msg("错误的跳转页码，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
@@ -453,9 +456,9 @@
 
     //查询按钮
     $("#search").on("click", function () {
-        let number = $("#number").val().trim()
+        let name = $("#name").val().trim()
         let collegeId = $("#collegeId").val();
-        let courseId = $("#courseId").val();
+        let course = $("#course").val();
         let loadingIndex = layer.msg('处理中', {icon: 16});
         //发送ajax请求
         $.ajax({
@@ -463,9 +466,9 @@
             type: "POST",
             dataType: "json",
             data: {
-                "number": number,
+                "name": name,
                 "collegeId": collegeId,
-                "courseId": courseId
+                "course": course
             },
             success: function (result) {
                 layer.close(loadingIndex);

@@ -13,6 +13,16 @@ public class DiscussPost {
 
     private String content;
 
+    private Student student;
+
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -55,16 +65,12 @@ public class DiscussPost {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
-        sb.append(", discussId=").append(discussId);
-        sb.append(", studentId=").append(studentId);
-        sb.append(", recordTime=").append(recordTime);
-        sb.append(", content=").append(content);
-        sb.append("]");
-        return sb.toString();
+        return "DiscussPost{" +
+                "id=" + id +
+                ", discussId=" + discussId +
+                ", studentId=" + studentId +
+                ", recordTime=" + recordTime +
+                ", content='" + content + '\'' +
+                '}';
     }
 }

@@ -2,7 +2,10 @@ package com.cdut.studypro.daos;
 
 import com.cdut.studypro.beans.DiscussPost;
 import com.cdut.studypro.beans.DiscussPostExample;
+
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface DiscussPostMapper {
@@ -17,6 +20,8 @@ public interface DiscussPostMapper {
     int insertSelective(DiscussPost record);
 
     List<DiscussPost> selectByExampleWithBLOBs(DiscussPostExample example);
+
+    List<DiscussPost> selectByExampleWithBLOBsAndStudentName(DiscussPostExample example);
 
     List<DiscussPost> selectByExample(DiscussPostExample example);
 
@@ -33,4 +38,8 @@ public interface DiscussPostMapper {
     int updateByPrimaryKeyWithBLOBs(DiscussPost record);
 
     int updateByPrimaryKey(DiscussPost record);
+
+    DiscussPost selectByPrimaryKeyWithStudentName(Integer id);
+
+    List<DiscussPost> selectByDiscussIdWithStudentName(Map<String, Object> map);
 }

@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cdut.studypro.daos.StudentMapper">
+
+    <resultMap id="BriefResultMap" type="com.cdut.studypro.beans.Student">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+    </resultMap>
+
     <resultMap id="BaseResultMap" type="com.cdut.studypro.beans.Student">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
@@ -16,7 +22,7 @@
 
     <!--新增带学院信息的映射-->
     <resultMap extends="BaseResultMap" id="ResultMapWithCollege" type="com.cdut.studypro.beans.Student">
-        <association property="college" select="com.cdut.studypro.daos.CollegeMapper.selectByPrimaryKeyWithoutBLOBs" column="college_id"/>
+        <association property="college" select="com.cdut.studypro.daos.CollegeMapper.selectByPrimaryKeyWithIdAndName" column="college_id"/>
     </resultMap>
     <sql id="Example_Where_Clause">
         <where>
@@ -116,6 +122,13 @@
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
+        from student
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectByPrimaryKeyWithIdAndName" parameterType="java.lang.Integer" resultMap="BriefResultMap">
+        select
+        id,name
         from student
         where id = #{id,jdbcType=INTEGER}
     </select>
@@ -323,12 +336,13 @@
 
     <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="false">
         insert into student
-        (name,number,telephone,id_card_no,account,password,email)
+        (name,number,college_id,telephone,id_card_no,account,password,email)
         values
         <foreach collection="students" item="student" separator=",">
             (
             #{student.name,jdbcType=VARCHAR},
             #{student.number,jdbcType=VARCHAR},
+            #{student.collegeId,jdbcType=INTEGER},
             #{student.telephone,jdbcType=VARCHAR},
             #{student.idCardNo,jdbcType=VARCHAR},
             #{student.account,jdbcType=VARCHAR},

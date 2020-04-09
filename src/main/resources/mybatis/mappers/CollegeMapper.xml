@@ -113,7 +113,7 @@
         from college
         where id = #{id,jdbcType=INTEGER}
     </select>
-    <select id="selectByPrimaryKeyWithoutBLOBs" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="selectByPrimaryKeyWithIdAndName" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from college

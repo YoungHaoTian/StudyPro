@@ -1,19 +1,22 @@
 package com.cdut.studypro.controllers;
 
+import com.cdut.studypro.beans.DiscussPost;
+import com.cdut.studypro.beans.Student;
 import com.cdut.studypro.beans.Teacher;
 import com.cdut.studypro.beans.TeacherExample;
-import com.cdut.studypro.beans.TeacherExample.*;
 import com.cdut.studypro.services.TeacherService;
 import com.cdut.studypro.utils.MD5Util;
 import com.cdut.studypro.utils.RequestResult;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Map;
+import javax.servlet.http.HttpSession;
+import java.util.*;
 
 /**
  * @description:
@@ -34,7 +37,7 @@ public class TeacherController {
     public RequestResult login(@RequestBody Map<String, String> map, HttpServletRequest request) {
         System.out.println(map);
         TeacherExample teacherExample = new TeacherExample();
-        Criteria criteria = teacherExample.createCriteria();
+        TeacherExample.Criteria criteria = teacherExample.createCriteria();
         String message = "";
         if ("phone".equals(map.get("type"))) {
             criteria.andTelephoneEqualTo(map.get("username"));
@@ -104,4 +107,90 @@ public class TeacherController {
         request.getSession().removeAttribute("ForgetCode");
         return RequestResult.success();
     }
+
+
+    /*@ResponseBody
+    @PostMapping("/searchDiscussPostByTerm")
+    public RequestResult searchDiscussPostByTerm(@RequestParam("name") String name, HttpSession session) {
+        //将查询条件存放进session中，以回显查询条件
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", null);
+        if (!"".equals(name.trim())) {
+            map.put("name", name.trim());
+        }
+        session.setAttribute("discussPostQueryCriteria", map);
+        return RequestResult.success();
+    }
+
+    @ResponseBody
+    @PostMapping("/deleteDiscussPostBatch")
+    public RequestResult deleteDiscussPostBatch(@RequestParam("ids") String id) {
+
+        if (id == null) {
+            return RequestResult.failure("批量删除失败，请稍后再试");
+        }
+        String[] ids = id.split("-");
+        List<Integer> postIds = new ArrayList<>();
+        for (String s : ids) {
+            postIds.add(Integer.parseInt(s));
+        }
+        boolean b = adminService.deleteDiscussPostByIdBatch(postIds);
+        if (!b) {
+            return RequestResult.failure("批量删除失败，请稍后再试");
+        }
+        return RequestResult.success();
+
+    }
+
+
+    @RequestMapping("/searchDiscussReply/{id}")
+    public String searchDiscussReply(@PathVariable("id") Integer id, Map<String, Object> map, @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum, @RequestParam("pageNumber") Integer pageNumber, HttpSession session) {
+
+        Map<String, Object> map1 = (Map<String, Object>) session.getAttribute("discussPostQueryCriteria");
+        if (map1 == null) {
+            map1 = new HashMap<>();
+            map1.put("id", id);
+            map1.put("name", null);
+        } else {
+            map1.put("id", id);
+        }
+        PageHelper.startPage(pageNum, 10);
+        List<DiscussPost> discussPosts = adminService.getDiscussPostByDiscussIdWithStudentName(map1);
+        PageInfo<Student> page = new PageInfo(discussPosts, 10);
+        map.put("pageInfo", page);
+        map.put("pageNumber", pageNumber);
+        map.put("id", id);
+        return "teacher/searchDiscussReply";
+    }
+
+
+    @ResponseBody
+    @PostMapping("/saveDiscussReply/{id}")
+    public RequestResult saveDiscussReply(@PathVariable("id") Integer id, @RequestParam("content") String content) {
+        if (id == null) {
+            return RequestResult.failure("新增回复失败，请稍后再试");
+        }
+        if (content == null) {
+            return RequestResult.failure("新增回复失败，请稍后再试");
+        }
+        if ("".equals(content)) {
+            return RequestResult.failure("回复内容为空，请重新输入");
+        }
+        DiscussPost discussPost = new DiscussPost();
+        discussPost.setContent(content);
+        discussPost.setDiscussId(id);
+        discussPost.setStudentId(0);
+        discussPost.setRecordTime(new Date());
+        boolean b = adminService.insertDiscussPostSelective(discussPost);
+        if (!b) {
+            return RequestResult.failure("新增回复失败，请稍后再试");
+        }
+        return RequestResult.success();
+    }
+
+    @RequestMapping("/createReply/{id}")
+    public String createReply(@PathVariable("id") Integer id, Map<String, Object> map) {
+        map.put("id", id);
+        return "admin/createReply";
+    }*/
 }

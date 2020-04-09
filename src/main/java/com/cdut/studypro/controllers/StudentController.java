@@ -3,22 +3,17 @@ package com.cdut.studypro.controllers;
 import com.cdut.studypro.beans.Student;
 import com.cdut.studypro.beans.StudentExample;
 import com.cdut.studypro.beans.StudentExample.*;
-import com.cdut.studypro.beans.TeacherExample;
 import com.cdut.studypro.services.StudentService;
 import com.cdut.studypro.utils.MD5Util;
 import com.cdut.studypro.utils.RequestResult;
-import com.zhenzi.sms.ZhenziSmsClient;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * @description:

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,8 +22,8 @@
     <div class="col-lg-12">
         <ul class="breadcrumb wk-breadcrumb">
             <li><a href="javascript:void(0)">大学生学习平台</a></li>
-            <li><a href="javascript:void(0)">学院信息管理</a></li>
-            <li><a href="javascript:void(0)">编辑学院信息</a></li>
+            <li><a href="javascript:void(0)">讨论管理</a></li>
+            <li><a href="javascript:void(0)">编辑讨论</a></li>
         </ul>
     </div>
 </div>
@@ -31,36 +32,54 @@
     <div class="col-lg-12">
         <div class="panel panel-default wk-panel ">
             <div class="panel-heading">
-                编辑学院信息 Update Data
+                编辑讨论 Create Data
             </div>
-            <form id="collegeData" action="" method="POST">
+            <form id="discussData" action="" method="POST">
                 <div class="panel-body">
                     <div class="row">
                         <div class="form-inline">
                             <div class="form-group">
-                                <label for="name" class="control-label wk-filed-label">学院名称: </label>
+                                <label for="courseId" class="control-label wk-filed-label">所属课程:</label>
+                                <select class="selectpicker" id="courseId" name="courseId" style="width:100px;">
+                                    <c:forEach items="${courses}" var="course">
+                                        <c:choose>
+                                            <c:when test="${course.id == discuss.courseId}">
+                                                <option value="${course.id}" selected="selected">${course.name}:${course.teacher.name}(${course.teacher.college.name})</option>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <option value="${course.id}">${course.name}</option>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <label for="title" class="control-label wk-filed-label">讨论标题: </label>
                                 <div class="input-group">
-                                    <input required="required" name="name" type="text"
-                                           value="${college.name.trim()=="0"?"":(college.name.trim()==""?"":college.name.trim()) }"
-                                           class="form-control wk-normal-input" id="name" placeholder="请输入学院名称"/>
+                                    <input required="required" id="title" name="title" type="text"
+                                           class="form-control wk-long-2col-input" value="${discuss.title}"
+                                           placeholder="请输入讨论标题"/>
                                 </div>
                             </div>
+                        </div>
 
+                        <div class="form-inline">
                             <div class="form-group">
-                                <label for="intro" class="control-label wk-filed-label">学院介绍: </label>
+                                <label for="content" class="control-label wk-filed-label">讨论内容: </label>
                                 <div class="input-group">
-                                    <textarea required="required" name="intro" type="text"
-                                              class="form-control wk-long-2col-input" id="intro"
-                                              placeholder="请输入学院简介">${college.intro.trim()=="0"?"":(college.intro.trim()==""?"":college.intro.trim()) }</textarea>
+                                    <textarea required="required" id="content" name="content" type="text"
+                                           class="form-control wk-long-2col-input"
+                                              placeholder="请输入讨论内容">${discuss.content}</textarea>
                                 </div>
                             </div>
                         </div>
 
                     </div>
                 </div>
-
                 <div class="panel-footer wk-panel-footer">
-                    <button type="button" class="btn btn-info" onclick="updateCollege()">提&nbsp;&nbsp;交</button>
+                    <button type="button" class="btn btn-info" onclick="editDiscuss()">提&nbsp;&nbsp;交</button>
                     <button type="button" class="btn btn-info" onclick="back()" style="margin-left: 30px">
                         返&nbsp;&nbsp;回
                     </button>
@@ -69,41 +88,38 @@
         </div>
     </div>
 </div>
-
 </body>
 </html>
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
-    let names = /^[a-zA-Z0-9\u0020\u3000\u4e00-\u9fa5]+$/;
-
-    function updateCollege() {
-        let name = $("#name").val();
-        let intro = $("#intro").val();
-        if (name.trim() === "") {
-            layer.msg("学院名称不能为空", {time: 1500, icon: 5, shift: 6}, function () {
+    function editDiscuss() {
+         let title = $("#title").val();
+         let content = $("#content").val();
+         if (title.trim() === "") {
+            layer.msg("讨论标题不能为空", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+             return;
+        }
+        if (title.indexOf(" ") === 0) {
+            layer.msg("讨论标题不能以空格开头，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
-        if (name.indexOf(" ") === 0) {
-            layer.msg("学院名称不能以空格开头，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+        if (content.trim() === "") {
+            layer.msg("讨论内容不能为空", {time: 1500, icon: 5, shift: 6}, function () {
             });
-            return;
+             return;
         }
-        if (!names.test(name)) {
-            layer.msg("学院名称由数字、字母、中文组成", {time: 1500, icon: 5, shift: 6}, function () {
-            });
-            return;
-        }
-        if (intro.trim() === "") {
-            layer.msg("学院介绍不能为空", {time: 1500, icon: 5, shift: 6}, function () {
+        if (content.indexOf(" ") === 0) {
+            layer.msg("讨论内容不能以空格开头，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
         let loadingIndex = layer.msg('处理中', {icon: 16});
-        let data = $("#collegeData").serialize();
+        let data = $("#discussData").serialize();
         data = decodeURIComponent(data);
         $.ajax({
-            url: "${APP_PATH}/admin/editCollege/${college.id}",
+            url: "${APP_PATH}/admin/editDiscuss/${discuss.id}",
             type: "POST",
             // contentType: "application/json",//不使用contentType: “application/json”则data可以是对象,使用contentType: “application/json”则data只能是json字符串
             dataType: "json",
@@ -127,8 +143,7 @@
             }
         });
     }
-
     function back() {
-        window.location.href = "${APP_PATH}/admin/searchCollege?pageNum=" +${pageNum};
+        window.location.href="${APP_PATH}/admin/searchDiscuss?&pageNum=${pageNum}";
     }
 </script>

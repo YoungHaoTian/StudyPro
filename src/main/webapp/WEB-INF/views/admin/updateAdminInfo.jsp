@@ -22,147 +22,95 @@
     <div class="col-lg-12">
         <ul class="breadcrumb wk-breadcrumb">
             <li><a href="javascript:void(0)">大学生学习平台</a></li>
-            <li><a href="javascript:void(0)">教师信息管理</a></li>
-            <li><a href="javascript:void(0)">新增教师</a></li>
+            <li><a href="javascript:void(0)">个人信息管理</a></li>
+            <li><a href="javascript:void(0)">个人信息修改</a></li>
         </ul>
     </div>
 </div>
-
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default wk-panel ">
-            <div class="panel-heading">新增教师 Create Data</div>
-            <form id="teacherData" action="" method="POST">
+            <div class="panel-heading">编辑管理员信息 Update Data</div>
+            <form id="adminData" action="" method="POST">
                 <div class="panel-body">
                     <div class="row">
                         <div class="form-inline">
                             <div class="form-group">
-                                <label for="name" class="control-label wk-filed-label">教师姓名:</label>
+                                <label for="name" class="control-label wk-filed-label">管理员姓名:
+                                </label>
                                 <div class="input-group">
-                                    <input required="required" id="name" name="name" type="text" maxlength="5"
-                                           class="form-control wk-normal-input" value="杨浩天"
-                                           placeholder="请输入教师姓名"/>
+                                    <input required="required" id="name" name="name" type="text"
+                                           class="form-control wk-normal-input" value="${admin.name}"
+                                           placeholder="请输入姓名"/>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label for="number" class="control-label wk-filed-label">教师编号:</label>
-                                <div class="input-group">
-                                    <input required="required" id="number" name="number"
-                                           oninput="value=value.replace(/[^\d]/g,'')" type="text" maxlength="18"
-                                           class="form-control wk-normal-input" value="201613161013"
-                                           placeholder="请输入教师编号"/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="collegeId" class="control-label wk-filed-label">所属学院:</label>
-                                <select class="selectpicker" id="collegeId" name="collegeId">
-                                    <c:forEach items="${colleges}" var="var">
-                                        <option value="${var.id}">${var.name}</option>
-                                    </c:forEach>
-                                </select>
-                            </div>
-
-                        </div>
-
-                        <div class="form-inline">
-                            <div class="form-group">
-                                <label for="telephone" class="control-label wk-filed-label">联系电话:</label>
-                                <div class="input-group">
-                                    <input required="required" id="telephone" name="telephone"
-                                           oninput="value=value.replace(/[^\d]/g,'')" type="text" maxlength="11"
-                                           class="form-control wk-normal-input" value="15928759418"
-                                           placeholder="请输入联系电话"/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="idCardNo" class="control-label wk-filed-label">身份证号:</label>
-                                <div class="input-group">
-                                    <input required="required" id="idCardNo" name="idCardNo" maxlength="18" type="text"
-                                           class="form-control wk-normal-input" value="513901199806163319"
-                                           placeholder="请输入身份证号"/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="gender" class="control-label wk-filed-label">教师性别: </label>
-                                <select class="selectpicker" id="gender" name="gender">
-                                    <option value="0">男</option>
-                                    <option value="1">女</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-inline">
                             <div class="form-group">
                                 <label for="account" class="control-label wk-filed-label">登录账户: </label>
                                 <div class="input-group">
-                                    <input required="required" id="account" name="account" maxlength="18" type="text"
-                                           class="form-control wk-normal-input" value="201613161013"
+                                    <input required="required" id="account" name="account" type="text"
+                                           class="form-control wk-normal-input" value="${admin.account}"
                                            placeholder="请输入登录账户"/>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="password" class="control-label wk-filed-label">登录密码: </label>
                                 <div class="input-group">
-                                    <input required="required" id="password" name="password" type="text" maxlength="18"
-                                           class="form-control wk-normal-input" value="123456789"
+                                    <input required="required" id="password" name="password" type="text"
+                                           class="form-control wk-normal-input" value="${admin.password}"
                                            placeholder="请输入登录密码"/>
                                 </div>
                             </div>
+                        </div>
+                        <div class="form-inline">
                             <div class="form-group">
-                                <label for="email" class="control-label wk-filed-label">教师邮箱: </label>
+                                <label for="telephone" class="control-label wk-filed-label">联系电话:</label>
+                                <div class="input-group">
+                                    <input required="required" id="telephone" name="telephone" type="text"
+                                           oninput="value=value.replace(/[^\d]/g,'')" maxlength="11"
+                                           class="form-control wk-normal-input"
+                                           value="${admin.telephone.trim()=="0"?"":(admin.telephone.trim()==""?"":admin.telephone) }"
+                                           placeholder="请输入联系电话"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="email" class="control-label wk-filed-label">邮箱: </label>
                                 <div class="input-group">
                                     <input required="required" id="email" name="email" type="text" maxlength="20"
-                                           class="form-control wk-normal-input" value="10237040922@qq.com"
+                                           class="form-control wk-normal-input"
+                                           value="${admin.email.trim()=="0"?"":(admin.email.trim()==""?"":admin.email) }"
                                            placeholder="请输入邮箱"/>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="panel-footer wk-panel-footer">
-                    <button type="button" class="btn btn-info" onclick="createTeacher()">提&nbsp;&nbsp;交</button>
+                    <div class="panel-footer wk-panel-footer">
+                        <button type="button" class="btn btn-info" onclick="updateAdmin()">提&nbsp;&nbsp;交</button>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
 </body>
 </html>
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
-    //表单验证
+
     let phones = /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\d{8}$/;
     let han = /^[\u4e00-\u9fa5]{2,5}$/;
     let accounts = /^[a-zA-Z0-9_-]{12,18}$/;
-    let numbers = /^[19|20]\d{10,16}$/;
-    let idCardNos = /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
     let emails = /^(\w+\.)*\w+\@+[0-9a-zA-Z]+\.(com|com.cn|edu|hk|cn|net)$/;
     let passwords = /^[a-zA-Z0-9]{6,18}$/;
-
-    function createTeacher() {
-        //对姓名的验证
+    function updateAdmin() {
+        //表单验证
+        // 对姓名的验证
         let name = $("#name").val();
         if ($.trim(name) === "") {
-            layer.msg("教师姓名不能为空", {time: 1500, icon: 5, shift: 6}, function () {
-            });
-            return;
-        } else if (name.indexOf(" ") !== -1) {
-            layer.msg("教师姓名不能包含空格，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("姓名不能为空", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         } else if (!han.test(name)) {
             layer.msg("请输入正确的中文名字", {time: 1500, icon: 5, shift: 6}, function () {
-            });
-            return;
-        }
-        //对学号的验证
-        let number = $("#number").val();
-        if ($.trim(number) === "") {
-            layer.msg("教师编号不能为空", {time: 1500, icon: 5, shift: 6}, function () {
-            });
-            return;
-        } else if (!numbers.test(number)) {
-            layer.msg("请输入正确的教师编号", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
@@ -177,19 +125,6 @@
             });
             return;
         }
-
-        //对身份证号码的验证
-        let idCardNo = $("#idCardNo").val();
-        if ($.trim(idCardNo) === "") {
-            layer.msg("身份证号码不能为空 ", {time: 1500, icon: 5, shift: 6}, function () {
-            });
-            return;
-        } else if (!idCardNos.test(idCardNo)) {
-            layer.msg("身份证号码格式错误，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
-            });
-            return;
-        }
-
         //对账号的验证
         let account = $("#account").val();
         if ($.trim(account) === "") {
@@ -202,7 +137,6 @@
             });
             return;
         }
-
         //对登录密码的验证
         let password = $("#password").val();
         if ($.trim(password) === "") {
@@ -218,7 +152,6 @@
             });
             return;
         }
-
         //对邮箱进行验证
         let email = $("#email").val();
         if ($.trim(email) === "") {
@@ -231,11 +164,11 @@
             return;
         }
         let loadingIndex = layer.msg('处理中', {icon: 16});
-        let data = $("#teacherData").serialize();
+        let data = $("#adminData").serialize();
         data = decodeURIComponent(data);
         // console.log(data);
         $.ajax({
-            url: "${APP_PATH}/admin/saveTeacher",
+            url: "${APP_PATH}/admin/editAdminInfo/${admin.id}",
             type: "POST",
             // contentType: "application/json",//不使用contentType: “application/json”则data可以是对象,使用contentType: “application/json”则data只能是json字符串
             dataType: "json",
@@ -249,7 +182,7 @@
                 }
                 if (result.code === 100) {
                     console.log("success");
-                    layer.msg("新增教师成功", {time: 1500, icon: 6}, function () {
+                    layer.msg("修改成功", {time: 1500, icon: 6}, function () {
                     });
                 }
             },

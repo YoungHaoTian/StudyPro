@@ -2,7 +2,9 @@ package com.cdut.studypro.daos;
 
 import com.cdut.studypro.beans.College;
 import com.cdut.studypro.beans.CollegeExample;
+
 import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface CollegeMapper {
@@ -22,7 +24,7 @@ public interface CollegeMapper {
 
     College selectByPrimaryKey(Integer id);
 
-    College selectByPrimaryKeyWithoutBLOBs(Integer id);
+    College selectByPrimaryKeyWithIdAndName(Integer id);
 
     int updateByExampleSelective(@Param("record") College record, @Param("example") CollegeExample example);
 

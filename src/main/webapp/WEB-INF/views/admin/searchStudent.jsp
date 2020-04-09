@@ -18,6 +18,9 @@
     <style>
         th, td {
             text-align: center;
+            height: 30px;
+            border: #CCCCCC 1px solid;
+            s
         }
     </style>
 </head>
@@ -54,7 +57,7 @@
                         <select class="selectpicker" name="collegeId" id="collegeId">
                             <option value="0">请选择所属学院</option>
                             <c:forEach items="${colleges}" var="college">
-                               <%-- <option value="${college.id}">${college.name}</option>--%>
+                                <%-- <option value="${college.id}">${college.name}</option>--%>
                                 <c:choose>
                                     <c:when test="${college.id == sessionScope.studentQueryCriteria.get('collegeId')}">
                                         <option value="${college.id}" selected="selected">${college.name}</option>
@@ -135,10 +138,10 @@
                     <c:if test="${student.number==null}">
                         <td>未录入</td>
                     </c:if>
-                    <c:if test="${student.collegeId!=null}">
-                        <td>${student.collegeId==0?"未录入":student.college.name }</td>
+                    <c:if test="${student.college!=null}">
+                        <td>${student.college.name.trim()=="0"?"学院未设置名称":(student.college.name.trim()==""?"学院未设置名称":student.college.name) }</td>
                     </c:if>
-                    <c:if test="${student.collegeId==null}">
+                    <c:if test="${student.college==null}">
                         <td>未录入</td>
                     </c:if>
                     <c:if test="${student.telephone!=null}">
@@ -191,66 +194,68 @@
         </div>
     </div>
 </div>
-<!--显示分页信息-->
-<div class="row">
-    <!--分页文字信息  -->
-    <div class="col-md-6 col-md-offset-2">当前
-        <kbd>${pageInfo.pageNum }</kbd>
-        页，总<kbd>${pageInfo.pages }</kbd>
-        页，总<kbd>${pageInfo.total }</kbd>
-        条记录
+<c:if test="${!empty pageInfo.list}">
+    <!--显示分页信息-->
+    <div class="row">
+        <!--分页文字信息  -->
+        <div class="col-md-6 col-md-offset-2">当前
+            <kbd>${pageInfo.pageNum }</kbd>
+            页，总<kbd>${pageInfo.pages }</kbd>
+            页，总<kbd>${pageInfo.total }</kbd>
+            条记录
+        </div>
     </div>
-</div>
-<!-- 分页条信息 -->
-<div class="row">
-    <div class="col-md-6 col-md-offset-6">
-        <nav aria-label="Page navigation">
-            <ul class="pagination">
-                <c:if test="${pageInfo.hasPreviousPage }">
-                    <li><a href="${APP_PATH}/admin/searchStudent?pageNum=1">首页</a></li>
-                    <li><a href="${APP_PATH}/admin/searchStudent?pageNum=${pageInfo.pageNum-1}"
-                           aria-label="Previous"><span aria-hidden="true">&laquo;</span>
-                    </a></li>
-                </c:if>
-                <c:if test="${!pageInfo.hasPreviousPage}">
-                    <li><a href="javascript:void(0)" style="pointer-events: none">首页</a></li>
-                    <li><a href="javascript:void(0)" style="pointer-events: none"
-                           aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
-                    </a></li>
-                </c:if>
-
-                <c:forEach items="${pageInfo.navigatepageNums }" var="page_Num">
-                    <c:if test="${page_Num == pageInfo.pageNum }">
-                        <li class="active"><a href="javascript:void(0)">${page_Num }</a></li>
+    <!-- 分页条信息 -->
+    <div class="row">
+        <div class="col-md-6 col-md-offset-6">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <c:if test="${pageInfo.hasPreviousPage }">
+                        <li><a href="${APP_PATH}/admin/searchStudent?pageNum=1">首页</a></li>
+                        <li><a href="${APP_PATH}/admin/searchStudent?pageNum=${pageInfo.pageNum-1}"
+                               aria-label="Previous"><span aria-hidden="true">&laquo;</span>
+                        </a></li>
                     </c:if>
-                    <c:if test="${page_Num != pageInfo.pageNum }">
-                        <li><a href="${APP_PATH }/admin/searchStudent?pageNum=${page_Num }">${page_Num }</a></li>
+                    <c:if test="${!pageInfo.hasPreviousPage}">
+                        <li><a href="javascript:void(0)" style="pointer-events: none">首页</a></li>
+                        <li><a href="javascript:void(0)" style="pointer-events: none"
+                               aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
+                        </a></li>
                     </c:if>
-                </c:forEach>
 
-                <c:if test="${pageInfo.hasNextPage }">
-                    <li><a href="${APP_PATH }/admin/searchStudent?pageNum=${pageInfo.pageNum+1 }"
-                           aria-label="Next"> <span aria-hidden="true">&raquo;</span>
-                    </a></li>
-                    <li><a href="${APP_PATH }/admin/searchStudent?pageNum=${pageInfo.pages}">末页</a></li>
-                </c:if>
-                <c:if test="${!pageInfo.hasNextPage}">
-                    <li><a href="javascript:void(0)" style="pointer-events: none"
-                           aria-label="Next"> <span aria-hidden="true">&raquo;</span>
-                    </a></li>
-                    <li><a href="javascript:void(0)" style="pointer-events: none">末页</a></li>
-                </c:if>
-            </ul>
-        </nav>
+                    <c:forEach items="${pageInfo.navigatepageNums }" var="page_Num">
+                        <c:if test="${page_Num == pageInfo.pageNum }">
+                            <li class="active"><a href="javascript:void(0)">${page_Num }</a></li>
+                        </c:if>
+                        <c:if test="${page_Num != pageInfo.pageNum }">
+                            <li><a href="${APP_PATH }/admin/searchStudent?pageNum=${page_Num }">${page_Num }</a></li>
+                        </c:if>
+                    </c:forEach>
+
+                    <c:if test="${pageInfo.hasNextPage }">
+                        <li><a href="${APP_PATH }/admin/searchStudent?pageNum=${pageInfo.pageNum+1 }"
+                               aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+                        </a></li>
+                        <li><a href="${APP_PATH }/admin/searchStudent?pageNum=${pageInfo.pages}">末页</a></li>
+                    </c:if>
+                    <c:if test="${!pageInfo.hasNextPage}">
+                        <li><a href="javascript:void(0)" style="pointer-events: none"
+                               aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+                        </a></li>
+                        <li><a href="javascript:void(0)" style="pointer-events: none">末页</a></li>
+                    </c:if>
+                </ul>
+            </nav>
+        </div>
     </div>
-</div>
-<!-- 页面跳转信息 -->
-<div class="row">
-    <div class="col-sm-2 col-md-offset-6">
-        <input type="number" class="form-control" id="pageNum" placeholder="跳转到...">
+    <!-- 页面跳转信息 -->
+    <div class="row">
+        <div class="col-sm-2 col-md-offset-6">
+            <input type="number" class="form-control" id="pageNum" placeholder="跳转到...">
+        </div>
+        <button type="button" class="btn btn-success toPage" style="margin-left: 20px">确定跳转</button>
     </div>
-    <button type="button" class="btn btn-success toPage" style="margin-left: 20px">确定跳转</button>
-</div>
+</c:if>
 <div class="modal fade" id="studentDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
@@ -341,7 +346,7 @@
         //获取到将要跳转的页面值
         let pageNum = $("#pageNum").val();
         let total =${pageInfo.pages };
-        if (pageNum.trim() === "" || total < pageNum || pageNum < 0) {
+        if (pageNum.trim() === "" || total < pageNum || pageNum <= 0) {
             layer.msg("错误的跳转页码，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;

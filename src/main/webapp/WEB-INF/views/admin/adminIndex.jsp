@@ -30,16 +30,15 @@
         <ul class="nav nav-tabs wk-nav-menu" id="wk-nav-menu">
             <li role="presentation"><a id="leftNav">管理员模块&nbsp;&nbsp;<span class="glyphicon glyphicon-menu-up"
                                                                            aria-hidden="true"></span></a></li>
-            <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item">新增学生</a>
-            </li>
-            <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item">学生信息查询</a></li>
-            <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item">新增教师</a></li>
-            <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item">教师信息查询</a></li>
-            <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item">新增学院</a></li>
-            <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item">学院信息管理</a></li>
-            <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item">新增课程</a></li>
-            <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item">课程信息查询</a></li>
-            <li role="presentation"><a href="#" class="wk-main-menu-item">注销登录</a></li>
+            <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item" id="createStudent">新增学生</a></li>
+            <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item" id="searchStudent">学生信息查询</a></li>
+            <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item" id="createTeacher">新增教师</a></li>
+            <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item" id="searchTeacher">教师信息查询</a></li>
+            <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item" id="createCollege">新增学院</a></li>
+            <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item" id="searchCollege">学院信息管理</a></li>
+            <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item" id="createCourse">新增课程</a></li>
+            <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item" id="searchCourse">课程信息查询</a></li>
+            <li role="presentation"><a href="javascript:void(0);" id="logout">注销登录</a></li>
         </ul>
     </div>
 </div>
@@ -64,17 +63,17 @@
                         </div>
                         <div id="AMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
-                                <button type="button" class="list-group-item" id="wk-menu-panel-item-createStudent"
+                                <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/createStudent">
                                     新增学生&nbsp;<span class=" glyphicon glyphicon-triangle-right"
                                                     aria-hidden="true"></span>
                                 </button>
-                                <button type="button" class="list-group-item" id="wk-menu-panel-item-createManyStudent"
+                                <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/createStudentBatch">
                                     批量新增学生&nbsp;<span class=" glyphicon glyphicon-triangle-right"
                                                       aria-hidden="true"></span>
                                 </button>
-                                <button type="button" class="list-group-item" id="wk-menu-panel-item-searchStudent"
+                                <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/searchStudent">
                                     学生信息查询&nbsp;<span class=" glyphicon glyphicon-triangle-right"
                                                       aria-hidden="true"></span>
@@ -92,17 +91,17 @@
                         </div>
                         <div id="BMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
-                                <button type="button" class="list-group-item" id="wk-menu-panel-item-createTeacher"
+                                <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/createTeacher">
                                     新增教师&nbsp;<span class=" glyphicon glyphicon-triangle-right"
                                                     aria-hidden="true"></span>
                                 </button>
-                                <button type="button" class="list-group-item" id="wk-menu-panel-item-createManyTeacher"
+                                <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/createTeacherBatch">
                                     批量新增教师&nbsp;<span class=" glyphicon glyphicon-triangle-right"
                                                       aria-hidden="true"></span>
                                 </button>
-                                <button type="button" class="list-group-item" id="wk-menu-panel-item-searchTeacher"
+                                <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/searchTeacher">
                                     教师信息查询&nbsp;<span class=" glyphicon glyphicon-triangle-right"
                                                       aria-hidden="true"></span>
@@ -121,12 +120,12 @@
 
                         <div id="CMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
-                                <button type="button" class="list-group-item" id="wk-menu-panel-item-createCollege"
+                                <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/createCollege">
                                     新增学院&nbsp;<span class=" glyphicon glyphicon-triangle-right"
                                                     aria-hidden="true"></span>
                                 </button>
-                                <button type="button" class="list-group-item" id="wk-menu-panel-item-searchCollege"
+                                <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/searchCollege">
                                     学院信息查询&nbsp;<span class=" glyphicon glyphicon-triangle-right"
                                                       aria-hidden="true"></span>
@@ -145,12 +144,12 @@
                         </div>
                         <div id="DMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
-                                <button type="button" class="list-group-item" id="wk-menu-panel-item-createCourse"
+                                <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/createCourse">
                                     新增课程&nbsp;<span class=" glyphicon glyphicon-triangle-right"
                                                     aria-hidden="true"></span>
                                 </button>
-                                <button type="button" class="list-group-item" id="wk-menu-panel-item-searchCourse"
+                                <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/searchCourse">
                                     课程信息查询&nbsp;<span class=" glyphicon glyphicon-triangle-right"
                                                       aria-hidden="true"></span>
@@ -168,7 +167,8 @@
                         </div>
                         <div id="EMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
-                                <button type="button" class="list-group-item" id="wk-menu-panel-item-searchDiscussInfo">
+                                <button type="button" class="list-group-item"
+                                        href="${APP_PATH}/admin/searchDiscuss">
                                     话题讨论&nbsp;<span class=" glyphicon glyphicon-triangle-right"
                                                     aria-hidden="true"></span>
                                 </button>
@@ -185,11 +185,11 @@
                         </div>
                         <div id="FMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
-                                <button type="button" class="list-group-item" id="wk-menu-panel-item-createNotice">
+                                <button type="button" class="list-group-item" href="${APP_PATH}/admin/createNotice">
                                     新增公告&nbsp;<span class=" glyphicon glyphicon-triangle-right"
                                                     aria-hidden="true"></span>
                                 </button>
-                                <button type="button" class="list-group-item" id="wk-menu-panel-item-searchNotice">
+                                <button type="button" class="list-group-item" href="${APP_PATH}/admin/searchNotice">
                                     公告信息查询&nbsp;<span class=" glyphicon glyphicon-triangle-right"
                                                       aria-hidden="true"></span>
                                 </button>
@@ -207,7 +207,13 @@
                         </div>
                         <div id="GMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
-                                <button type="button" class="list-group-item" id="wk-menu-panel-item-updateAdminInfo">
+                                <button type="button" class="list-group-item"
+                                        href="${APP_PATH}/admin/viewAdminInfo">
+                                    个人信息查看&nbsp;<span class=" glyphicon glyphicon-triangle-right"
+                                                      aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="list-group-item"
+                                        href="${APP_PATH}/admin/updateAdminInfo">
                                     个人信息修改&nbsp;<span class=" glyphicon glyphicon-triangle-right"
                                                       aria-hidden="true"></span>
                                 </button>
@@ -226,8 +232,26 @@
         </iframe>
     </div>
 </div>
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title">注销登录</h5>
+            </div>
+            <div class="modal-body">
 
-<script>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="logout_btn">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${APP_PATH}/resources/js/layer/layer.js"></script>
+<script type="text/javascript">
     $(document).ready(function () {
         let flag = true;
         let span = $("#leftNav span");
@@ -305,14 +329,42 @@
 
     $(".wk-main-menu-item").each(function () {
         $(this).on("click", function () {
-            let url = "";
-            let id = $(this).attr("id").substr(19, $(this).attr("id").length);
-
-            $("#mainFrame").attr("src", "" + id + ".html");
+            let url = $(this).attr("id");
+            $("#mainFrame").attr("src", "${APP_PATH}/admin/" + url);
         });
     });
 
-
+    $("#logout").on("click", function () {
+        $("#logoutModal .modal-body").text("你确定要注销登录吗？");
+        $("#logoutModal").modal({
+            backdrop: "static"
+        });
+    })
+    $("#logout_btn").on("click", function () {
+        let loadingIndex = layer.msg('注销中...', {icon: 16});
+        //发送ajax请求删除
+        $.ajax({
+            url: "${APP_PATH}/admin/logout",
+            type: "POST",
+            dataType: "json",
+            success: function (result) {
+                layer.close(loadingIndex);
+                if (result.code === 200) {
+                    layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
+                    });
+                }
+                if (result.code === 100) {
+                    layer.msg("注销登录成功", {time: 1000, icon: 1}, function () {
+                    });
+                    window.location.href = "${APP_PATH}/index/login";
+                }
+            },
+            error: function () {
+                layer.msg("网络异常，请稍后再试", {time: 1500, icon: 5, shift: 6}, function () {
+                });
+            }
+        });
+    });
 </script>
 
 </body>

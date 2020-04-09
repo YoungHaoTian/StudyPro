@@ -1,8 +1,5 @@
 package com.cdut.studypro.controllers;
 
-import com.cdut.studypro.beans.Student;
-import com.cdut.studypro.beans.StudentExample;
-import com.cdut.studypro.beans.Teacher;
 import com.cdut.studypro.services.StudentService;
 import com.cdut.studypro.services.TeacherService;
 import com.cdut.studypro.utils.RequestResult;
@@ -18,7 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 

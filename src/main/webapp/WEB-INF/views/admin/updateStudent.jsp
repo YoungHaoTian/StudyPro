@@ -41,7 +41,7 @@
                                 <div class="input-group">
                                     <input required="required" id="name" name="name" type="text" maxlength="5"
                                            class="form-control wk-normal-input"
-                                           value="${student.name.trim()=="0"?"未录入":(student.name.trim()==""?"未录入":student.name) }"
+                                           value="${student.name.trim()=="0"?"":(student.name.trim()==""?"":student.name) }"
                                            placeholder="请输入学生姓名"/>
                                 </div>
                             </div>
@@ -52,20 +52,21 @@
                                     <input required="required" id="number" name="number"
                                            oninput="value=value.replace(/[^\d]/g,'')" type="text" maxlength="18"
                                            class="form-control wk-normal-input"
-                                           value="${student.number.trim()=="0"?"未录入":(student.number.trim()==""?"未录入":student.number) }"
+                                           value="${student.number.trim()=="0"?"":(student.number.trim()==""?"":student.number) }"
                                            placeholder="请输入学生学号"/>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="collegeId" class="control-label wk-filed-label">所属学院:</label>
                                 <select class="selectpicker" id="collegeId" name="collegeId">
-                                    <c:forEach items="${colleges}" var="var">
+                                    <option value="0">请选择所属学院</option>
+                                    <c:forEach items="${colleges}" var="college">
                                         <c:choose>
-                                            <c:when test="${var.id == student.collegeId}">
-                                                <option value="${var.id}" selected="selected">${var.name}</option>
+                                            <c:when test="${college.id == student.collegeId}">
+                                                <option value="${college.id}" selected="selected">${college.name.trim()}</option>
                                             </c:when>
                                             <c:otherwise>
-                                                <option value="${var.id}">${var.name}</option>
+                                                <option value="${college.id}">${college.name.trim()}</option>
                                             </c:otherwise>
                                         </c:choose>
                                     </c:forEach>
@@ -80,7 +81,7 @@
                                     <input required="required" id="telephone" name="telephone" type="text"
                                            oninput="value=value.replace(/[^\d]/g,'')" maxlength="11"
                                            class="form-control wk-normal-input"
-                                           value="${student.telephone.trim()=="0"?"未录入":(student.telephone.trim()==""?"未录入":student.telephone) }"
+                                           value="${student.telephone.trim()=="0"?"":(student.telephone.trim()==""?"":student.telephone) }"
                                            placeholder="请输入联系电话"/>
                                 </div>
                             </div>
@@ -89,7 +90,7 @@
                                 <div class="input-group">
                                     <input required="required" id="idCardNo" name="idCardNo" maxlength="18" type="text"
                                            class="form-control wk-normal-input"
-                                           value="${student.idCardNo.trim()=="0"?"未录入":(student.idCardNo.trim()==""?"未录入":student.idCardNo) }"
+                                           value="${student.idCardNo.trim()=="0"?"":(student.idCardNo.trim()==""?"":student.idCardNo) }"
                                            placeholder="请输入身份证号"/>
                                 </div>
                             </div>
@@ -115,7 +116,7 @@
                                 <div class="input-group">
                                     <input required="required" id="account" name="account" type="text" maxlength="18"
                                            class="form-control wk-normal-input"
-                                           value="${student.account.trim()=="0"?"未录入":(student.account.trim()==""?"未录入":student.account) }"
+                                           value="${student.account.trim()=="0"?"":(student.account.trim()==""?"":student.account) }"
                                            placeholder="请输入登录账户"/>
                                 </div>
                             </div>
@@ -124,7 +125,7 @@
                                 <div class="input-group">
                                     <input required="required" id="password" name="password" type="text" maxlength="18"
                                            class="form-control wk-normal-input"
-                                           value="${student.account.trim()=="0"?"未录入":(student.account.trim()==""?"未录入":student.account) }"
+                                           value="${student.account.trim()=="0"?"":(student.account.trim()==""?"":student.account) }"
                                            placeholder="请输入登录密码"/>
                                 </div>
                             </div>
@@ -133,7 +134,7 @@
                                 <div class="input-group">
                                     <input required="required" id="email" name="email" type="text" maxlength="20"
                                            class="form-control wk-normal-input"
-                                           value="${student.email.trim()=="0"?"未录入":(student.email.trim()==""?"未录入":student.email) }"
+                                           value="${student.email.trim()=="0"?"":(student.email.trim()==""?"":student.email) }"
                                            placeholder="请输入邮箱"/>
                                 </div>
                             </div>
@@ -144,7 +145,9 @@
                 </div>
                 <div class="panel-footer wk-panel-footer">
                     <button type="button" class="btn btn-info" onclick="updateStudent()">提&nbsp;&nbsp;交</button>
-                    <button type="button" class="btn btn-info" onclick="back()" style="margin-left: 30px">返&nbsp;&nbsp;回</button>
+                    <button type="button" class="btn btn-info" onclick="back()" style="margin-left: 30px">
+                        返&nbsp;&nbsp;回
+                    </button>
                 </div>
             </form>
         </div>
@@ -184,6 +187,13 @@
             return;
         } else if (!numbers.test(number)) {
             layer.msg("请输入正确学号", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        //对学院的验证
+        let collegeId = $("#collegeId").val();
+        if (collegeId === "0") {
+            layer.msg("请选择所属学院", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
@@ -280,8 +290,8 @@
             }
         });
     }
-    
+
     function back() {
-        window.location.href="${APP_PATH}/admin/searchStudent?pageNum="+${pageNum};
+        window.location.href = "${APP_PATH}/admin/searchStudent?pageNum=" +${pageNum};
     }
 </script>

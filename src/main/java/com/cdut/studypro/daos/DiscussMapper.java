@@ -2,7 +2,10 @@ package com.cdut.studypro.daos;
 
 import com.cdut.studypro.beans.Discuss;
 import com.cdut.studypro.beans.DiscussExample;
+
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface DiscussMapper {
@@ -33,4 +36,8 @@ public interface DiscussMapper {
     int updateByPrimaryKeyWithBLOBs(Discuss record);
 
     int updateByPrimaryKey(Discuss record);
+
+    List<Discuss> selectByExampleWithBLOBsAndTeacherAndCourse(DiscussExample example);
+
+    List<Discuss> selectByCourseNameAndTeacherName(Map<String, String> map);
 }

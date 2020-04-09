@@ -4,10 +4,10 @@ import com.cdut.studypro.beans.*;
 import com.cdut.studypro.daos.*;
 import com.cdut.studypro.services.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @description:
@@ -34,6 +34,12 @@ public class AdminServiceImpl implements AdminService {
     @Autowired
     private TeacherMapper teacherMapper;
 
+    @Autowired
+    private DiscussMapper discussMapper;
+
+    @Autowired
+    private NoticeMapper noticeMapper;
+
     @Override
     public List<Admin> selectAdminByExample(AdminExample example) {
         return adminMapper.selectByExample(example);
@@ -49,10 +55,6 @@ public class AdminServiceImpl implements AdminService {
         return collegeMapper.selectByExample(null);
     }
 
-    @Override
-    public List<Student> getAllStudentsWithCollege() {
-        return studentMapper.selectByExampleWithCollege(null);
-    }
 
     @Override
     public List<Student> getAllStudentsWithCollegeByExample(StudentExample example) {
@@ -123,6 +125,11 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    public List<Integer> getTeacherIdByCourseExample(CourseExample example) {
+        return courseMapper.selectTeacherIdByExample(example);
+    }
+
+    @Override
     public boolean deleteTeacherById(Integer id) {
         return teacherMapper.deleteByPrimaryKey(id) > 0;
     }
@@ -146,9 +153,10 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<College> getAllCollegesWithBLOBs() {
-        return collegeMapper.selectByExampleWithBLOBs(null);
+    public boolean unbindCourse(Course course) {
+        return courseMapper.updateByPrimaryKeySelective(course) > 0;
     }
+
 
     @Override
     public List<College> getAllCollegesWithBLOBsByExample(CollegeExample example) {
@@ -189,6 +197,13 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    public List<Teacher> getAllTeachersWithIdNameAndCollege() {
+        TeacherExample teacherExample = new TeacherExample();
+        teacherExample.setOrderByClause("CONVERT(name using gbk) asc");
+        return teacherMapper.selectByExampleWithIdNameAndCollege(teacherExample);
+    }
+
+    @Override
     public boolean isCourseExistsByExample(CourseExample example) {
         return courseMapper.countByExample(example) > 0;
     }
@@ -196,5 +211,125 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public boolean insertCourseSelective(Course course) {
         return courseMapper.insertSelective(course) > 0;
+    }
+
+    @Override
+    public List<Course> getAllCoursesWithBLOBsCollegeAndTeacherByExample(CourseExample example) {
+        return courseMapper.selectByExampleWithBLOBsAndCollegeAndTeacher(example);
+    }
+
+    @Override
+    public boolean deleteCourseById(Integer id) {
+        return courseMapper.deleteByPrimaryKey(id) > 0;
+    }
+
+    @Override
+    public boolean deleteCourseByIdBatch(List<Integer> ids) {
+        CourseExample courseExample = new CourseExample();
+        CourseExample.Criteria criteria = courseExample.createCriteria();
+        criteria.andIdIn(ids);
+        return courseMapper.deleteByExample(courseExample) > 0;
+    }
+
+    @Override
+    public Course getCourseByPrimaryKey(Integer id) {
+        return courseMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public boolean updateCourseByPrimaryKeySelective(Course course) {
+        return courseMapper.updateByPrimaryKeySelective(course) > 0;
+    }
+
+    @Override
+    public List<Integer> getTeacherIdByTeacherExample(TeacherExample example) {
+        return teacherMapper.selectIdsByExample(example);
+    }
+
+    @Override
+    public Course getCourseByPrimaryKeyWithoutTeacherAndCollege(Integer id) {
+        return courseMapper.selectByPrimaryKeyWithoutTeacherAndCollege(id);
+    }
+
+    @Override
+    public List<Discuss> getAllDiscussWithBLOBsAndTeacherAndCourseByExample(DiscussExample example) {
+        return discussMapper.selectByExampleWithBLOBsAndTeacherAndCourse(example);
+    }
+
+    @Override
+    public List<Integer> getCourseIdByCourseExample(CourseExample example) {
+        return courseMapper.selectCourseIdByExample(example);
+    }
+
+    @Override
+    public List<Course> getAllCoursesWithWithCollegeAndTeacher() {
+        CourseExample courseExample = new CourseExample();
+        courseExample.setOrderByClause("CONVERT(name using gbk) asc");
+        return courseMapper.selectByExampleWithCollegeAndTeacher(courseExample);
+    }
+
+
+    @Override
+    public Discuss getDiscussByPrimaryKey(Integer id) {
+        return discussMapper.selectByPrimaryKey(id);
+    }
+
+
+    @Override
+    public boolean deleteDiscussByIdBatch(List<Integer> ids) {
+        DiscussExample discussExample = new DiscussExample();
+        DiscussExample.Criteria criteria = discussExample.createCriteria();
+        criteria.andIdIn(ids);
+        return discussMapper.deleteByExample(discussExample) > 0;
+
+    }
+
+
+    @Override
+    public boolean updateDiscussByPrimaryKeySelective(Discuss discuss) {
+        return discussMapper.updateByPrimaryKeySelective(discuss) > 0;
+    }
+
+    @Override
+    public boolean insertNoticeSelective(Notice notice) {
+        return noticeMapper.insertSelective(notice) > 0;
+    }
+
+    @Override
+    public List<Notice> getAllNoticesByExample(NoticeExample example) {
+        return noticeMapper.selectByExampleWithBLOBs(example);
+    }
+
+    @Override
+    public boolean deleteNoticeById(Integer id) {
+        return noticeMapper.deleteByPrimaryKey(id) > 0;
+    }
+
+    @Override
+    public boolean deleteNoticeByIdBatch(List<Integer> noticeIds) {
+        NoticeExample noticeExample = new NoticeExample();
+        NoticeExample.Criteria criteria = noticeExample.createCriteria();
+        criteria.andIdIn(noticeIds);
+        return noticeMapper.deleteByExample(noticeExample) > 0;
+    }
+
+    @Override
+    public Notice getNoticeByPrimaryKey(Integer id) {
+        return noticeMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public boolean updateNoticeByPrimaryKeySelective(Notice notice) {
+        return noticeMapper.updateByPrimaryKeySelective(notice) > 0;
+    }
+
+    @Override
+    public Admin getAdminById(Integer id) {
+        return adminMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public boolean updateAdminByPrimaryKeySelective(Admin admin) {
+        return adminMapper.updateByPrimaryKeySelective(admin) > 0;
     }
 }

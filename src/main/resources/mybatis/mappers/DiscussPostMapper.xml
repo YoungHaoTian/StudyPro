@@ -1,239 +1,283 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cdut.studypro.daos.DiscussPostMapper">
-  <resultMap id="BaseResultMap" type="com.cdut.studypro.beans.DiscussPost">
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="discuss_id" jdbcType="INTEGER" property="discussId" />
-    <result column="student_id" jdbcType="INTEGER" property="studentId" />
-    <result column="record_time" jdbcType="TIMESTAMP" property="recordTime" />
-  </resultMap>
-  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.cdut.studypro.beans.DiscussPost">
-    <result column="content" jdbcType="LONGVARCHAR" property="content" />
-  </resultMap>
-  <sql id="Example_Where_Clause">
-    <where>
-      <foreach collection="oredCriteria" item="criteria" separator="or">
-        <if test="criteria.valid">
-          <trim prefix="(" prefixOverrides="and" suffix=")">
-            <foreach collection="criteria.criteria" item="criterion">
-              <choose>
-                <when test="criterion.noValue">
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue">
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue">
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue">
-                  and ${criterion.condition}
-                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
+    <resultMap id="BriefResultMap" type="com.cdut.studypro.beans.DiscussPost">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="student_name" jdbcType="INTEGER" property="student.name"/>
+        <result column="record_time" jdbcType="TIMESTAMP" property="recordTime"/>
+        <result column="content" jdbcType="LONGVARCHAR" property="content"/>
+    </resultMap>
+    <resultMap id="BaseResultMap" type="com.cdut.studypro.beans.DiscussPost">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="discuss_id" jdbcType="INTEGER" property="discussId"/>
+        <result column="student_id" jdbcType="INTEGER" property="studentId"/>
+        <result column="record_time" jdbcType="TIMESTAMP" property="recordTime"/>
+    </resultMap>
+    <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.cdut.studypro.beans.DiscussPost">
+        <result column="content" jdbcType="LONGVARCHAR" property="content"/>
+    </resultMap>
+
+    <resultMap extends="ResultMapWithBLOBs" id="ResultMapWithBLOBsAndStudentIdName"
+               type="com.cdut.studypro.beans.DiscussPost">
+        <association property="student" column="student_id"
+                     select="com.cdut.studypro.daos.StudentMapper.selectByPrimaryKeyWithIdAndName"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
             </foreach>
-          </trim>
-        </if>
-      </foreach>
-    </where>
-  </sql>
-  <sql id="Update_By_Example_Where_Clause">
-    <where>
-      <foreach collection="example.oredCriteria" item="criteria" separator="or">
-        <if test="criteria.valid">
-          <trim prefix="(" prefixOverrides="and" suffix=")">
-            <foreach collection="criteria.criteria" item="criterion">
-              <choose>
-                <when test="criterion.noValue">
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue">
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue">
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue">
-                  and ${criterion.condition}
-                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
             </foreach>
-          </trim>
-        </if>
-      </foreach>
-    </where>
-  </sql>
-  <sql id="Base_Column_List">
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
     id, discuss_id, student_id, record_time
   </sql>
-  <sql id="Blob_Column_List">
+    <sql id="Blob_Column_List">
     content
   </sql>
-  <select id="selectByExampleWithBLOBs" parameterType="com.cdut.studypro.beans.DiscussPostExample" resultMap="ResultMapWithBLOBs">
-    select
-    <if test="distinct">
-      distinct
-    </if>
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from discuss_post
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null">
-      order by ${orderByClause}
-    </if>
-  </select>
-  <select id="selectByExample" parameterType="com.cdut.studypro.beans.DiscussPostExample" resultMap="BaseResultMap">
-    select
-    <if test="distinct">
-      distinct
-    </if>
-    <include refid="Base_Column_List" />
-    from discuss_post
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null">
-      order by ${orderByClause}
-    </if>
-  </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
-    select 
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from discuss_post
-    where id = #{id,jdbcType=INTEGER}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    <select id="selectByExampleWithBLOBs" parameterType="com.cdut.studypro.beans.DiscussPostExample"
+            resultMap="ResultMapWithBLOBs">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from discuss_post
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByExampleWithBLOBsAndStudentName" parameterType="com.cdut.studypro.beans.DiscussPostExample"
+            resultMap="ResultMapWithBLOBsAndStudentIdName">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from discuss_post
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <select id="selectByExample" parameterType="com.cdut.studypro.beans.DiscussPostExample" resultMap="BaseResultMap">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from discuss_post
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from discuss_post
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectByPrimaryKeyWithStudentName" parameterType="java.lang.Integer"
+            resultMap="ResultMapWithBLOBsAndStudentIdName">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from discuss_post
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from discuss_post
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <delete id="deleteByExample" parameterType="com.cdut.studypro.beans.DiscussPostExample">
-    delete from discuss_post
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-  </delete>
-  <insert id="insert" parameterType="com.cdut.studypro.beans.DiscussPost">
+    <delete id="deleteByExample" parameterType="com.cdut.studypro.beans.DiscussPostExample">
+        delete from discuss_post
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.cdut.studypro.beans.DiscussPost">
     insert into discuss_post (id, discuss_id, student_id, 
       record_time, content)
     values (#{id,jdbcType=INTEGER}, #{discussId,jdbcType=INTEGER}, #{studentId,jdbcType=INTEGER}, 
       #{recordTime,jdbcType=TIMESTAMP}, #{content,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.cdut.studypro.beans.DiscussPost">
-    insert into discuss_post
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
-      <if test="discussId != null">
-        discuss_id,
-      </if>
-      <if test="studentId != null">
-        student_id,
-      </if>
-      <if test="recordTime != null">
-        record_time,
-      </if>
-      <if test="content != null">
-        content,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=INTEGER},
-      </if>
-      <if test="discussId != null">
-        #{discussId,jdbcType=INTEGER},
-      </if>
-      <if test="studentId != null">
-        #{studentId,jdbcType=INTEGER},
-      </if>
-      <if test="recordTime != null">
-        #{recordTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="content != null">
-        #{content,jdbcType=LONGVARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <select id="countByExample" parameterType="com.cdut.studypro.beans.DiscussPostExample" resultType="java.lang.Long">
-    select count(*) from discuss_post
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-  </select>
-  <update id="updateByExampleSelective" parameterType="map">
-    update discuss_post
-    <set>
-      <if test="record.id != null">
-        id = #{record.id,jdbcType=INTEGER},
-      </if>
-      <if test="record.discussId != null">
+    <insert id="insertSelective" parameterType="com.cdut.studypro.beans.DiscussPost">
+        insert into discuss_post
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="discussId != null">
+                discuss_id,
+            </if>
+            <if test="studentId != null">
+                student_id,
+            </if>
+            <if test="recordTime != null">
+                record_time,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="discussId != null">
+                #{discussId,jdbcType=INTEGER},
+            </if>
+            <if test="studentId != null">
+                #{studentId,jdbcType=INTEGER},
+            </if>
+            <if test="recordTime != null">
+                #{recordTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.cdut.studypro.beans.DiscussPostExample" resultType="java.lang.Long">
+        select count(*) from discuss_post
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update discuss_post
+        <set>
+            <if test="record.id != null">
+                id = #{record.id,jdbcType=INTEGER},
+            </if>
+            <if test="record.discussId != null">
+                discuss_id = #{record.discussId,jdbcType=INTEGER},
+            </if>
+            <if test="record.studentId != null">
+                student_id = #{record.studentId,jdbcType=INTEGER},
+            </if>
+            <if test="record.recordTime != null">
+                record_time = #{record.recordTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.content != null">
+                content = #{record.content,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExampleWithBLOBs" parameterType="map">
+        update discuss_post
+        set id = #{record.id,jdbcType=INTEGER},
         discuss_id = #{record.discussId,jdbcType=INTEGER},
-      </if>
-      <if test="record.studentId != null">
         student_id = #{record.studentId,jdbcType=INTEGER},
-      </if>
-      <if test="record.recordTime != null">
         record_time = #{record.recordTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.content != null">
-        content = #{record.content,jdbcType=LONGVARCHAR},
-      </if>
-    </set>
-    <if test="_parameter != null">
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByExampleWithBLOBs" parameterType="map">
-    update discuss_post
-    set id = #{record.id,jdbcType=INTEGER},
-      discuss_id = #{record.discussId,jdbcType=INTEGER},
-      student_id = #{record.studentId,jdbcType=INTEGER},
-      record_time = #{record.recordTime,jdbcType=TIMESTAMP},
-      content = #{record.content,jdbcType=LONGVARCHAR}
-    <if test="_parameter != null">
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByExample" parameterType="map">
-    update discuss_post
-    set id = #{record.id,jdbcType=INTEGER},
-      discuss_id = #{record.discussId,jdbcType=INTEGER},
-      student_id = #{record.studentId,jdbcType=INTEGER},
-      record_time = #{record.recordTime,jdbcType=TIMESTAMP}
-    <if test="_parameter != null">
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.cdut.studypro.beans.DiscussPost">
-    update discuss_post
-    <set>
-      <if test="discussId != null">
-        discuss_id = #{discussId,jdbcType=INTEGER},
-      </if>
-      <if test="studentId != null">
-        student_id = #{studentId,jdbcType=INTEGER},
-      </if>
-      <if test="recordTime != null">
-        record_time = #{recordTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="content != null">
-        content = #{content,jdbcType=LONGVARCHAR},
-      </if>
-    </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.cdut.studypro.beans.DiscussPost">
+        content = #{record.content,jdbcType=LONGVARCHAR}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update discuss_post
+        set id = #{record.id,jdbcType=INTEGER},
+        discuss_id = #{record.discussId,jdbcType=INTEGER},
+        student_id = #{record.studentId,jdbcType=INTEGER},
+        record_time = #{record.recordTime,jdbcType=TIMESTAMP}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.cdut.studypro.beans.DiscussPost">
+        update discuss_post
+        <set>
+            <if test="discussId != null">
+                discuss_id = #{discussId,jdbcType=INTEGER},
+            </if>
+            <if test="studentId != null">
+                student_id = #{studentId,jdbcType=INTEGER},
+            </if>
+            <if test="recordTime != null">
+                record_time = #{recordTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="content != null">
+                content = #{content,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.cdut.studypro.beans.DiscussPost">
     update discuss_post
     set discuss_id = #{discussId,jdbcType=INTEGER},
       student_id = #{studentId,jdbcType=INTEGER},
@@ -241,11 +285,25 @@
       content = #{content,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.cdut.studypro.beans.DiscussPost">
+    <update id="updateByPrimaryKey" parameterType="com.cdut.studypro.beans.DiscussPost">
     update discuss_post
     set discuss_id = #{discussId,jdbcType=INTEGER},
       student_id = #{studentId,jdbcType=INTEGER},
       record_time = #{recordTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+    <select id="selectByDiscussIdWithStudentName" parameterType="map" resultMap="BriefResultMap">
+        select d.id,d.content,d.record_time,s.name student_name
+        from discuss_post d
+        left outer join student s
+        on d.student_id=s.id
+        where d.discuss_id = #{id}
+        <if test="name!=null">
+            and s.name like "%"#{name}"%"
+        </if>
+        <if test="name==null">
+            or d.student_id=0
+        </if>
+        order by record_time asc
+    </select>
 </mapper>

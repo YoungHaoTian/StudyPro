@@ -2,7 +2,9 @@ package com.cdut.studypro.daos;
 
 import com.cdut.studypro.beans.Course;
 import com.cdut.studypro.beans.CourseExample;
+
 import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface CourseMapper {
@@ -22,6 +24,8 @@ public interface CourseMapper {
 
     Course selectByPrimaryKey(Integer id);
 
+    Course selectByPrimaryKeyWithoutBLOBs(Integer id);
+
     int updateByExampleSelective(@Param("record") Course record, @Param("example") CourseExample example);
 
     int updateByExampleWithBLOBs(@Param("record") Course record, @Param("example") CourseExample example);
@@ -33,4 +37,21 @@ public interface CourseMapper {
     int updateByPrimaryKeyWithBLOBs(Course record);
 
     int updateByPrimaryKey(Course record);
+
+    //根据teacher_id查找课程
+    List<Course> selectByTeacherIdWithIdAndName(Integer id);
+
+    //带学院信息和教师信息的条件查询
+    List<Course> selectByExampleWithBLOBsAndCollegeAndTeacher(CourseExample example);
+
+    //带id、name、teacher的条件查询
+    List<Course> selectByExampleWithCollegeAndTeacher(CourseExample courseExample);
+
+    //根据课程名称查询教师id
+    List<Integer> selectTeacherIdByExample(CourseExample example);
+
+    Course selectByPrimaryKeyWithoutTeacherAndCollege(Integer id);
+
+    //根据课程名称查询课程id
+    List<Integer> selectCourseIdByExample(CourseExample example);
 }
