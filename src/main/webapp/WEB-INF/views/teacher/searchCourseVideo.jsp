@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,17 +11,20 @@
     <link rel="shortcut icon" href="https://8.url.cn/edu/edu_modules/edu-ui/img/nohash/favicon.ico">
     <link rel="stylesheet" href="${APP_PATH}/resources1/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="${APP_PATH}/resources1/bootstrap/css/bootstrap-theme.min.css">
-    <script type="text/javascript" src="${APP_PATH}/resources1/js/jquery-3.1.1.js"></script>
-    <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="${APP_PATH}/resources1/css/wukong-ui.css">
     <link rel="stylesheet" href="${APP_PATH}/resources1/bootstrap/css/bootstrap-select.min.css">
+    <script type="text/javascript" src="${APP_PATH}/resources1/js/jquery-3.1.1.js"></script>
     <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap.min.js"></script>
     <style>
         th, td {
-            /*vertical-align: middle;*/
             text-align: center;
             height: 30px;
             border: #CCCCCC 1px solid;
+        }
+
+        td {
+            word-wrap: break-word;
         }
     </style>
 </head>
@@ -30,8 +34,8 @@
     <div class="col-lg-12">
         <ul class="breadcrumb wk-breadcrumb">
             <li><a href="javascript:void(0)">大学生学习平台</a></li>
-            <li><a href="javascript:void(0)">教师信息管理</a></li>
-            <li><a href="javascript:void(0)">教师信息查询</a></li>
+            <li><a href="javascript:void(0)">课程视频管理</a></li>
+            <li><a href="javascript:void(0)">课程视频查询</a></li>
         </ul>
     </div>
 </div>
@@ -44,12 +48,12 @@
             </div>
             <!-- 搜索 start -->
             <div style="position: absolute;top: -11px;left: 240px;">
-                <div class="navbar-form navbar-right" role="search">
+                <form class="navbar-form navbar-right" role="search"
+                      action="" method="post">
                     <div class="form-group">
-                        <label for="name" class="control-label wk-filed-label" style="margin-top: 20px">教师姓名:</label>
-                        <input type="text"  maxlength="5"
-                               class="form-control" id="name" name="name" placeholder="教师姓名"
-                               value="${sessionScope.teacherQueryCriteria.get("name")}">
+                        <label for="name" class="control-label wk-filed-label" style="margin-top: 20px">课程名称:</label>
+                        <input type="text" class="form-control" name="name" id="name" placeholder="课程名称"
+                               value="${sessionScope.courseVideoQueryCriteria.get("name")}">
                     </div>
                     <div class="form-group">
                         <label for="collegeId" class="control-label wk-filed-label"
@@ -58,7 +62,7 @@
                             <option value="0">请选择所属学院</option>
                             <c:forEach items="${colleges}" var="college">
                                 <c:choose>
-                                    <c:when test="${college.id == sessionScope.teacherQueryCriteria.get('collegeId')}">
+                                    <c:when test="${college.id == sessionScope.courseVideoQueryCriteria.get('collegeId')}">
                                         <option value="${college.id}" selected="selected">${college.name}</option>
                                     </c:when>
                                     <c:otherwise>
@@ -68,17 +72,9 @@
                             </c:forEach>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label for="course" class="control-label wk-filed-label"
-                               style="margin-top: 20px">教授课程:</label>
-                        <input type="text" maxlength="18"
-                               class="form-control" id="course" name="course" placeholder="请输入教授课程"
-                               value="${sessionScope.teacherQueryCriteria.get("course")}">
-
-                    </div>
                     <div class="form-group" style="margin-left: 20px">
                         <button type="button" id="search" class="btn btn-success search" data-toggle="tooltip"
-                                data-placement="left" title="查询学生" style="margin-right: 20px">
+                                data-placement="left" title="查询课程视频" style="margin-right: 20px">
                             <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                             查询
                         </button>
@@ -86,12 +82,12 @@
                     <div class="form-group">
                         <button type="button" class="btn btn-danger batchDelete" data-toggle="tooltip"
                                 data-placement="left"
-                                title="批量删除学生">
+                                title="批量删除课程视频">
                             <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                             批量删除
                         </button>
                     </div>
-                </div>
+                </form>
             </div>
             <!-- 搜索 end -->
         </div>
@@ -108,107 +104,41 @@
                         <input type="checkbox" id="select_all"/>
                         <label for="select_all" style="margin-bottom: 0px;font-weight: 200">全选</label>
                     </th>
-                    <th style="width: 80px">教师姓名</th>
-                    <th style="width: 100px">教师编号</th>
-                    <th>所属学院</th>
-                    <th>教授课程</th>
-                    <th style="width: 100px">联系电话</th>
-                    <th style="width: 200px">身份证号</th>
-                    <th style="width: 50px">性别</th>
-                    <th>登录账户</th>
-                    <th>邮箱</th>
+                    <th>文件名</th>
+                    <th>所属课程：学院</th>
+                    <th>所属章节</th>
+                    <th>上传时间</th>
                     <th>选择操作</th>
                 </tr>
                 </thead>
                 <tbody>
-                <c:forEach items="${pageInfo.list}" var="teacher" varStatus="statu">
-                    <%--<c:if test="${statu.index%2==0}">
-                        <tr class="success">
-                    </c:if>
-                    <c:if test="${statu.index%2!=0}">
-                        <tr class="warning">
-                    </c:if>--%>
+                <c:forEach items="${pageInfo.list}" var="video">
                     <tr>
                         <th>
                             <label>
-                                <input teaId="${teacher.id}" type="checkbox" class="select_item"/>
+                                <input videoId="${video.id}" type="checkbox" class="select_item"/>
                             </label>
                         </th>
-                        <c:if test="${teacher.name!=null}">
-                            <td>${teacher.name.trim()=="0"?"未录入":(teacher.name.trim()==""?"未录入":teacher.name) }</td>
-                        </c:if>
-                        <c:if test="${teacher.name==null}">
-                            <td>未录入</td>
-                        </c:if>
-                        <c:if test="${teacher.number!=null}">
-                            <td>${teacher.number.trim()=="0"?"未录入":(teacher.number.trim()==""?"未录入":teacher.number) }</td>
-                        </c:if>
-                        <c:if test="${teacher.number==null}">
-                            <td>未录入</td>
-                        </c:if>
-                        <c:if test="${teacher.college!=null}">
-                            <td>${teacher.college.name.trim()=="0"?"学院未设置名称":(teacher.college.name.trim()==""?"学院未设置名称":teacher.college.name) }</td>
-                        </c:if>
-                        <c:if test="${teacher.college==null}">
-                            <td>未录入</td>
-                        </c:if>
-                        <c:if test="${teacher.courses!=null}">
-                            <td>
-                                <c:forEach items="${teacher.courses}" var="course" varStatus="statu">
-                                    <span style="color: red; "> ${statu.index+1}：</span>${course.name}
-                                    <c:if test="${!statu.last}">
-                                        <br>
-                                    </c:if>
-                                </c:forEach>
-
-                            </td>
-                        </c:if>
-                        <c:if test="${teacher.courses==null}">
-                            <td>未录入</td>
-                        </c:if>
-                        <c:if test="${teacher.telephone!=null}">
-                            <td>${teacher.telephone.trim()=="0"?"未录入":(teacher.telephone.trim()==""?"未录入":teacher.telephone) }</td>
-                        </c:if>
-                        <c:if test="${teacher.telephone==null}">
-                            <td>未录入</td>
-                        </c:if>
-                        <c:if test="${teacher.idCardNo!=null}">
-                            <td>${teacher.idCardNo.trim()=="0"?"未录入":(teacher.idCardNo.trim()==""?"未录入":teacher.idCardNo) }</td>
-                        </c:if>
-                        <c:if test="${teacher.idCardNo==null}">
-                            <td>未录入</td>
-                        </c:if>
-                        <c:if test="${teacher.gender!=null}">
-                            <td>${teacher.gender==0?"男":"女" }</td>
-                        </c:if>
-                        <c:if test="${teacher.gender==null}">
-                            <td>未录入</td>
-                        </c:if>
-                        <c:if test="${teacher.account!=null}">
-                            <td>${teacher.account.trim()=="0"?"未录入":(teacher.account.trim()==""?"未录入":teacher.account) }</td>
-                        </c:if>
-                        <c:if test="${teacher.account==null}">
-                            <td>未录入</td>
-                        </c:if>
-                        <c:if test="${teacher.email!=null}">
-                            <td>${teacher.email.trim()=="0"?"未录入":(teacher.email.trim()==""?"未录入":teacher.email) }</td>
-                        </c:if>
-                        <c:if test="${teacher.email==null}">
-                            <td>未录入</td>
-                        </c:if>
+                        <td>${video.path}</td>
+                        <td>${video.courseChapter.course.name}：${video.courseChapter.course.college.name}</td>
+                        <td>${video.courseChapter.title}</td>
+                        <td><fmt:formatDate value="${video.recordTime}" pattern="yyyy-MM-dd  HH:mm:ss"/></td>
                         <td>
-                            <button class="btn btn-primary btn-sm edit" type="button"
-                                    data-toggle="tooltip" data-placement="left"
-                                    title="编辑当前教师" edit-id="${teacher.id}" style="margin-right: 20px">
-                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-                                编辑
+                            <button class="btn btn-success btn-sm view" data-toggle="tooltip" data-placement="left"
+                                    title="查看当前课程视频" view-id="${video.id}" style="margin-right: 20px">
+                                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                                查看视频
                             </button>
-                            <button class="btn btn-danger btn-sm delete" type="button" data-toggle="tooltip"
-                               data-placement="left"
-                               title="删除当前教师" del-id="${teacher.id}">
+                            <button class="btn btn-primary btn-sm edit" data-toggle="tooltip" data-placement="left"
+                                    title="重新上传当前课程视频" edit-id="${video.id}" style="margin-right: 20px">
+                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                                重新上传
+                            </button>
+                            <a class="btn btn-danger btn-sm delete" data-toggle="tooltip" data-placement="left"
+                               title="删除当前课程视频" del-id="${video.id}">
                                 <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                                 删除
-                            </button>
+                            </a>
                         </td>
                     </tr>
                 </c:forEach>
@@ -234,8 +164,8 @@
             <nav aria-label="Page navigation">
                 <ul class="pagination">
                     <c:if test="${pageInfo.hasPreviousPage }">
-                        <li><a href="${APP_PATH}/admin/searchTeacher?pageNum=1">首页</a></li>
-                        <li><a href="${APP_PATH}/admin/searchTeacher?pageNum=${pageInfo.pageNum-1}"
+                        <li><a href="${APP_PATH}/teacher/searchCourseVideo?pageNum=1">首页</a></li>
+                        <li><a href="${APP_PATH}/teacher/searchCourseVideo?pageNum=${pageInfo.pageNum-1}"
                                aria-label="Previous"><span aria-hidden="true">&laquo;</span>
                         </a></li>
                     </c:if>
@@ -251,15 +181,15 @@
                             <li class="active"><a href="javascript:void(0)">${page_Num }</a></li>
                         </c:if>
                         <c:if test="${page_Num != pageInfo.pageNum }">
-                            <li><a href="${APP_PATH }/admin/searchTeacher?pageNum=${page_Num }">${page_Num }</a></li>
+                            <li><a href="${APP_PATH }/teacher/searchCourseVideo?pageNum=${page_Num }">${page_Num }</a></li>
                         </c:if>
                     </c:forEach>
 
                     <c:if test="${pageInfo.hasNextPage }">
-                        <li><a href="${APP_PATH }/admin/searchTeacher?pageNum=${pageInfo.pageNum+1 }"
+                        <li><a href="${APP_PATH }/teacher/searchCourseVideo?pageNum=${pageInfo.pageNum+1 }"
                                aria-label="Next"> <span aria-hidden="true">&raquo;</span>
                         </a></li>
-                        <li><a href="${APP_PATH }/admin/searchTeacher?pageNum=${pageInfo.pages}">末页</a></li>
+                        <li><a href="${APP_PATH }/teacher/searchCourseVideo?pageNum=${pageInfo.pages}">末页</a></li>
                     </c:if>
                     <c:if test="${!pageInfo.hasNextPage}">
                         <li><a href="javascript:void(0)" style="pointer-events: none"
@@ -272,95 +202,75 @@
         </div>
     </div>
     <!-- 页面跳转信息 -->
-    <div class="row" style="margin-bottom: 50px">
+    <div class="row">
         <div class="col-sm-2 col-md-offset-6">
             <input type="number" class="form-control" id="pageNum" placeholder="跳转到...">
         </div>
-        <button type="button" class="btn btn-success" onclick="toPage()" style="margin-left: 20px">确定跳转</button>
+        <button type="button" class="btn btn-success toPage" style="margin-left: 20px">确定跳转</button>
     </div>
 </c:if>
-<div class="modal fade" id="teacherDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+<div class="modal fade" id="videoDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">老师删除</h5>
+                <h5 class="modal-title">课程视频删除</h5>
             </div>
             <div class="modal-body">
 
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary" id="teacher_delete_btn">确定</button>
+                <button type="button" class="btn btn-primary" id="video_delete_btn">确定</button>
             </div>
         </div>
     </div>
 </div>
-<div class="modal fade" id="teacherBatchDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+<div class="modal fade" id="videoBatchDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">老师批量删除</h5>
+                <h5 class="modal-title">课程视频批量删除</h5>
             </div>
             <div class="modal-body">
 
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary" id="teacher_batchDelete_btn">确定</button>
+                <button type="button" class="btn btn-primary" id="video_batchDelete_btn">确定</button>
             </div>
         </div>
     </div>
 </div>
+</body>
+</html>
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
     let ids = "";
     let id = "";
-
-    function toPage() {
-        //获取到将要跳转的页面值
-        let pageNum = $("#pageNum").val();
-        let total =${pageInfo.pages };
-        if (pageNum.trim() === "" || total < pageNum || pageNum <= 0) {
-            layer.msg("错误的跳转页码，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
-            });
-            return;
-        }
-        window.location.href = "${APP_PATH}/admin/searchTeacher?pageNum=" + pageNum;
-    }
-
-    //编辑教师信息
-    $(".edit").on("click", function () {
-        let id = $(this).attr("edit-id");
-        window.location.href = "${APP_PATH}/admin/updateTeacher/" + id + "?pageNum=${pageInfo.pageNum}";
-    });
-
-    //删除单个教师
+    //删除单个课程视频
     $(".delete").on("click", function () {
         id = $(this).attr("del-id");
         console.log(id);
-        //删除教师时弹出确认框
+        //删除课程时弹出确认框
         let name = $(this).parents("tr").find("td:eq(0)").text();
-        let message = "确定删除老师 【" + name + "】 的信息吗？";
-        if (name === "未录入") {
-            message = "确定删除该老师的信息吗？";
-        }
-        $("#teacherDeleteModal .modal-body").text(message);
-        $("#teacherDeleteModal").modal({
+        console.log(name);
+        let message = "确定删除当前课程视频【"+name+"】吗？";
+
+        $("#videoDeleteModal .modal-body").text(message);
+        $("#videoDeleteModal").modal({
                 backdrop: "static"
             }
         );
     });
-    //确认删除教师
-    $("#teacher_delete_btn").on("click", function () {
+    $("#file_delete_btn").on("click", function () {
         let loadingIndex = layer.msg('处理中', {icon: 16});
-        console.log(id);
         //确认，发送ajax请求删除即可
         $.ajax({
-            url: "${APP_PATH}/admin/deleteTeacher",
+            url: "${APP_PATH}/teacher/deleteCourseFile",
             type: "POST",
             dataType: "json",
             data: {
@@ -373,7 +283,7 @@
                     });
                 }
                 if (result.code === 100) {
-                    window.location.href = "${APP_PATH}/admin/searchTeacher?pageNum=${pageInfo.pageNum }";
+                    window.location.href = "${APP_PATH}/teacher/searchCourseFile?pageNum=${pageInfo.pageNum }";
                 }
             },
             error: function () {
@@ -382,16 +292,26 @@
             }
         })
     });
+    //页面跳转
+    $(".toPage").on("click", function () {
+        //获取到将要跳转的页面值
+        let pageNum = $("#pageNum").val();
+        let total =${pageInfo.pages };
+        if (pageNum.trim() === "" || total < pageNum || pageNum <= 0) {
+            layer.msg("错误的跳转页码，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        window.location.href = "${APP_PATH}/teacher/searchCourseVideo?pageNum=" + pageNum;
+    });
 
-
-    //批量删除教师
+    //批量删除课程视频
     //全选按钮
     $("#select_all").on("click", (function () {
-        //attr获取checked是undefined;
-        //我们这些dom原生的属性；attr获取自定义属性的值；
-        //prop修改和读取dom原生属性的值
         $(".select_item").prop("checked", $(this).prop("checked"));
         let checked = $(this).prop("checked");
+        console.log(checked);
+        console.log(checked === true);
         if (checked === true) {
             $(this).parent("th").children("label").text("取消");
         } else {
@@ -406,30 +326,29 @@
     //点击批量删除按钮
     $(".batchDelete").on("click", function () {
         $.each($(".select_item:checked"), function () {
-            //组装教师id字符串
-            ids += $(this).attr("teaId") + "-";
+            //组装课程id字符串
+            ids += $(this).attr("videoId") + "-";
         });
         console.log(ids);
         if (ids.trim() === "") {
-            layer.msg("操作失败，你未选择任何教师", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("操作失败，你未选择课程视频", {time: 1500, icon: 5, shift: 6}, function () {
             });
         } else {
             //去除删除的id多余的"-"
             ids = ids.substring(0, ids.length - 1);
             console.log(ids);
 
-            $("#teacherBatchDeleteModal .modal-body").text("你确定要删除这些老师信息吗？");
-            $("#teacherBatchDeleteModal").modal({
+            $("#videoBatchDeleteModal .modal-body").text("你确定要删除这些课程视频吗？");
+            $("#videoBatchDeleteModal").modal({
                 backdrop: "static"
             });
         }
     });
-    //确认批量删除按钮
-    $("#teacher_batchDelete_btn").on("click", function () {
+    $("#video_batchDelete_btn").on("click", function () {
         let loadingIndex = layer.msg('处理中', {icon: 16});
         //发送ajax请求删除
         $.ajax({
-            url: "${APP_PATH}/admin/deleteTeacherBatch",
+            url: "${APP_PATH}/teacher/deleteCourseVideoBatch",
             type: "POST",
             dataType: "json",
             data: {
@@ -444,7 +363,7 @@
                 if (result.code === 100) {
                     layer.msg("批量删除成功", {time: 1000, icon: 1}, function () {
                     });
-                    window.location.href = "${APP_PATH}/admin/searchTeacher?pageNum=${pageInfo.pageNum }";
+                    window.location.href = "${APP_PATH}/teacher/searchCourseVideo?pageNum=${pageInfo.pageNum }";
                 }
             },
             error: function () {
@@ -456,19 +375,17 @@
 
     //查询按钮
     $("#search").on("click", function () {
-        let name = $("#name").val().trim()
-        let collegeId = $("#collegeId").val();
-        let course = $("#course").val();
+        let name = $("#name").val().trim();
+        let collegeId = $("#collegeId").val().trim();
         let loadingIndex = layer.msg('处理中', {icon: 16});
         //发送ajax请求
         $.ajax({
-            url: "${APP_PATH}/admin/searchTeacherByTerm",
+            url: "${APP_PATH}/teacher/searchCourseVideoByTerm",
             type: "POST",
             dataType: "json",
             data: {
                 "name": name,
-                "collegeId": collegeId,
-                "course": course
+                "collegeId": collegeId
             },
             success: function (result) {
                 layer.close(loadingIndex);
@@ -479,7 +396,7 @@
                 if (result.code === 100) {
                     layer.msg("查询成功", {time: 1000, icon: 1}, function () {
                     });
-                    window.location.href = "${APP_PATH}/admin/searchTeacher";
+                    window.location.href = "${APP_PATH}/teacher/searchCourseVideo";
                 }
             },
             error: function () {
@@ -488,12 +405,13 @@
             }
         });
     });
-
-    //编辑教师信息
+    //编辑课程视频信息
     $(".edit").on("click", function () {
         let id = $(this).attr("edit-id");
-        window.location.href = "${APP_PATH}/admin/updateTeacher/" + id + "?pageNum=${pageInfo.pageNum}";
+        window.location.href = "${APP_PATH}/teacher/editCourseVideo/" + id + "?pageNum=${pageInfo.pageNum}";
+    });
+    $(".view").on("click", function () {
+        let id = $(this).attr("view-id");
+        window.location.href = "${APP_PATH}/teacher/viewCourseVideo/" + id + "?pageNum=${pageInfo.pageNum}";
     })
 </script>
-</body>
-</html>

@@ -26,6 +26,8 @@ public interface CourseMapper {
 
     Course selectByPrimaryKeyWithoutBLOBs(Integer id);
 
+    Course selectByPrimaryKeyWithIdNameAndCollege(Integer id);
+
     int updateByExampleSelective(@Param("record") Course record, @Param("example") CourseExample example);
 
     int updateByExampleWithBLOBs(@Param("record") Course record, @Param("example") CourseExample example);
@@ -52,6 +54,9 @@ public interface CourseMapper {
 
     Course selectByPrimaryKeyWithoutTeacherAndCollege(Integer id);
 
-    //根据课程名称查询课程id
+    //根据条件查询课程id
     List<Integer> selectCourseIdByExample(CourseExample example);
+
+    //根据teacher的id值查找该teacher所教授的所有课程，包含章节信息
+    List<Course> selectByTeacherIdWithChapterAndCollege(Integer id);
 }

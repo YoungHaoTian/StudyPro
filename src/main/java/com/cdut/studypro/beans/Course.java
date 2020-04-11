@@ -1,5 +1,6 @@
 package com.cdut.studypro.beans;
 
+import java.util.List;
 import java.util.Objects;
 
 public class Course {
@@ -18,6 +19,16 @@ public class Course {
     private Teacher teacher;
 
     private String intro;
+
+    private List<CourseChapter> chapters;
+
+    public List<CourseChapter> getChapters() {
+        return chapters;
+    }
+
+    public void setChapters(List<CourseChapter> chapters) {
+        this.chapters = chapters;
+    }
 
     public College getCollege() {
         return college;
@@ -94,6 +105,7 @@ public class Course {
                 ", college=" + college +
                 ", teacher=" + teacher +
                 ", intro='" + intro + '\'' +
+                ", chapters=" + chapters +
                 '}';
     }
 

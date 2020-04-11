@@ -28,5 +28,7 @@ public interface CourseVideoMapper {
 
     int updateByPrimaryKey(CourseVideo record);
 
+    List<Integer> selectVideoIdByExample(CourseVideoExample courseVideoExample);
 
+    List<CourseVideo> selectByExampleWithCourseChapter(CourseVideoExample courseVideoExample);
 }

@@ -41,5 +41,9 @@ public class DatabaseTest {
         boolean equals = Arrays.equals(original_title, current_title);
         System.out.println(equals);
 
+        String path="\15\1\1\1586594478031_movie.mp4";
+        String substring = path.substring(path.indexOf("_")+1);
+        System.out.println(substring);
+
     }
 }

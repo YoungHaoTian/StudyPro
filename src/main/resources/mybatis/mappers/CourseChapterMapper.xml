@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.cdut.studypro.daos.CourseVideoMapper">
-    <resultMap id="BaseResultMap" type="com.cdut.studypro.beans.CourseVideo">
+<mapper namespace="com.cdut.studypro.daos.CourseChapterMapper">
+    <resultMap id="BriefResultMap" type="com.cdut.studypro.beans.CourseChapter">
         <id column="id" jdbcType="INTEGER" property="id"/>
-        <result column="path" jdbcType="VARCHAR" property="path"/>
-        <result column="chapter_id" jdbcType="INTEGER" property="chapterId"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+    </resultMap>
+    <resultMap extends="BriefResultMap" id="ResultMapWithCourse" type="com.cdut.studypro.beans.CourseChapter">
+        <result column="course_id" property="courseId" jdbcType="INTEGER"/>
+        <association property="course" column="course_id" select="com.cdut.studypro.daos.CourseMapper.selectByPrimaryKeyWithIdNameAndCollege"/>
+    </resultMap>
+    <resultMap id="BaseResultMap" type="com.cdut.studypro.beans.CourseChapter">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="course_id" jdbcType="INTEGER" property="courseId"/>
         <result column="record_time" jdbcType="TIMESTAMP" property="recordTime"/>
     </resultMap>
-    <resultMap extends="BaseResultMap" id="ResultMapWithChapter" type="com.cdut.studypro.beans.CourseVideo">
-        <association property="courseChapter" column="chapter_id" select="com.cdut.studypro.daos.CourseChapterMapper.selectByPrimaryKeyWithIdTitleAndCourse"/>
+    <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.cdut.studypro.beans.CourseChapter">
+        <result column="content" jdbcType="LONGVARCHAR" property="content"/>
     </resultMap>
     <sql id="Example_Where_Clause">
         <where>
@@ -71,15 +79,21 @@
         </where>
     </sql>
     <sql id="Base_Column_List">
-    id, path, chapter_id, record_time
+    id, title, course_id, record_time
   </sql>
-    <select id="selectByExample" parameterType="com.cdut.studypro.beans.CourseVideoExample" resultMap="BaseResultMap">
+    <sql id="Blob_Column_List">
+    content
+  </sql>
+    <select id="selectByExampleWithBLOBs" parameterType="com.cdut.studypro.beans.CourseChapterExample"
+            resultMap="ResultMapWithBLOBs">
         select
         <if test="distinct">
             distinct
         </if>
         <include refid="Base_Column_List"/>
-        from course_video
+        ,
+        <include refid="Blob_Column_List"/>
+        from course_chapter
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
         </if>
@@ -87,122 +101,175 @@
             order by ${orderByClause}
         </if>
     </select>
-    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="selectByExample" parameterType="com.cdut.studypro.beans.CourseChapterExample" resultMap="BaseResultMap">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from course_chapter
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
         select
         <include refid="Base_Column_List"/>
-        from course_video
+        ,
+        <include refid="Blob_Column_List"/>
+        from course_chapter
         where id = #{id,jdbcType=INTEGER}
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from course_video
+    delete from course_chapter
     where id = #{id,jdbcType=INTEGER}
   </delete>
-    <delete id="deleteByExample" parameterType="com.cdut.studypro.beans.CourseVideoExample">
-        delete from course_video
+    <delete id="deleteByExample" parameterType="com.cdut.studypro.beans.CourseChapterExample">
+        delete from course_chapter
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
         </if>
     </delete>
-    <insert id="insert" parameterType="com.cdut.studypro.beans.CourseVideo">
-    insert into course_video (id, path, chapter_id, 
-      record_time)
-    values (#{id,jdbcType=INTEGER}, #{path,jdbcType=VARCHAR}, #{chapterId,jdbcType=INTEGER}, 
-      #{recordTime,jdbcType=TIMESTAMP})
+    <insert id="insert" parameterType="com.cdut.studypro.beans.CourseChapter">
+    insert into course_chapter (id, title, course_id, 
+      record_time, content)
+    values (#{id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{courseId,jdbcType=INTEGER}, 
+      #{recordTime,jdbcType=TIMESTAMP}, #{content,jdbcType=LONGVARCHAR})
   </insert>
-    <insert id="insertSelective" parameterType="com.cdut.studypro.beans.CourseVideo">
-        insert into course_video
+    <insert id="insertSelective" parameterType="com.cdut.studypro.beans.CourseChapter">
+        insert into course_chapter
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
                 id,
             </if>
-            <if test="path != null">
-                path,
+            <if test="title != null">
+                title,
             </if>
-            <if test="chapterId != null">
-                chapter_id,
+            <if test="courseId != null">
+                course_id,
             </if>
             <if test="recordTime != null">
                 record_time,
+            </if>
+            <if test="content != null">
+                content,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">
                 #{id,jdbcType=INTEGER},
             </if>
-            <if test="path != null">
-                #{path,jdbcType=VARCHAR},
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
             </if>
-            <if test="chapterId != null">
-                #{chapterId,jdbcType=INTEGER},
+            <if test="courseId != null">
+                #{courseId,jdbcType=INTEGER},
             </if>
             <if test="recordTime != null">
                 #{recordTime,jdbcType=TIMESTAMP},
             </if>
+            <if test="content != null">
+                #{content,jdbcType=LONGVARCHAR},
+            </if>
         </trim>
     </insert>
-    <select id="countByExample" parameterType="com.cdut.studypro.beans.CourseVideoExample" resultType="java.lang.Long">
-        select count(*) from course_video
+    <select id="countByExample" parameterType="com.cdut.studypro.beans.CourseChapterExample"
+            resultType="java.lang.Long">
+        select count(*) from course_chapter
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
         </if>
     </select>
     <update id="updateByExampleSelective" parameterType="map">
-        update course_video
+        update course_chapter
         <set>
             <if test="record.id != null">
                 id = #{record.id,jdbcType=INTEGER},
             </if>
-            <if test="record.path != null">
-                path = #{record.path,jdbcType=VARCHAR},
+            <if test="record.title != null">
+                title = #{record.title,jdbcType=VARCHAR},
             </if>
-            <if test="record.chapterId != null">
-                chapter_id = #{record.chapterId,jdbcType=INTEGER},
+            <if test="record.courseId != null">
+                course_id = #{record.courseId,jdbcType=INTEGER},
             </if>
             <if test="record.recordTime != null">
                 record_time = #{record.recordTime,jdbcType=TIMESTAMP},
             </if>
+            <if test="record.content != null">
+                content = #{record.content,jdbcType=LONGVARCHAR},
+            </if>
         </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExampleWithBLOBs" parameterType="map">
+        update course_chapter
+        set id = #{record.id,jdbcType=INTEGER},
+        title = #{record.title,jdbcType=VARCHAR},
+        course_id = #{record.courseId,jdbcType=INTEGER},
+        record_time = #{record.recordTime,jdbcType=TIMESTAMP},
+        content = #{record.content,jdbcType=LONGVARCHAR}
         <if test="_parameter != null">
             <include refid="Update_By_Example_Where_Clause"/>
         </if>
     </update>
     <update id="updateByExample" parameterType="map">
-        update course_video
+        update course_chapter
         set id = #{record.id,jdbcType=INTEGER},
-        path = #{record.path,jdbcType=VARCHAR},
-        chapter_id = #{record.chapterId,jdbcType=INTEGER},
+        title = #{record.title,jdbcType=VARCHAR},
+        course_id = #{record.courseId,jdbcType=INTEGER},
         record_time = #{record.recordTime,jdbcType=TIMESTAMP}
         <if test="_parameter != null">
             <include refid="Update_By_Example_Where_Clause"/>
         </if>
     </update>
-    <update id="updateByPrimaryKeySelective" parameterType="com.cdut.studypro.beans.CourseVideo">
-        update course_video
+    <update id="updateByPrimaryKeySelective" parameterType="com.cdut.studypro.beans.CourseChapter">
+        update course_chapter
         <set>
-            <if test="path != null">
-                path = #{path,jdbcType=VARCHAR},
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR},
             </if>
-            <if test="chapterId != null">
-                chapter_id = #{chapterId,jdbcType=INTEGER},
+            <if test="courseId != null">
+                course_id = #{courseId,jdbcType=INTEGER},
             </if>
             <if test="recordTime != null">
                 record_time = #{recordTime,jdbcType=TIMESTAMP},
             </if>
+            <if test="content != null">
+                content = #{content,jdbcType=LONGVARCHAR},
+            </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.cdut.studypro.beans.CourseVideo">
-    update course_video
-    set path = #{path,jdbcType=VARCHAR},
-      chapter_id = #{chapterId,jdbcType=INTEGER},
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.cdut.studypro.beans.CourseChapter">
+    update course_chapter
+    set title = #{title,jdbcType=VARCHAR},
+      course_id = #{courseId,jdbcType=INTEGER},
+      record_time = #{recordTime,jdbcType=TIMESTAMP},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+    <update id="updateByPrimaryKey" parameterType="com.cdut.studypro.beans.CourseChapter">
+    update course_chapter
+    set title = #{title,jdbcType=VARCHAR},
+      course_id = #{courseId,jdbcType=INTEGER},
       record_time = #{recordTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
-    <select id="selectVideoIdByExample" parameterType="com.cdut.studypro.beans.CourseVideoExample"
+    <select id="selectByCourseIdWithIdAndTitle" parameterType="java.lang.Integer" resultMap="BriefResultMap">
+        select id,title
+        from course_chapter
+        where course_id=#{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectChapterIdByExample" parameterType="com.cdut.studypro.beans.CourseChapterExample"
             resultType="java.lang.Integer">
         select
         id
-        from course_video
+        from course_chapter
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
         </if>
@@ -210,18 +277,11 @@
             order by ${orderByClause}
         </if>
     </select>
-    <select id="selectByExampleWithCourseChapter" parameterType="com.cdut.studypro.beans.CourseVideoExample" resultMap="ResultMapWithChapter">
+    <select id="selectByPrimaryKeyWithIdTitleAndCourse" parameterType="java.lang.Integer" resultMap="ResultMapWithCourse">
         select
-        <if test="distinct">
-            distinct
-        </if>
-        <include refid="Base_Column_List"/>
-        from course_video
-        <if test="_parameter != null">
-            <include refid="Example_Where_Clause"/>
-        </if>
-        <if test="orderByClause != null">
-            order by ${orderByClause}
-        </if>
+        id,title,course_id
+        from course_chapter
+        where id = #{id,jdbcType=INTEGER}
     </select>
+
 </mapper>

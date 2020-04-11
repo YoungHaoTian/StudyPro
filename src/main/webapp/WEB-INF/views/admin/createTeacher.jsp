@@ -40,7 +40,7 @@
                                 <label for="name" class="control-label wk-filed-label">教师姓名:</label>
                                 <div class="input-group">
                                     <input required="required" id="name" name="name" type="text" maxlength="5"
-                                           class="form-control wk-normal-input" value="杨浩天"
+                                           class="form-control wk-normal-input" value=""
                                            placeholder="请输入教师姓名"/>
                                 </div>
                             </div>
@@ -49,7 +49,7 @@
                                 <div class="input-group">
                                     <input required="required" id="number" name="number"
                                            oninput="value=value.replace(/[^\d]/g,'')" type="text" maxlength="18"
-                                           class="form-control wk-normal-input" value="201613161013"
+                                           class="form-control wk-normal-input" value=""
                                            placeholder="请输入教师编号"/>
                                 </div>
                             </div>
@@ -70,7 +70,7 @@
                                 <div class="input-group">
                                     <input required="required" id="telephone" name="telephone"
                                            oninput="value=value.replace(/[^\d]/g,'')" type="text" maxlength="11"
-                                           class="form-control wk-normal-input" value="15928759418"
+                                           class="form-control wk-normal-input" value=""
                                            placeholder="请输入联系电话"/>
                                 </div>
                             </div>
@@ -78,7 +78,7 @@
                                 <label for="idCardNo" class="control-label wk-filed-label">身份证号:</label>
                                 <div class="input-group">
                                     <input required="required" id="idCardNo" name="idCardNo" maxlength="18" type="text"
-                                           class="form-control wk-normal-input" value="513901199806163319"
+                                           class="form-control wk-normal-input" value=""
                                            placeholder="请输入身份证号"/>
                                 </div>
                             </div>
@@ -95,7 +95,7 @@
                                 <label for="account" class="control-label wk-filed-label">登录账户: </label>
                                 <div class="input-group">
                                     <input required="required" id="account" name="account" maxlength="18" type="text"
-                                           class="form-control wk-normal-input" value="201613161013"
+                                           class="form-control wk-normal-input" value=""
                                            placeholder="请输入登录账户"/>
                                 </div>
                             </div>
@@ -103,7 +103,7 @@
                                 <label for="password" class="control-label wk-filed-label">登录密码: </label>
                                 <div class="input-group">
                                     <input required="required" id="password" name="password" type="text" maxlength="18"
-                                           class="form-control wk-normal-input" value="123456789"
+                                           class="form-control wk-normal-input" value=""
                                            placeholder="请输入登录密码"/>
                                 </div>
                             </div>
@@ -111,7 +111,7 @@
                                 <label for="email" class="control-label wk-filed-label">教师邮箱: </label>
                                 <div class="input-group">
                                     <input required="required" id="email" name="email" type="text" maxlength="20"
-                                           class="form-control wk-normal-input" value="10237040922@qq.com"
+                                           class="form-control wk-normal-input" value=""
                                            placeholder="请输入邮箱"/>
                                 </div>
                             </div>

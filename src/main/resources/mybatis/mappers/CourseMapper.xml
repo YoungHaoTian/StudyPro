@@ -4,6 +4,11 @@
     <resultMap id="BriefResultMap" type="com.cdut.studypro.beans.Course">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="college_id" jdbcType="VARCHAR" property="collegeId"/>
+    </resultMap>
+    <resultMap extends="BriefResultMap" id="ResultMapWithCollege" type="com.cdut.studypro.beans.Course">
+        <association property="college" select="com.cdut.studypro.daos.CollegeMapper.selectByPrimaryKeyWithIdAndName"
+                     column="college_id"/>
     </resultMap>
     <resultMap id="BaseResultMap" type="com.cdut.studypro.beans.Course">
         <id column="id" jdbcType="INTEGER" property="id"/>
@@ -14,6 +19,12 @@
     </resultMap>
     <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.cdut.studypro.beans.Course">
         <result column="intro" jdbcType="LONGVARCHAR" property="intro"/>
+    </resultMap>
+    <resultMap extends="BriefResultMap" id="BriefResultMapWithChapterAndCollege" type="com.cdut.studypro.beans.Course">
+        <association property="college" column="college_id"
+                     select="com.cdut.studypro.daos.CollegeMapper.selectByPrimaryKeyWithIdAndName"/>
+        <collection column="id" property="chapters" ofType="com.cdut.studypro.beans.CourseChapter"
+                    select="com.cdut.studypro.daos.CourseChapterMapper.selectByCourseIdWithIdAndTitle"/>
     </resultMap>
     <resultMap extends="ResultMapWithBLOBs" id="ResultMapWithBLOBsAndCollegeAndTeacher"
                type="com.cdut.studypro.beans.Course">
@@ -377,4 +388,19 @@
             order by ${orderByClause}
         </if>
     </select>
+    <select id="selectByTeacherIdWithChapterAndCollege" parameterType="java.lang.Integer"
+            resultMap="BriefResultMapWithChapterAndCollege">
+        select id,name,college_id
+        from course
+        where teacher_id=#{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectByPrimaryKeyWithIdNameAndCollege" parameterType="java.lang.Integer"
+            resultMap="ResultMapWithCollege">
+        select
+        id,name,college_id
+        from course
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+
 </mapper>

@@ -1,21 +1,28 @@
 package com.cdut.studypro.controllers;
 
-import com.cdut.studypro.beans.DiscussPost;
-import com.cdut.studypro.beans.Student;
-import com.cdut.studypro.beans.Teacher;
-import com.cdut.studypro.beans.TeacherExample;
+import com.cdut.studypro.beans.*;
 import com.cdut.studypro.services.TeacherService;
 import com.cdut.studypro.utils.MD5Util;
 import com.cdut.studypro.utils.RequestResult;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import net.sf.json.JSONObject;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.*;
 
 /**
@@ -108,6 +115,510 @@ public class TeacherController {
         return RequestResult.success();
     }
 
+    @RequestMapping("/teacherIndex")
+    public String teacherIndex() {
+        return "teacher/teacherIndex";
+    }
+
+    @RequestMapping("/createCourseVideo")
+    public String createCourseVideo(Map<String, Object> map, HttpSession session) {
+        /*Teacher teacher = (Teacher) session.getAttribute("user");
+        map.put("courses", teacherService.getAllCoursesWithChapter(teacher.getId()));*/
+        map.put("courses", teacherService.getAllCoursesWithChapterAndCollegeByTeacherId(15));
+        return "teacher/createCourseVideo";
+    }
+
+    @ResponseBody
+    @PostMapping("/saveCourseVideo")
+    public RequestResult saveCourseVideo(@RequestParam(value = "file") MultipartFile file, @RequestParam("chapterId") Integer chapterId, @RequestParam("courseId") Integer courseId, HttpServletRequest request) {
+        System.out.println(file.getOriginalFilename());
+        System.out.println(chapterId);
+//        Teacher teacher = (Teacher)request.getSession().getAttribute("user");
+
+        String path = request.getServletContext().getRealPath("/video/");
+        //System.out.println(request.getServletPath());//请求路径
+        //System.out.println(request.getContextPath());//项目路径
+        //视频存放路径：/video/课程id/章节id/上传时间_fileName
+        String fileDir = courseId + "\\" + chapterId + "\\";
+        path += fileDir;
+        System.out.println(path);
+        File file1 = new File(path);
+        System.out.println(file1.exists());
+        Date date = new Date();
+        String fileName = date.getTime() + "_" + file.getOriginalFilename();
+        if (!file1.exists()) {
+            boolean mkdir = file1.mkdirs();
+            if (!mkdir) {
+                return RequestResult.failure("视频上传失败，请稍后再试");
+            }
+        }
+        try {
+            file.transferTo(new File(file1, fileName));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return RequestResult.failure("视频上传失败，请稍后再试");
+        }
+
+        CourseVideo courseVideo = new CourseVideo();
+        courseVideo.setChapterId(chapterId);
+        courseVideo.setPath(fileDir + fileName);
+        courseVideo.setRecordTime(date);
+        boolean b = teacherService.saveCourseVideo(courseVideo);
+        if (!b) {
+            return RequestResult.failure("视频上传失败，请稍后再试");
+        }
+        return RequestResult.success();
+    }
+
+    @RequestMapping("/searchCourseVideo")
+    public String searchCourseVideo(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum, Map<String, Object> map) {
+        /*Teacher teacher = (Teacher) session.getAttribute("user");
+        map.put("videos",teacherService.searchCourseVideo(teacher.getId()));*/
+
+        CourseVideoExample courseVideoExample = (CourseVideoExample) session.getAttribute("courseVideoExample");
+        if (courseVideoExample == null) {
+            courseVideoExample = new CourseVideoExample();
+            List<Integer> ids = teacherService.getCourseIdsByTeacherId(15);
+            if (ids.size() == 0) {
+                ids.add(0);
+            }
+            ids = teacherService.getChapterIdsByCourseIds(ids);
+            if (ids.size() == 0) {
+                ids.add(0);
+            }
+            ids = teacherService.getVideoIdsByChapterIds(ids);
+            if (ids.size() == 0) {
+                ids.add(0);
+            }
+            CourseVideoExample.Criteria criteria = courseVideoExample.createCriteria();
+            criteria.andIdIn(ids);
+            courseVideoExample.setOrderByClause("record_time asc");
+        }
+        PageHelper.startPage(pageNum, 10);
+        List<CourseVideo> videos = teacherService.searchCourseVideoByExampleWithCourseChapter(courseVideoExample);
+        for (CourseVideo video : videos) {
+            String path = video.getPath();
+            path = path.substring(path.indexOf('_') + 1);
+            video.setPath(path);
+        }
+        PageInfo<Student> page = new PageInfo(videos, 10);
+        map.put("pageInfo", page);
+        map.put("colleges", teacherService.getAllColleges());
+//        map.put("videos",videos);
+        return "teacher/searchCourseVideo";
+    }
+
+    @ResponseBody
+    @PostMapping("/deleteCourseVideo")
+    public RequestResult deleteCourseVideo(@RequestParam("id") Integer id, HttpServletRequest request) {
+        if (id == null) {
+            return RequestResult.failure("课程视频删除失败，请稍后再试");
+        }
+        CourseVideo courseVideo = teacherService.getCourseVideoById(id);
+        if (courseVideo == null) {
+            return RequestResult.failure("课程视频删除失败，请稍后再试");
+        }
+        //删除课程视频在数据库中的记录
+        boolean success = teacherService.deleteCourseVideoById(id);
+        if (!success) {
+            return RequestResult.failure("课程视频删除失败，请稍后再试");
+        }
+        //在文件目录中删除文件
+        String path = request.getServletContext().getRealPath("/video/") + courseVideo.getPath();
+        File file = new File(path);
+        if (file.exists()) {
+            file.delete();
+        }
+        return RequestResult.success();
+    }
+
+
+    @ResponseBody
+    @PostMapping("/deleteCourseVideoBatch")
+    public RequestResult deleteCourseVideoBatch(@RequestParam("ids") String ids, HttpServletRequest request) {
+        if (ids == null) {
+            return RequestResult.failure("批量删除失败，请稍后再试");
+        }
+        String[] id = ids.split("-");
+        List<Integer> videoIds = new ArrayList<>();
+        for (String s : id) {
+            videoIds.add(Integer.parseInt(s));
+        }
+        List<CourseVideo> videos = teacherService.getCourseVideoByIds(videoIds);
+        if (videos == null || videos.size() == 0) {
+            return RequestResult.failure("批量删除失败，请稍后再试");
+        }
+        boolean success = teacherService.deleteCourseVideoByIdBatch(videoIds);
+        if (!success) {
+            return RequestResult.failure("批量删除失败，请稍后再试");
+        }
+        //在文件目录中删除文件
+        for (CourseVideo video : videos) {
+            String path = request.getServletContext().getRealPath("/video/") + video.getPath();
+            File file = new File(path);
+            if (file.exists()) {
+                file.delete();
+            }
+        }
+        return RequestResult.success();
+    }
+
+
+    @ResponseBody
+    @PostMapping("/searchCourseVideoByTerm")
+    public RequestResult searchCourseVideoByTerm(@RequestParam("name") String name, @RequestParam("collegeId") Integer collegeId, HttpSession session) {
+        Map<String, Object> map = new HashMap<>();
+        CourseVideoExample courseVideoExample = new CourseVideoExample();
+        CourseVideoExample.Criteria criteria = courseVideoExample.createCriteria();
+        Teacher teacher = (Teacher) session.getAttribute("user");
+        if (!"".equals(name.trim())) {
+            CourseExample courseExample = new CourseExample();
+            CourseExample.Criteria courseExampleCriteria = courseExample.createCriteria();
+            courseExampleCriteria.andNameLike("%" + name.trim() + "%").andTeacherIdEqualTo(15);
+            List<Integer> ids = teacherService.getCourseIdsByExample(courseExample);
+            if (ids.size() == 0) {
+                ids.add(0);
+            }
+            CourseChapterExample courseChapterExample = new CourseChapterExample();
+            CourseChapterExample.Criteria courseChapterExampleCriteria = courseChapterExample.createCriteria();
+            courseChapterExampleCriteria.andCourseIdIn(ids);
+            ids = teacherService.getChapterIdsByExample(courseChapterExample);
+            if (ids.size() == 0) {
+                ids.add(0);
+            }
+            criteria.andChapterIdIn(ids);
+            map.put("name", name);
+        }
+        if (collegeId != 0) {
+            CourseExample courseExample = new CourseExample();
+            CourseExample.Criteria courseExampleCriteria = courseExample.createCriteria();
+            courseExampleCriteria.andCollegeIdEqualTo(collegeId).andTeacherIdEqualTo(15);
+            List<Integer> ids = teacherService.getCourseIdsByExample(courseExample);
+            if (ids.size() == 0) {
+                ids.add(0);
+            }
+            CourseChapterExample courseChapterExample = new CourseChapterExample();
+            CourseChapterExample.Criteria courseChapterExampleCriteria = courseChapterExample.createCriteria();
+            courseChapterExampleCriteria.andCourseIdIn(ids);
+            ids = teacherService.getChapterIdsByExample(courseChapterExample);
+            if (ids.size() == 0) {
+                ids.add(0);
+            }
+            criteria.andChapterIdIn(ids);
+            map.put("collegeId", collegeId);
+        }
+        courseVideoExample.setOrderByClause("record_time asc");
+        session.setAttribute("courseVideoExample", courseVideoExample);
+        session.setAttribute("courseVideoQueryCriteria", map);
+        return RequestResult.success();
+    }
+
+    @RequestMapping("/editCourseVideo/{id}")
+    public String editCourseVideo(@PathVariable("id") Integer id, Map<String, Object> map, @RequestParam("pageNum") Integer pageNum) {
+        map.put("courseVideoId", id);
+        map.put("pageNum", pageNum);
+        return "teacher/editCourseVideo";
+    }
+
+    @ResponseBody
+    @PostMapping("/updateCourseVideo")
+    public RequestResult updateCourseVideo(@RequestParam(value = "file") MultipartFile file, @RequestParam("courseVideoId") Integer courseVideoId, HttpServletRequest request) {
+        if (file == null) {
+            return RequestResult.failure("视频更新失败，请稍后再试");
+        }
+        CourseVideo video = teacherService.getCourseVideoById(courseVideoId);
+        if (video == null) {
+            return RequestResult.failure("视频更新失败，请稍后再试");
+        }
+        String basePath = request.getServletContext().getRealPath("/video/");
+        String dirPath = video.getPath().substring(0, video.getPath().lastIndexOf("\\") + 1);
+        String fileName = video.getPath().substring(video.getPath().lastIndexOf("\\") + 1);
+        System.out.println(basePath + dirPath + fileName);
+        //删除原来的文件
+        File oldFile = new File(basePath + video.getPath());
+        if (!oldFile.exists()) {
+            return RequestResult.failure("视频更新失败，请稍后再试");
+        }
+        boolean delete = oldFile.delete();
+        if (!delete) {
+            return RequestResult.failure("视频更新失败，请稍后再试");
+        }
+        Date date = new Date();
+        fileName = date.getTime() + "_" + file.getOriginalFilename();
+        System.out.println(basePath + dirPath + fileName);
+        try {
+            file.transferTo(new File(basePath + dirPath + fileName));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return RequestResult.failure("视频更新失败，请稍后再试");
+        }
+        video.setPath(dirPath + fileName);
+        video.setRecordTime(date);
+        video.setChapterId(null);
+        boolean success = teacherService.updateCourseVideoByPrimaryKeySelective(video);
+        if (!success) {
+            return RequestResult.failure("视频更新失败，请稍后再试");
+        }
+        return RequestResult.success();
+    }
+
+    @RequestMapping("/viewCourseVideo/{id}")
+    public String viewCourseVideo(@PathVariable("id") Integer id, Map<String, Object> map, @RequestParam("pageNum") Integer pageNum) {
+        CourseVideo video = teacherService.getCourseVideoById(id);
+        map.put("video", video);
+        map.put("pageNum", pageNum);
+        return "teacher/viewCourseVideo";
+    }
+
+    @RequestMapping("/createCourseFile")
+    public String createCourseFile(Map<String, Object> map, HttpSession session) {
+        /*Teacher teacher = (Teacher) session.getAttribute("user");
+        map.put("courses", teacherService.getAllCoursesWithChapter(teacher.getId()));*/
+        map.put("courses", teacherService.getAllCoursesWithChapterAndCollegeByTeacherId(15));
+        return "teacher/createCourseFile";
+    }
+
+    @ResponseBody
+    @PostMapping("/saveCourseFile")
+    public RequestResult saveCourseFile(@RequestParam(value = "file") MultipartFile file, @RequestParam("chapterId") Integer chapterId, @RequestParam("courseId") Integer courseId, HttpServletRequest request) {
+        System.out.println(file.getOriginalFilename());
+        System.out.println(chapterId);
+//        Teacher teacher = (Teacher)request.getSession().getAttribute("user");
+
+        String path = request.getServletContext().getRealPath("/file/");
+        //文档存放路径：//课程id/章节id/上传时间_fileName
+        String fileDir = courseId + "\\" + chapterId + "\\";
+        path += fileDir;
+        File file1 = new File(path);
+        Date date = new Date();
+        String fileName = date.getTime() + "_" + file.getOriginalFilename();
+        if (!file1.exists()) {
+            boolean mkdir = file1.mkdirs();
+            if (!mkdir) {
+                return RequestResult.failure("文档上传失败，请稍后再试");
+            }
+        }
+        try {
+            file.transferTo(new File(file1, fileName));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return RequestResult.failure("文档上传失败，请稍后再试");
+        }
+
+        CourseFile courseFile = new CourseFile();
+        courseFile.setChapterId(chapterId);
+        courseFile.setPath(fileDir + fileName);
+        courseFile.setRecordTime(date);
+        boolean b = teacherService.saveCourseFile(courseFile);
+        if (!b) {
+            return RequestResult.failure("文档上传失败，请稍后再试");
+        }
+        return RequestResult.success();
+    }
+
+
+    @RequestMapping("/searchCourseFile")
+    public String searchCourseFile(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum, Map<String, Object> map) {
+        /*Teacher teacher = (Teacher) session.getAttribute("user");
+        map.put("videos",teacherService.searchCourseVideo(teacher.getId()));*/
+        CourseFileExample courseFileExample = (CourseFileExample) session.getAttribute("courseFileExample");
+        if (courseFileExample == null) {
+            courseFileExample = new CourseFileExample();
+            List<Integer> ids = teacherService.getCourseIdsByTeacherId(15);
+            if (ids.size() == 0) {
+                ids.add(0);
+            }
+            ids = teacherService.getChapterIdsByCourseIds(ids);
+            if (ids.size() == 0) {
+                ids.add(0);
+            }
+            ids = teacherService.getFileIdsByChapterIds(ids);
+            if (ids.size() == 0) {
+                ids.add(0);
+            }
+            CourseFileExample.Criteria criteria = courseFileExample.createCriteria();
+            criteria.andIdIn(ids);
+            courseFileExample.setOrderByClause("record_time asc");
+        }
+        PageHelper.startPage(pageNum, 10);
+        List<CourseFile> files = teacherService.searchCourseFileByExampleWithCourseChapter(courseFileExample);
+        for (CourseFile file : files) {
+            String path = file.getPath();
+            path = path.substring(path.indexOf('_') + 1);
+            file.setPath(path);
+        }
+        PageInfo<Student> page = new PageInfo(files, 10);
+        map.put("pageInfo", page);
+        map.put("colleges", teacherService.getAllColleges());
+        return "teacher/searchCourseFile";
+    }
+
+    @ResponseBody
+    @PostMapping("/deleteCourseFile")
+    public RequestResult deleteCourseFile(@RequestParam("id") Integer id, HttpServletRequest request) {
+        if (id == null) {
+            return RequestResult.failure("课程文档删除失败，请稍后再试");
+        }
+        CourseFile courseFile = teacherService.getCourseFileById(id);
+        if (courseFile == null) {
+            return RequestResult.failure("课程文档删除失败，请稍后再试");
+        }
+        //删除课程视频在数据库中的记录
+        boolean success = teacherService.deleteCourseFileById(id);
+        if (!success) {
+            return RequestResult.failure("课程文档删除失败，请稍后再试");
+        }
+        //在文件目录中删除文件
+        String path = request.getServletContext().getRealPath("/file/") + courseFile.getPath();
+        File file = new File(path);
+        if (file.exists()) {
+            file.delete();
+        }
+        return RequestResult.success();
+    }
+
+    @ResponseBody
+    @PostMapping("/deleteCourseFileBatch")
+    public RequestResult deleteCourseFileBatch(@RequestParam("ids") String ids, HttpServletRequest request) {
+        if (ids == null) {
+            return RequestResult.failure("批量删除失败，请稍后再试");
+        }
+        String[] id = ids.split("-");
+        List<Integer> fileIds = new ArrayList<>();
+        for (String s : id) {
+            fileIds.add(Integer.parseInt(s));
+        }
+        List<CourseFile> files = teacherService.getCourseFileByIds(fileIds);
+        if (files == null || files.size() == 0) {
+            return RequestResult.failure("批量删除失败，请稍后再试");
+        }
+        boolean success = teacherService.deleteCourseFileByIdBatch(fileIds);
+        if (!success) {
+            return RequestResult.failure("批量删除失败，请稍后再试");
+        }
+        //在文件目录中删除文件
+        for (CourseFile file : files) {
+            String path = request.getServletContext().getRealPath("/file/") + file.getPath();
+            File f = new File(path);
+            if (f.exists()) {
+                f.delete();
+            }
+        }
+        return RequestResult.success();
+    }
+
+    @ResponseBody
+    @PostMapping("/searchCourseFileByTerm")
+    public RequestResult searchCourseFileByTerm(@RequestParam("name") String name, @RequestParam("collegeId") Integer collegeId, HttpSession session) {
+        Map<String, Object> map = new HashMap<>();
+        CourseFileExample courseFileExample = new CourseFileExample();
+        CourseFileExample.Criteria criteria = courseFileExample.createCriteria();
+        Teacher teacher = (Teacher) session.getAttribute("user");
+        if (!"".equals(name.trim())) {
+            CourseExample courseExample = new CourseExample();
+            CourseExample.Criteria courseExampleCriteria = courseExample.createCriteria();
+            courseExampleCriteria.andNameLike("%" + name.trim() + "%").andTeacherIdEqualTo(15);
+            List<Integer> ids = teacherService.getCourseIdsByExample(courseExample);
+            if (ids.size() == 0) {
+                ids.add(0);
+            }
+            CourseChapterExample courseChapterExample = new CourseChapterExample();
+            CourseChapterExample.Criteria courseChapterExampleCriteria = courseChapterExample.createCriteria();
+            courseChapterExampleCriteria.andCourseIdIn(ids);
+            ids = teacherService.getChapterIdsByExample(courseChapterExample);
+            if (ids.size() == 0) {
+                ids.add(0);
+            }
+            criteria.andChapterIdIn(ids);
+            map.put("name", name);
+        }
+        if (collegeId != 0) {
+            CourseExample courseExample = new CourseExample();
+            CourseExample.Criteria courseExampleCriteria = courseExample.createCriteria();
+            courseExampleCriteria.andCollegeIdEqualTo(collegeId).andTeacherIdEqualTo(15);
+            List<Integer> ids = teacherService.getCourseIdsByExample(courseExample);
+            if (ids.size() == 0) {
+                ids.add(0);
+            }
+            CourseChapterExample courseChapterExample = new CourseChapterExample();
+            CourseChapterExample.Criteria courseChapterExampleCriteria = courseChapterExample.createCriteria();
+            courseChapterExampleCriteria.andCourseIdIn(ids);
+            ids = teacherService.getChapterIdsByExample(courseChapterExample);
+            if (ids.size() == 0) {
+                ids.add(0);
+            }
+            criteria.andChapterIdIn(ids);
+            map.put("collegeId", collegeId);
+        }
+        courseFileExample.setOrderByClause("record_time asc");
+        session.setAttribute("courseFileExample", courseFileExample);
+        session.setAttribute("courseFileQueryCriteria", map);
+        return RequestResult.success();
+    }
+
+    @RequestMapping("/editCourseFile/{id}")
+    public String editCourseFile(@PathVariable("id") Integer id, Map<String, Object> map, @RequestParam("pageNum") Integer pageNum) {
+        map.put("courseFileId", id);
+        map.put("pageNum", pageNum);
+        return "teacher/editCourseFile";
+    }
+
+    @ResponseBody
+    @PostMapping("/updateCourseFile")
+    public RequestResult updateCourseFile(@RequestParam(value = "file") MultipartFile file, @RequestParam("courseFileId") Integer courseFileId, HttpServletRequest request) {
+        if (file == null) {
+            return RequestResult.failure("文档更新失败，请稍后再试");
+        }
+        CourseFile courseFile = teacherService.getCourseFileById(courseFileId);
+        if (courseFile == null) {
+            return RequestResult.failure("文档更新失败，请稍后再试");
+        }
+        String basePath = request.getServletContext().getRealPath("/file/");
+        String dirPath = courseFile.getPath().substring(0, courseFile.getPath().lastIndexOf("\\") + 1);
+        String fileName = courseFile.getPath().substring(courseFile.getPath().lastIndexOf("\\") + 1);
+        System.out.println(basePath + dirPath + fileName);
+        //删除原来的文件
+        File oldFile = new File(basePath + courseFile.getPath());
+        if (!oldFile.exists()) {
+            return RequestResult.failure("文档更新失败，请稍后再试");
+        }
+        boolean delete = oldFile.delete();
+        if (!delete) {
+            return RequestResult.failure("文档更新失败，请稍后再试");
+        }
+        Date date = new Date();
+        fileName = date.getTime() + "_" + file.getOriginalFilename();
+        System.out.println(basePath + dirPath + fileName);
+        try {
+            file.transferTo(new File(basePath + dirPath + fileName));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return RequestResult.failure("文档更新失败，请稍后再试");
+        }
+        courseFile.setPath(dirPath + fileName);
+        courseFile.setRecordTime(date);
+        courseFile.setChapterId(null);
+        boolean success = teacherService.updateCourseFileByPrimaryKeySelective(courseFile);
+        if (!success) {
+            return RequestResult.failure("文档更新失败，请稍后再试");
+        }
+        return RequestResult.success();
+    }
+
+    @RequestMapping("/downloadCourseFile/{id}")
+    public ResponseEntity<byte[]> downloadTeacherTemplate(@PathVariable("id") Integer id, HttpServletRequest request) throws IOException {
+        String path = request.getServletContext().getRealPath("/file/");
+        CourseFile courseFile = teacherService.getCourseFileById(id);
+        String fileName = courseFile.getPath().substring(courseFile.getPath().indexOf("_") + 1);
+        File file = new File(path + courseFile.getPath());
+        // 设置响应头通知浏览器下载
+        HttpHeaders headers = new HttpHeaders();
+        // 转码，避免文件名显示不出中文
+        fileName = URLEncoder.encode(fileName, "UTF-8");
+        headers.setContentDispositionFormData("attachment", fileName);
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.OK);
+    }
 
     /*@ResponseBody
     @PostMapping("/searchDiscussPostByTerm")

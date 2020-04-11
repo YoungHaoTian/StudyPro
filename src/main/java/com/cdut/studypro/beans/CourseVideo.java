@@ -7,11 +7,19 @@ public class CourseVideo {
 
     private String path;
 
-    private Integer courseId;
+    private Integer chapterId;
 
     private Date recordTime;
 
-    private Integer teacherId;
+    private CourseChapter courseChapter;
+
+    public CourseChapter getCourseChapter() {
+        return courseChapter;
+    }
+
+    public void setCourseChapter(CourseChapter courseChapter) {
+        this.courseChapter = courseChapter;
+    }
 
     public Integer getId() {
         return id;
@@ -29,12 +37,12 @@ public class CourseVideo {
         this.path = path == null ? null : path.trim();
     }
 
-    public Integer getCourseId() {
-        return courseId;
+    public Integer getChapterId() {
+        return chapterId;
     }
 
-    public void setCourseId(Integer courseId) {
-        this.courseId = courseId;
+    public void setChapterId(Integer chapterId) {
+        this.chapterId = chapterId;
     }
 
     public Date getRecordTime() {
@@ -45,14 +53,6 @@ public class CourseVideo {
         this.recordTime = recordTime;
     }
 
-    public Integer getTeacherId() {
-        return teacherId;
-    }
-
-    public void setTeacherId(Integer teacherId) {
-        this.teacherId = teacherId;
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -61,9 +61,8 @@ public class CourseVideo {
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
         sb.append(", path=").append(path);
-        sb.append(", courseId=").append(courseId);
+        sb.append(", chapterId=").append(chapterId);
         sb.append(", recordTime=").append(recordTime);
-        sb.append(", teacherId=").append(teacherId);
         sb.append("]");
         return sb.toString();
     }
