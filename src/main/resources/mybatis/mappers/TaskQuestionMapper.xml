@@ -272,4 +272,27 @@
       score = #{score,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="selectByTaskId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from task_question
+    where task_id = #{id,jdbcType=INTEGER}
+  </select>
+  <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="false">
+        insert into task_question
+        (title,item_a,item_b,item_c,item_d,answer,task_id,score)
+        values
+        <foreach collection="questions" item="question" separator=",">
+            (
+            #{question.title,jdbcType=VARCHAR},
+            #{question.itemA,jdbcType=VARCHAR},
+            #{question.itemB,jdbcType=VARCHAR},
+            #{question.itemC,jdbcType=VARCHAR},
+            #{question.itemD,jdbcType=VARCHAR},
+            #{question.answer,jdbcType=VARCHAR},
+            #{question.taskId,jdbcType=INTEGER},
+            #{question.score,jdbcType=INTEGER}
+            )
+        </foreach>
+    </insert>
 </mapper>

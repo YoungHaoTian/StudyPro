@@ -165,6 +165,66 @@ public class TaskExample {
             return (Criteria) this;
         }
 
+        public Criteria andChapterIdIsNull() {
+            addCriterion("chapter_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andChapterIdIsNotNull() {
+            addCriterion("chapter_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andChapterIdEqualTo(Integer value) {
+            addCriterion("chapter_id =", value, "chapterId");
+            return (Criteria) this;
+        }
+
+        public Criteria andChapterIdNotEqualTo(Integer value) {
+            addCriterion("chapter_id <>", value, "chapterId");
+            return (Criteria) this;
+        }
+
+        public Criteria andChapterIdGreaterThan(Integer value) {
+            addCriterion("chapter_id >", value, "chapterId");
+            return (Criteria) this;
+        }
+
+        public Criteria andChapterIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("chapter_id >=", value, "chapterId");
+            return (Criteria) this;
+        }
+
+        public Criteria andChapterIdLessThan(Integer value) {
+            addCriterion("chapter_id <", value, "chapterId");
+            return (Criteria) this;
+        }
+
+        public Criteria andChapterIdLessThanOrEqualTo(Integer value) {
+            addCriterion("chapter_id <=", value, "chapterId");
+            return (Criteria) this;
+        }
+
+        public Criteria andChapterIdIn(List<Integer> values) {
+            addCriterion("chapter_id in", values, "chapterId");
+            return (Criteria) this;
+        }
+
+        public Criteria andChapterIdNotIn(List<Integer> values) {
+            addCriterion("chapter_id not in", values, "chapterId");
+            return (Criteria) this;
+        }
+
+        public Criteria andChapterIdBetween(Integer value1, Integer value2) {
+            addCriterion("chapter_id between", value1, value2, "chapterId");
+            return (Criteria) this;
+        }
+
+        public Criteria andChapterIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("chapter_id not between", value1, value2, "chapterId");
+            return (Criteria) this;
+        }
+
         public Criteria andTeacherIdIsNull() {
             addCriterion("teacher_id is null");
             return (Criteria) this;
@@ -225,63 +285,73 @@ public class TaskExample {
             return (Criteria) this;
         }
 
-        public Criteria andCourseIdIsNull() {
-            addCriterion("course_id is null");
+        public Criteria andTitleIsNull() {
+            addCriterion("title is null");
             return (Criteria) this;
         }
 
-        public Criteria andCourseIdIsNotNull() {
-            addCriterion("course_id is not null");
+        public Criteria andTitleIsNotNull() {
+            addCriterion("title is not null");
             return (Criteria) this;
         }
 
-        public Criteria andCourseIdEqualTo(Integer value) {
-            addCriterion("course_id =", value, "courseId");
+        public Criteria andTitleEqualTo(String value) {
+            addCriterion("title =", value, "title");
             return (Criteria) this;
         }
 
-        public Criteria andCourseIdNotEqualTo(Integer value) {
-            addCriterion("course_id <>", value, "courseId");
+        public Criteria andTitleNotEqualTo(String value) {
+            addCriterion("title <>", value, "title");
             return (Criteria) this;
         }
 
-        public Criteria andCourseIdGreaterThan(Integer value) {
-            addCriterion("course_id >", value, "courseId");
+        public Criteria andTitleGreaterThan(String value) {
+            addCriterion("title >", value, "title");
             return (Criteria) this;
         }
 
-        public Criteria andCourseIdGreaterThanOrEqualTo(Integer value) {
-            addCriterion("course_id >=", value, "courseId");
+        public Criteria andTitleGreaterThanOrEqualTo(String value) {
+            addCriterion("title >=", value, "title");
             return (Criteria) this;
         }
 
-        public Criteria andCourseIdLessThan(Integer value) {
-            addCriterion("course_id <", value, "courseId");
+        public Criteria andTitleLessThan(String value) {
+            addCriterion("title <", value, "title");
             return (Criteria) this;
         }
 
-        public Criteria andCourseIdLessThanOrEqualTo(Integer value) {
-            addCriterion("course_id <=", value, "courseId");
+        public Criteria andTitleLessThanOrEqualTo(String value) {
+            addCriterion("title <=", value, "title");
             return (Criteria) this;
         }
 
-        public Criteria andCourseIdIn(List<Integer> values) {
-            addCriterion("course_id in", values, "courseId");
+        public Criteria andTitleLike(String value) {
+            addCriterion("title like", value, "title");
             return (Criteria) this;
         }
 
-        public Criteria andCourseIdNotIn(List<Integer> values) {
-            addCriterion("course_id not in", values, "courseId");
+        public Criteria andTitleNotLike(String value) {
+            addCriterion("title not like", value, "title");
             return (Criteria) this;
         }
 
-        public Criteria andCourseIdBetween(Integer value1, Integer value2) {
-            addCriterion("course_id between", value1, value2, "courseId");
+        public Criteria andTitleIn(List<String> values) {
+            addCriterion("title in", values, "title");
             return (Criteria) this;
         }
 
-        public Criteria andCourseIdNotBetween(Integer value1, Integer value2) {
-            addCriterion("course_id not between", value1, value2, "courseId");
+        public Criteria andTitleNotIn(List<String> values) {
+            addCriterion("title not in", values, "title");
+            return (Criteria) this;
+        }
+
+        public Criteria andTitleBetween(String value1, String value2) {
+            addCriterion("title between", value1, value2, "title");
+            return (Criteria) this;
+        }
+
+        public Criteria andTitleNotBetween(String value1, String value2) {
+            addCriterion("title not between", value1, value2, "title");
             return (Criteria) this;
         }
 

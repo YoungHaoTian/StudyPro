@@ -48,7 +48,7 @@
                 工具栏 Tools
             </div>
             <!-- 搜索 start -->
-            <div style="position: absolute;top: -11px;left: 240px;">
+            <div style="position: absolute;top: -11px;left: 200px;">
                 <form class="navbar-form navbar-right" role="search"
                       action="" method="post">
                     <div class="form-group">
@@ -72,6 +72,14 @@
                                 </c:choose>
                             </c:forEach>
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="minTime" class="control-label wk-filed-label" style="margin-top: 20px">上传时间:</label>
+                        <input type="date" class="form-control" name="name" id="minTime"
+                               value="${sessionScope.courseFileQueryCriteria.get("minTime")}"/>
+                        <label for="maxTime" class="control-label wk-filed-label" style="margin-top: 20px">到:</label>
+                        <input type="date" class="form-control" name="name" id="maxTime"
+                               value="${sessionScope.courseFileQueryCriteria.get("maxTime")}"/>
                     </div>
                     <div class="form-group" style="margin-left: 20px">
                         <button type="button" id="search" class="btn btn-success search" data-toggle="tooltip"
@@ -378,6 +386,8 @@
     $("#search").on("click", function () {
         let name = $("#name").val().trim();
         let collegeId = $("#collegeId").val().trim();
+        let minTime = $("#minTime").val().trim();
+        let maxTime = $("#maxTime").val().trim();
         let loadingIndex = layer.msg('处理中', {icon: 16});
         //发送ajax请求
         $.ajax({
@@ -386,7 +396,9 @@
             dataType: "json",
             data: {
                 "name": name,
-                "collegeId": collegeId
+                "collegeId": collegeId,
+                "minTime": minTime,
+                "maxTime": maxTime
             },
             success: function (result) {
                 layer.close(loadingIndex);

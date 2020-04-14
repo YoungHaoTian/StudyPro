@@ -4,6 +4,7 @@ package com.cdut.studypro.services;
 import com.cdut.studypro.beans.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @description:
@@ -23,15 +24,11 @@ public interface TeacherService {
 
     List<Course> getAllCoursesWithChapterAndCollegeByTeacherId(Integer id);
 
-
-    /*List<DiscussPost> getDiscussPostByDiscussId(Integer id);
-
     boolean deleteDiscussPostByIdBatch(List<Integer> ids);
 
-    boolean insertDiscussPostSelective(DiscussPost discussPost);*/
+    boolean insertDiscussPostSelective(DiscussPost discussPost);
 
     boolean saveCourseVideo(CourseVideo collegeVideo);
-
 
     List<CourseVideo> searchCourseVideoByExampleWithCourseChapter(CourseVideoExample courseVideoExample);
 
@@ -72,4 +69,56 @@ public interface TeacherService {
     boolean deleteCourseFileByIdBatch(List<Integer> fileIds);
 
     boolean updateCourseFileByPrimaryKeySelective(CourseFile courseFile);
+
+    boolean saveDiscuss(Discuss discuss);
+
+    List<Discuss> getAllDiscussWithBLOBsAndCourseByExample(DiscussExample discussExample);
+
+    List<Course> getAllCoursesWithCollegeByTeacherId(Integer id);
+
+    boolean deleteDiscussByIdBatch(List<Integer> discussIds);
+
+    boolean deleteDiscussPostByDiscussIds(List<Integer> discussIds);
+
+    List<DiscussPost> getAllDiscussPostByMapWithStudentName(Map<String, Object> map1);
+
+    boolean saveTask(Task task);
+
+    List<Task> getAllTasksWithCourseAndChapterExample(TaskExample taskExample);
+
+    boolean deleteTaskById(Integer id);
+
+    boolean deleteTaskByIdBatch(List<Integer> taskIds);
+
+    Task getTaskWithCourseAndChapterById(Integer id);
+
+    Task getTaskById(Integer id);
+
+    boolean updateTaskByPrimaryKeySelective(Task task);
+
+    Discuss getDiscussById(Integer id);
+
+    boolean updateDiscussByPrimaryKeySelective(Discuss discuss);
+
+    List<TaskQuestion> getTaskQuestionsByTaskId(Integer id);
+
+    boolean deleteTaskQuestionByIdBatch(List<Integer> questionIds);
+
+    boolean insertTaskQuestion(TaskQuestion taskQuestion);
+
+    TaskQuestion getTaskQuestionsById(Integer id);
+
+    boolean updateTaskQuestionByPrimaryKeySelective(TaskQuestion taskQuestion);
+
+    boolean insertTaskQuestionBatch(List<TaskQuestion> taskQuestions);
+
+    Teacher getTeacherByIdWithCollege(Integer id);
+
+    Teacher getTeacherByIdWithoutCollegeAndCourse(Integer id);
+
+    boolean insertCourseChapterSelective(CourseChapter chapter);
+
+    List<CourseChapter> getAllChapterWithBLOBsAndCourseByExample(CourseChapterExample chapterExample);
+
+    boolean deleteChapterByIdBatch(List<Integer> chapterIds);
 }

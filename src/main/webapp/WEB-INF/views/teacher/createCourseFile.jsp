@@ -61,7 +61,7 @@
                                                     <c:if test="${!statu.first}">
                                                 <li class="list-group-item tree-closed">
                                                     </c:if>
-                                                    <span class="glyphicon glyphicon-tasks"></span>&nbsp;${course.name}:${course.college.name}
+                                                    <span class="glyphicon glyphicon-tasks"></span>&nbsp;${course.name}(${course.college.name})
                                                     <span class="badge"
                                                           style="float:right">${course.chapters.size()}</span>
                                                     <c:if test="${!empty course.chapters}">
@@ -74,7 +74,7 @@
                                                             <c:forEach items="${course.chapters}" var="chapter">
                                                                 <li style="height:30px;">
                                                                     <a href="javascript:void(0)" class="chapter"
-                                                                       text="${course.name}:${course.college.name}:${chapter.title}"
+                                                                       text="${course.name}(${course.college.name}) > ${chapter.title}"
                                                                        chapterId="${chapter.id}"
                                                                        courseId="${course.id}"><span
                                                                             class="glyphicon glyphicon-tags"></span>&nbsp;${chapter.title}
@@ -139,12 +139,13 @@
             }
         });
     });
-     $(".chapter").on("click", function () {
+    $(".chapter").on("click", function () {
         $("#chapter").val($(this).attr("text"));
         $("#chapter").attr("chapterId", $(this).attr("chapterId"));
         $("#chapter").attr("courseId", $(this).attr("courseId"));
     });
-     function createCourseFile() {
+
+    function createCourseFile() {
         let chapterId = $("#chapter").attr("chapterId");
         let courseId = $("#chapter").attr("courseId");
         let file = $("#file").val();

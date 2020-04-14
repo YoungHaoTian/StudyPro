@@ -100,15 +100,33 @@
                                 </button>
                             </div>
                         </div>
-
                     </div>
 
                     <div class="panel panel-info wk-accordion-header">
                         <div class="panel-heading">
-                            <a data-toggle="collapse" href="#DMenu" data-parent="#accordion" class="click">作业管理&nbsp;<span
+                            <a data-toggle="collapse" href="#DMenu" data-parent="#accordion" class="click">课程章节管理&nbsp;<span
                                     class=" glyphicon glyphicon-hand-down" aria-hidden="true"></span></a>
                         </div>
                         <div id="DMenu" class="panel-collapse collapse">
+                            <div class="list-group wk-accordion-list-group">
+                                <button type="button" class="list-group-item" href="${APP_PATH}/teacher/createChapter">
+                                    新增章节&nbsp;<span class=" glyphicon glyphicon-triangle-right"
+                                                    aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="list-group-item" href="${APP_PATH}/teacher/searchChapter">
+                                    章节查询&nbsp;<span class=" glyphicon glyphicon-triangle-right"
+                                                      aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-info wk-accordion-header">
+                        <div class="panel-heading">
+                            <a data-toggle="collapse" href="#EMenu" data-parent="#accordion" class="click">作业管理&nbsp;<span
+                                    class=" glyphicon glyphicon-hand-down" aria-hidden="true"></span></a>
+                        </div>
+                        <div id="EMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
                                 <button type="button" class="list-group-item" href="${APP_PATH}/teacher/createTask">发布作业&nbsp;<span
                                         class=" glyphicon glyphicon-triangle-right"
@@ -123,11 +141,16 @@
 
                     <div class="panel panel-info wk-accordion-header">
                         <div class="panel-heading">
-                            <a data-toggle="collapse" href="#EMenu" data-parent="#accordion" class="click">个人信息管理&nbsp;<span
+                            <a data-toggle="collapse" href="#FMenu" data-parent="#accordion" class="click">个人信息管理&nbsp;<span
                                     class=" glyphicon glyphicon-hand-down" aria-hidden="true"></span></a>
                         </div>
-                        <div id="EMenu" class="panel-collapse collapse">
+                        <div id="FMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
+                                 <button type="button" class="list-group-item"
+                                        href="${APP_PATH}/teacher/viewTeacherInfo">
+                                    个人信息查看&nbsp;<span class=" glyphicon glyphicon-triangle-right"
+                                                      aria-hidden="true"></span>
+                                </button>
                                 <button type="button" class="list-group-item"
                                         href="${APP_PATH}/teacher/updateTeacherInfo">
                                     个人信息修改&nbsp;<span class=" glyphicon glyphicon-triangle-right"

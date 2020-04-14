@@ -28,6 +28,16 @@ public class CourseChapter {
 
     private List<CourseFile> files;
 
+    private List<Task> tasks;
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
+    }
+
     public List<CourseVideo> getVideos() {
         return videos;
     }

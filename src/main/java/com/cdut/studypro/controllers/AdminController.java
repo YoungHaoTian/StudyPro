@@ -34,7 +34,6 @@ import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -185,9 +184,9 @@ public class AdminController {
 
     //异常处理
     @ResponseBody
-    @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public RequestResult handException(MaxUploadSizeExceededException e, HttpServletRequest request) {
-        return RequestResult.failure("文件超过了大小，上传失败！");
+    @ExceptionHandler(RuntimeException.class)
+    public RequestResult handException(RuntimeException e, HttpServletRequest request) {
+        return RequestResult.failure(e.getMessage());
     }
 
 
@@ -800,7 +799,7 @@ public class AdminController {
         List<Teacher> teachers = adminService.getAllTeachersWithCollegeAndCourseByExample(teacherExample);
         //使用PageInfo包装查询结果，PageInfo包含了非常全面的分页属性，只需要将PageInfo交给页面就可以了
         //navigatePages：连续显示多少页
-        PageInfo<Student> page = new PageInfo(teachers, 10);
+        PageInfo<Teacher> page = new PageInfo(teachers, 10);
         map.put("pageInfo", page);
         return "admin/searchTeacher";
     }
@@ -1035,7 +1034,7 @@ public class AdminController {
         CollegeExample collegeExample = (CollegeExample) session.getAttribute("collegeExample");
         PageHelper.startPage(pageNum, 10);
         List<College> colleges = adminService.getAllCollegesWithBLOBsByExample(collegeExample);
-        PageInfo<Student> page = new PageInfo(colleges, 10);
+        PageInfo<College> page = new PageInfo(colleges, 10);
         map.put("pageInfo", page);
         return "admin/searchCollege";
     }
@@ -1177,7 +1176,7 @@ public class AdminController {
         CourseExample courseExample = (CourseExample) session.getAttribute("courseExample");
         PageHelper.startPage(pageNum, 10);
         List<Course> courses = adminService.getAllCoursesWithBLOBsCollegeAndTeacherByExample(courseExample);
-        PageInfo<Student> page = new PageInfo(courses, 10);
+        PageInfo<Course> page = new PageInfo(courses, 10);
         map.put("pageInfo", page);
         map.put("colleges", adminService.getAllColleges());
         map.put("courses", courses);
@@ -1317,7 +1316,7 @@ public class AdminController {
         DiscussExample discussExample = (DiscussExample) session.getAttribute("discussExample");
         PageHelper.startPage(pageNum, 10);
         List<Discuss> discusses = adminService.getAllDiscussWithBLOBsAndTeacherAndCourseByExample(discussExample);
-        PageInfo<Student> page = new PageInfo(discusses, 10);
+        PageInfo<Discuss> page = new PageInfo(discusses, 10);
         map.put("pageInfo", page);
         return "admin/searchDiscuss";
     }
@@ -1425,14 +1424,14 @@ public class AdminController {
         for (String s : ids) {
             discussIds.add(Integer.parseInt(s));
         }
+        //删除讨论的同时删除对应的讨论内容
         boolean b = adminService.deleteDiscussByIdBatch(discussIds);
         if (!b) {
             return RequestResult.failure("批量删除失败，请稍后再试");
         }
+        adminService.deleteDiscussPostByDiscussIds(discussIds);
         return RequestResult.success();
-
     }
-
 
     @RequestMapping("/createNotice")
     public String createNotice() {
@@ -1458,7 +1457,7 @@ public class AdminController {
         NoticeExample noticeExample = (NoticeExample) session.getAttribute("noticeExample");
         PageHelper.startPage(pageNum, 10);
         List<Notice> notices = adminService.getAllNoticesByExample(noticeExample);
-        PageInfo<Student> page = new PageInfo(notices, 10);
+        PageInfo<Notice> page = new PageInfo(notices, 10);
         map.put("pageInfo", page);
         return "admin/searchNotice";
     }
@@ -1519,8 +1518,9 @@ public class AdminController {
             if (!"".equals(maxTime.trim())) {
                 Date max = simpleDateFormat.parse(maxTime);
                 criteria.andRecordTimeLessThanOrEqualTo(max);
-                map.put("minTime", maxTime);
+                map.put("maxTime", maxTime);
             }
+            noticeExample.setOrderByClause("record_time desc");
             session.setAttribute("noticeExample", noticeExample);
             session.setAttribute("noticeQueryCriteria", map);
         } catch (Exception e) {

@@ -56,17 +56,17 @@
         <!--<table tableName="admin" domainObjectName="Admin"/>
         <table tableName="collect" domainObjectName="Collect"/>
         <table tableName="college" domainObjectName="College"/>
-        <table tableName="course" domainObjectName="Course"/>-->
+        <table tableName="course" domainObjectName="Course"/>
         <table tableName="course_file" domainObjectName="CourseFile"/>
         <table tableName="course_video" domainObjectName="CourseVideo"/>
         <table tableName="course_chapter" domainObjectName="CourseChapter"/>
-       <!-- <table tableName="discuss" domainObjectName="Discuss"/>
+       <table tableName="discuss" domainObjectName="Discuss"/>
         <table tableName="discuss_post" domainObjectName="DiscussPost"/>
         <table tableName="notice" domainObjectName="Notice"/>
         <table tableName="student" domainObjectName="Student"/>
-        <table tableName="student_task" domainObjectName="StudentTask"/>
+        <table tableName="student_task" domainObjectName="StudentTask"/>-->
         <table tableName="task" domainObjectName="Task"/>
-        <table tableName="task_question" domainObjectName="TaskQuestion"/>
+        <!--<table tableName="task_question" domainObjectName="TaskQuestion"/>
         <table tableName="teacher" domainObjectName="Teacher"/>-->
     </context>
 </generatorConfiguration>

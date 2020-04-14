@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" %>
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
@@ -10,13 +11,12 @@
     <link rel="shortcut icon" href="https://8.url.cn/edu/edu_modules/edu-ui/img/nohash/favicon.ico">
     <link rel="stylesheet" href="${APP_PATH}/resources1/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="${APP_PATH}/resources1/bootstrap/css/bootstrap-theme.min.css">
-    <link rel="stylesheet" href="${APP_PATH}/resources1/css/wukong-ui.css">
-    <link rel="stylesheet" href="${APP_PATH}/resources1/bootstrap/css/bootstrap-select.min.css">
     <link rel="stylesheet" href="${APP_PATH}/resources1/ztree/zTreeStyle.css">
     <script type="text/javascript" src="${APP_PATH}/resources1/js/jquery-3.1.1.js"></script>
-    <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap-select.min.js"></script>
-
     <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="${APP_PATH}/resources1/css/wukong-ui.css">
+    <link rel="stylesheet" href="${APP_PATH}/resources1/bootstrap/css/bootstrap-select.min.css">
+    <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap-select.min.js"></script>
     <style>
         .tree li {
             list-style-type: none;
@@ -30,8 +30,8 @@
     <div class="col-lg-12">
         <ul class="breadcrumb wk-breadcrumb">
             <li><a href="javascript:void(0)">大学生学习平台</a></li>
-            <li><a href="javascript:void(0)">课程视频管理</a></li>
-            <li><a href="javascript:void(0)">上传课程视频</a></li>
+            <li><a href="javascript:void(0)">作业管理</a></li>
+            <li><a href="javascript:void(0)">新增作业</a></li>
         </ul>
     </div>
 </div>
@@ -40,7 +40,7 @@
     <div class="col-lg-12">
         <div class="panel panel-default wk-panel ">
             <div class="panel-heading">
-                上传视频 Create Data
+                新增作业 Create Data
             </div>
             <form action="" method="POST" enctype="multipart/form-data">
                 <div class="panel-body">
@@ -75,7 +75,7 @@
                                                             <c:forEach items="${course.chapters}" var="chapter">
                                                                 <li style="height:30px;">
                                                                     <a href="javascript:void(0)" class="chapter"
-                                                                       text="${course.name}(${course.college.name}) > ${chapter.title}"
+                                                                       text="${course.name}:${course.college.name}:${chapter.title}"
                                                                        chapterId="${chapter.id}"
                                                                        courseId="${course.id}"><span
                                                                             class="glyphicon glyphicon-tags"></span>&nbsp;${chapter.title}
@@ -106,17 +106,17 @@
                         </div>
                         <div class="form-inline">
                             <div class="form-group">
-                                <label for="file" class="control-label wk-filed-label">选择文件: </label>
+                                <label for="title" class="control-label wk-filed-label">作业标题: </label>
                                 <div class="input-group">
-                                    <input required="required" id="file" name="file" type="file"
-                                           class="form-control wk-long-2col-input"/>
+                                    <textarea required="required" id="title" name="title"
+                                              class="form-control wk-long-2col-input"></textarea>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="panel-footer wk-panel-footer">
-                    <button type="button" class="btn btn-info" onclick="createCourseVideo();">提&nbsp;&nbsp;交</button>
+                    <button type="button" class="btn btn-info" onclick="createTask();">提&nbsp;&nbsp;交</button>
                 </div>
             </form>
         </div>
@@ -146,49 +146,45 @@
         $("#chapter").attr("courseId", $(this).attr("courseId"));
     });
 
-    function createCourseVideo() {
+    function createTask() {
         let chapterId = $("#chapter").attr("chapterId");
         let courseId = $("#chapter").attr("courseId");
-        let file = $("#file").val();
+        let title = $("#title").val();
         if (chapterId === "0" || courseId === "0") {
-            layer.msg("你还没有选择视频所属课程及章节", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("你还没有选择所属课程及章节", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
-        if (file === "") {
-            layer.msg("请选择需要上传的文件", {time: 1500, icon: 5, shift: 6}, function () {
+        if (title.trim() === "") {
+            layer.msg("作业标题不能为空", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
-        //判断上传文件的后缀名
-        let strExtension = file.substr(file.lastIndexOf('.') + 1);
-        if (strExtension !== "mp4" && strExtension !== "avi") {
-            layer.msg("请上传mp4或avi格式的视频文件", {time: 1500, icon: 5, shift: 6}, function () {
+        if (title.trim().length > 100) {
+            layer.msg("作业标题内容长度不能超过100", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
-        //上传文件
-        let formData = new FormData();
         let loadingIndex = layer.msg('处理中', {icon: 16});
-        formData.append("file", $("#file")[0].files[0]);
-        formData.append("chapterId", chapterId);
-        formData.append("courseId", courseId);
         $.ajax({
-            url: "${APP_PATH}/teacher/saveCourseVideo",
-            type: 'POST',
-            dataType: 'json',
-            crossDomain: true, // 如果用到跨域，需要后台开启CORS
-            data: formData,
-            processData: false,
-            contentType: false,
+            url: "${APP_PATH}/teacher/saveTask",
+            type: "POST",
+            // contentType: "application/json",//不使用contentType: “application/json”则data可以是对象,使用contentType: “application/json”则data只能是json字符串
+            dataType: "json",
+            data: {
+                "chapterId": chapterId,
+                "title": title.trim()
+            },
             success: function (result) {
                 layer.close(loadingIndex);
+                console.log(result);
                 if (result.code === 200) {
                     layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
                     });
                 }
                 if (result.code === 100) {
-                    layer.msg("视频上传成功", {time: 1000, icon: 1}, function () {
+                    console.log("success");
+                    layer.msg("作业添加成功", {time: 1500, icon: 6}, function () {
                     });
                 }
             },

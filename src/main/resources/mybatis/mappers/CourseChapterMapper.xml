@@ -18,6 +18,9 @@
     <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.cdut.studypro.beans.CourseChapter">
         <result column="content" jdbcType="LONGVARCHAR" property="content"/>
     </resultMap>
+    <resultMap extends="ResultMapWithBLOBs" id="ResultMapWithBLOBsAndCourse" type="com.cdut.studypro.beans.CourseChapter">
+        <association property="course" column="course_id" select="com.cdut.studypro.daos.CourseMapper.selectByPrimaryKeyWithIdNameAndCollege"/>
+    </resultMap>
     <sql id="Example_Where_Clause">
         <where>
             <foreach collection="oredCriteria" item="criteria" separator="or">
@@ -101,6 +104,23 @@
             order by ${orderByClause}
         </if>
     </select>
+     <select id="selectByExampleWithBLOBsAndCourse" parameterType="com.cdut.studypro.beans.CourseChapterExample"
+            resultMap="ResultMapWithBLOBsAndCourse">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from course_chapter
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
     <select id="selectByExample" parameterType="com.cdut.studypro.beans.CourseChapterExample" resultMap="BaseResultMap">
         select
         <if test="distinct">
@@ -115,6 +135,7 @@
             order by ${orderByClause}
         </if>
     </select>
+
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
         select
         <include refid="Base_Column_List"/>
@@ -264,6 +285,7 @@
         select id,title
         from course_chapter
         where course_id=#{id,jdbcType=INTEGER}
+        order by record_time asc
     </select>
     <select id="selectChapterIdByExample" parameterType="com.cdut.studypro.beans.CourseChapterExample"
             resultType="java.lang.Integer">

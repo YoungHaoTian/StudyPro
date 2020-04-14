@@ -4,6 +4,7 @@
     <resultMap id="BriefResultMap" type="com.cdut.studypro.beans.DiscussPost">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="student_name" jdbcType="INTEGER" property="student.name"/>
+        <result column="student_id" jdbcType="INTEGER" property="studentId"/>
         <result column="record_time" jdbcType="TIMESTAMP" property="recordTime"/>
         <result column="content" jdbcType="LONGVARCHAR" property="content"/>
     </resultMap>
@@ -293,7 +294,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
     <select id="selectByDiscussIdWithStudentName" parameterType="map" resultMap="BriefResultMap">
-        select d.id,d.content,d.record_time,s.name student_name
+        select d.id,d.content,d.student_id,d.record_time,s.name student_name
         from discuss_post d
         left outer join student s
         on d.student_id=s.id
@@ -301,9 +302,18 @@
         <if test="name!=null">
             and s.name like "%"#{name}"%"
         </if>
-        <if test="name==null">
-            or d.student_id=0
+        <if test="content!=null">
+            and d.content like "%"#{content}"%"
         </if>
+        <if test="minDate!=null">
+            and d.record_time >= #{minDate,jdbcType=TIMESTAMP}
+        </if>
+        <if test="maxDate!=null">
+            and d.record_time &lt;= #{maxDate,jdbcType=TIMESTAMP}
+        </if>
+        <!--<if test="name==null">
+            or d.student_id=0
+        </if>-->
         order by record_time asc
     </select>
 </mapper>

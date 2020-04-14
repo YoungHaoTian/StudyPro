@@ -52,7 +52,7 @@
                                     <input required="required" id="name" name="name" type="text" maxlength="5"
                                            class="form-control wk-normal-input"
                                            value="${teacher.name.trim()=="0"?"":(teacher.name.trim()==""?"":teacher.name) }"
-                                           placeholder=" 请输入学生姓名"/>
+                                           placeholder=" 请输入教师姓名"/>
                                 </div>
                             </div>
 
@@ -63,7 +63,7 @@
                                            oninput="value=value.replace(/[^\d]/g,'')" type="text" maxlength="18"
                                            class="form-control wk-normal-input"
                                            value="${teacher.number.trim()=="0"?"":(teacher.number.trim()==""?"":teacher.number) }"
-                                           placeholder="请输入学生学号"/>
+                                           placeholder="请输入教师编号"/>
                                 </div>
                             </div>
                             <div class="form-group">

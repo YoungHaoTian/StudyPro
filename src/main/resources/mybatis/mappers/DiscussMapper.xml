@@ -16,6 +16,12 @@
         <association property="course" select="com.cdut.studypro.daos.CourseMapper.selectByPrimaryKeyWithoutBLOBs"
                      column="course_id"/>
     </resultMap>
+    <resultMap extends="ResultMapWithBLOBs" id="ResultMapWithBLOBsAndCourse"
+               type="com.cdut.studypro.beans.Discuss">
+        <association property="course"
+                     select="com.cdut.studypro.daos.CourseMapper.selectByPrimaryKeyWithIdNameAndCollege"
+                     column="course_id"/>
+    </resultMap>
     <sql id="Example_Where_Clause">
         <where>
             <foreach collection="oredCriteria" item="criteria" separator="or">
@@ -285,4 +291,22 @@
             order by ${orderByClause}
         </if>
     </select>
+    <select id="selectByExampleWithBLOBsAndCourse" parameterType="com.cdut.studypro.beans.DiscussExample"
+            resultMap="ResultMapWithBLOBsAndCourse">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from discuss
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
 </mapper>

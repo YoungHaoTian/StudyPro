@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" %>
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
@@ -10,13 +11,12 @@
     <link rel="shortcut icon" href="https://8.url.cn/edu/edu_modules/edu-ui/img/nohash/favicon.ico">
     <link rel="stylesheet" href="${APP_PATH}/resources1/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="${APP_PATH}/resources1/bootstrap/css/bootstrap-theme.min.css">
-    <link rel="stylesheet" href="${APP_PATH}/resources1/css/wukong-ui.css">
-    <link rel="stylesheet" href="${APP_PATH}/resources1/bootstrap/css/bootstrap-select.min.css">
     <link rel="stylesheet" href="${APP_PATH}/resources1/ztree/zTreeStyle.css">
     <script type="text/javascript" src="${APP_PATH}/resources1/js/jquery-3.1.1.js"></script>
-    <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap-select.min.js"></script>
-
     <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="${APP_PATH}/resources1/css/wukong-ui.css">
+    <link rel="stylesheet" href="${APP_PATH}/resources1/bootstrap/css/bootstrap-select.min.css">
+    <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap-select.min.js"></script>
     <style>
         .tree li {
             list-style-type: none;
@@ -30,8 +30,8 @@
     <div class="col-lg-12">
         <ul class="breadcrumb wk-breadcrumb">
             <li><a href="javascript:void(0)">大学生学习平台</a></li>
-            <li><a href="javascript:void(0)">课程视频管理</a></li>
-            <li><a href="javascript:void(0)">上传课程视频</a></li>
+            <li><a href="javascript:void(0)">个人信息管理</a></li>
+            <li><a href="javascript:void(0)">查看个人信息</a></li>
         </ul>
     </div>
 </div>
@@ -39,10 +39,8 @@
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default wk-panel ">
-            <div class="panel-heading">
-                上传视频 Create Data
-            </div>
-            <form action="" method="POST" enctype="multipart/form-data">
+            <div class="panel-heading">查看个人信息 View Data</div>
+            <form>
                 <div class="panel-body">
                     <div class="row">
                         <div class="form-inline">
@@ -53,7 +51,7 @@
                                             <ul style="padding-left:0px;" class="list-group">
                                                 <li class="list-group-item tree-closed">
                                                     <a href="javascript:void(0)"><span
-                                                            class="glyphicon glyphicon-tasks"></span>&nbsp;选择所授课程及章节</a>
+                                                            class="glyphicon glyphicon-tasks"></span>&nbsp;所授课程及章节</a>
                                                 </li>
                                                 <c:forEach items="${courses}" var="course" varStatus="statu">
                                                 <c:if test="${statu.first}">
@@ -75,7 +73,7 @@
                                                             <c:forEach items="${course.chapters}" var="chapter">
                                                                 <li style="height:30px;">
                                                                     <a href="javascript:void(0)" class="chapter"
-                                                                       text="${course.name}(${course.college.name}) > ${chapter.title}"
+                                                                       text="${course.name}:${course.college.name}:${chapter.title}"
                                                                        chapterId="${chapter.id}"
                                                                        courseId="${course.id}"><span
                                                                             class="glyphicon glyphicon-tags"></span>&nbsp;${chapter.title}
@@ -91,42 +89,101 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
+                    </div>
+                </div>
+            </form>
+            <form>
+                <div class="panel-body">
+                    <div class="row" style="text-align: left">
                         <div class="form-inline">
                             <div class="form-group">
-                                <label for="chapter" class="control-label wk-filed-label">所选课程及章节: </label>
+                                <label for="name" class="control-label wk-filed-label">姓名:</label>
                                 <div class="input-group">
-                                    <input required="required" id="chapter" name="chapter" chapterId="0" courseId="0"
-                                           type="text"
-                                           readonly="readonly"
-                                           class="form-control wk-long-2col-input"/>
+                                    <input required="required" id="name" name="name" type="text"
+                                           class="form-control wk-normal-input" value="${teacher.name}"
+                                           readonly="readonly"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="number" class="control-label wk-filed-label">编号:</label>
+                                <div class="input-group">
+                                    <input id="number" name="number" type="text" readonly="readonly"
+                                           class="form-control wk-normal-input" value="${teacher.number}"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="college" class="control-label wk-filed-label">所属学院:</label>
+                                <div class="input-group">
+                                    <input id="college" name="college" type="text" readonly="readonly"
+                                           class="form-control wk-normal-input" value="${teacher.college.name}"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <label for="telephone" class="control-label wk-filed-label">电话:</label>
+                                <div class="input-group">
+                                    <input required="required" id="telephone" name="telephone" type="text"
+                                           class="form-control wk-normal-input" value="${teacher.telephone}"
+                                           readonly="readonly"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="gender" class="control-label wk-filed-label">性别: </label>
+                                <div class="input-group">
+                                    <input required="required" id="gender" name="gender" type="text"
+                                           class="form-control wk-normal-input" value="${teacher.gender==0?'男':'女'}"
+                                           readonly="readonly"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="idCardNo" class="control-label wk-filed-label">身份证号:</label>
+                                <div class="input-group">
+                                    <input required="required" id="idCardNo" name="idCardNo" type="text"
+                                           class="form-control wk-normal-input" value="${teacher.idCardNo}"
+                                           readonly="readonly"/>
                                 </div>
                             </div>
                         </div>
                         <div class="form-inline">
                             <div class="form-group">
-                                <label for="file" class="control-label wk-filed-label">选择文件: </label>
+                                <label for="account" class="control-label wk-filed-label">账户: </label>
                                 <div class="input-group">
-                                    <input required="required" id="file" name="file" type="file"
-                                           class="form-control wk-long-2col-input"/>
+                                    <input required="required" id="account" name="account" type="text"
+                                           class="form-control wk-normal-input" value="${teacher.account}"
+                                           readonly="readonly"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="password" class="control-label wk-filed-label">密码: </label>
+                                <div class="input-group">
+                                    <input required="required" id="password" name="password" type="text"
+                                           class="form-control wk-normal-input" value="${teacher.password}"
+                                           readonly="readonly"/>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email" class="control-label wk-filed-label">邮箱地址: </label>
+                                <div class="input-group">
+                                    <input required="required" id="email" name="email" type="text"
+                                           class="form-control wk-normal-input" value="${teacher.email}"
+                                           readonly="readonly"/>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="panel-footer wk-panel-footer">
-                    <button type="button" class="btn btn-info" onclick="createCourseVideo();">提&nbsp;&nbsp;交</button>
-                </div>
             </form>
+
         </div>
     </div>
 </div>
-
 </body>
 </html>
 <script src="${APP_PATH}/resources1/ztree/jquery.ztree.all-3.5.min.js"></script>
-<script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
     $(function () {
         $(".list-group-item").click(function () {
@@ -140,62 +197,4 @@
             }
         });
     });
-    $(".chapter").on("click", function () {
-        $("#chapter").val($(this).attr("text"));
-        $("#chapter").attr("chapterId", $(this).attr("chapterId"));
-        $("#chapter").attr("courseId", $(this).attr("courseId"));
-    });
-
-    function createCourseVideo() {
-        let chapterId = $("#chapter").attr("chapterId");
-        let courseId = $("#chapter").attr("courseId");
-        let file = $("#file").val();
-        if (chapterId === "0" || courseId === "0") {
-            layer.msg("你还没有选择视频所属课程及章节", {time: 1500, icon: 5, shift: 6}, function () {
-            });
-            return;
-        }
-        if (file === "") {
-            layer.msg("请选择需要上传的文件", {time: 1500, icon: 5, shift: 6}, function () {
-            });
-            return;
-        }
-        //判断上传文件的后缀名
-        let strExtension = file.substr(file.lastIndexOf('.') + 1);
-        if (strExtension !== "mp4" && strExtension !== "avi") {
-            layer.msg("请上传mp4或avi格式的视频文件", {time: 1500, icon: 5, shift: 6}, function () {
-            });
-            return;
-        }
-        //上传文件
-        let formData = new FormData();
-        let loadingIndex = layer.msg('处理中', {icon: 16});
-        formData.append("file", $("#file")[0].files[0]);
-        formData.append("chapterId", chapterId);
-        formData.append("courseId", courseId);
-        $.ajax({
-            url: "${APP_PATH}/teacher/saveCourseVideo",
-            type: 'POST',
-            dataType: 'json',
-            crossDomain: true, // 如果用到跨域，需要后台开启CORS
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (result) {
-                layer.close(loadingIndex);
-                if (result.code === 200) {
-                    layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
-                    });
-                }
-                if (result.code === 100) {
-                    layer.msg("视频上传成功", {time: 1000, icon: 1}, function () {
-                    });
-                }
-            },
-            error: function () {
-                layer.msg("网络异常，请稍后再试", {time: 1500, icon: 5, shift: 6}, function () {
-                });
-            }
-        });
-    }
 </script>

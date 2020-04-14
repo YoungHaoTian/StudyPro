@@ -285,6 +285,11 @@
             });
             return;
         }
+        if (pageNum ==${pageInfo.pageNum}) {
+            layer.msg("当前已经是第"+pageNum+"页", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
         window.location.href = "${APP_PATH}/admin/searchNotice?pageNum=" + pageNum;
     });
 
@@ -359,7 +364,7 @@
     //查询按钮
     $("#search").on("click", function () {
         let title = $("#title").val().trim();
-        let minTime = $("#minTime").val();
+        let minTime = $("#minTime").val().trim();
         let maxTime = $("#maxTime").val().trim();
         let loadingIndex = layer.msg('处理中', {icon: 16});
         //发送ajax请求

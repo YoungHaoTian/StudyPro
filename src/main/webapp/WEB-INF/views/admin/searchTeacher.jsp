@@ -329,6 +329,11 @@
             });
             return;
         }
+        if (pageNum ==${pageInfo.pageNum}) {
+            layer.msg("当前已经是第"+pageNum+"页", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
         window.location.href = "${APP_PATH}/admin/searchTeacher?pageNum=" + pageNum;
     }
 

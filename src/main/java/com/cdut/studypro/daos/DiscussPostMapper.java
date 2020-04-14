@@ -42,4 +42,6 @@ public interface DiscussPostMapper {
     DiscussPost selectByPrimaryKeyWithStudentName(Integer id);
 
     List<DiscussPost> selectByDiscussIdWithStudentName(Map<String, Object> map);
+
+
 }

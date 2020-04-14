@@ -34,8 +34,8 @@
     <div class="col-lg-12">
         <ul class="breadcrumb wk-breadcrumb">
             <li><a href="javascript:void(0)">大学生学习平台</a></li>
-            <li><a href="javascript:void(0)">讨论管理</a></li>
-            <li><a href="javascript:void(0)">讨论查询</a></li>
+            <li><a href="javascript:void(0)">课程章节管理</a></li>
+            <li><a href="javascript:void(0)">章节查询</a></li>
         </ul>
     </div>
 </div>
@@ -47,26 +47,45 @@
                 工具栏 Tools
             </div>
             <!-- 搜索 start -->
-            <div style="position: absolute;top: -11px;left: 240px;">
+            <div style="position: absolute;top: -11px;left: 200px;">
                 <form class="navbar-form navbar-right" role="search" action="" method="post">
                     <div class="form-group">
-                        <label for="course" class="control-label wk-filed-label"
+                        <label for="courseId" class="control-label wk-filed-label"
                                style="margin-top: 20px">所属课程:</label>
-                        <input type="text" maxlength="18"
-                               class="form-control" id="course" name="course" placeholder="请输入所属课程"
-                               value="${sessionScope.discussQueryCriteria.get("course")}">
+                        <select id="courseId" class="selectpicker" name="courseId">
+                            <option value="0">请选择所属课程</option>
+                            <c:forEach items="${courses}" var="course">
+                                <c:choose>
+                                    <c:when test="${course.id == sessionScope.chapterQueryCriteria.get('courseId')}">
+                                        <option value="${course.id}"
+                                                selected="selected">${course.name}(${course.college.name})</option>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <option value="${course.id}">${course.name}(${course.college.name})</option>
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:forEach>
+                        </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="teacher" class="control-label wk-filed-label"
-                               style="margin-top: 20px">发布教师:</label>
+                        <label for="title" class="control-label wk-filed-label"
+                               style="margin-top: 20px">章节标题:</label>
                         <input type="text" maxlength="18"
-                               class="form-control" id="teacher" name="teacher" placeholder="请输入发布教师"
-                               value="${sessionScope.discussQueryCriteria.get("teacher")}">
+                               class="form-control" id="title" name="title" placeholder="请输入章节标题"
+                               value="${sessionScope.chapterQueryCriteria.get("title")}">
+                    </div>
+                    <div class="form-group">
+                        <label for="minTime" class="control-label wk-filed-label" style="margin-top: 20px">发布时间:</label>
+                        <input type="date" class="form-control" name="name" id="minTime"
+                               value="${sessionScope.chapterQueryCriteria.get("minTime")}"/>
+                        <label for="maxTime" class="control-label wk-filed-label" style="margin-top: 20px">到:</label>
+                        <input type="date" class="form-control" name="name" id="maxTime"
+                               value="${sessionScope.chapterQueryCriteria.get("maxTime")}"/>
                     </div>
                     <div class="form-group" style="margin-left: 50px">
                         <button type="button" id="search" class="btn btn-success search" data-toggle="tooltip"
-                                data-placement="left" title="查询讨论" style="margin-right: 20px">
+                                data-placement="left" title="查询章节" style="margin-right: 20px">
                             <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                             查询
                         </button>
@@ -96,55 +115,47 @@
                         <input type="checkbox" id="select_all"/>
                         <label for="select_all" style="margin-bottom: 0px;font-weight: 200">全选</label>
                     </th>
-                    <th>讨论标题</th>
-                    <th>讨论内容</th>
-                    <th style="width:200px">所属课程</th>
-                    <th style="width:200px">发布教师</th>
+                    <th>章节标题</th>
+                    <th>章节内容</th>
+                    <th>所属课程(学院)</th>
                     <th style="width:200px">发布日期</th>
                     <th style="width:300px">选择操作</th>
                 </tr>
                 </thead>
                 <tbody>
-                <c:forEach items="${pageInfo.list}" var="discuss">
+                <c:forEach items="${pageInfo.list}" var="chapter">
                     <tr>
                         <th>
                             <label>
-                                <input discussId="${discuss.id}" type="checkbox" class="select_item"/>
+                                <input chapterId="${chapter.id}" type="checkbox" class="select_item"/>
                             </label>
                         </th>
-                        <td>${discuss.title}</td>
-                        <td>${discuss.content}</td>
-                        <c:if test="${discuss.course!=null}">
-                            <td>${discuss.course.name.trim()=="0"?"课程未设置名称":(discuss.course.name.trim()==""?"课程未设置名称":discuss.course.name) }</td>
+                        <td>${chapter.title}</td>
+                        <td>${chapter.content}</td>
+                        <c:if test="${chapter.course!=null}">
+                            <td>${chapter.course.name.trim()=="0"?"课程未设置名称":(chapter.course.name.trim()==""?"课程未设置名称":chapter.course.name) }(${chapter.course.college.name})</td>
                         </c:if>
-                        <c:if test="${discuss.course==null}">
+                        <c:if test="${chapter.course==null}">
                             <td>未录入</td>
                         </c:if>
-                        <c:if test="${discuss.teacher!=null}">
-                            <td style="width: 200px">${discuss.teacher.name.trim()=="0"?"教师未设置姓名":(discuss.teacher.name.trim()==""?"教师未设置姓名":discuss.teacher.name) }</td>
+                        <c:if test="${chapter.recordTime!=null}">
+                            <td><fmt:formatDate value="${chapter.recordTime}" pattern="yyyy-MM-dd  HH:mm:ss"/></td>
                         </c:if>
-                        <c:if test="${discuss.teacher==null}">
-                            <td>未录入</td>
-                        </c:if>
-                        <c:if test="${discuss.recordTime!=null}">
-                            <td><fmt:formatDate value="${discuss.recordTime}" pattern="yyyy-MM-dd  HH:mm:ss"/></td>
-                        </c:if>
-                        <c:if test="${discuss.recordTime==null}">
+                        <c:if test="${chapter.recordTime==null}">
                             <td>未录入</td>
                         </c:if>
                         <td>
-                            <button type="button" class="btn btn-info replyBtn" data-toggle="tooltip"
-                                    replyId="${discuss.id}" data-placement="left" title="回复该讨论"
-                                    style="margin-right: 20px">
-                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-                                回复
-                            </button>
-
-                            <button type="button" class="btn btn-info viewReplyBtn"
-                                    data-toggle="tooltip" viewId="${discuss.id}"
-                                    data-placement="left" title="查看该讨论的所有回复" style="margin-right: 20px">
-                                <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+                            <button type="button" class="btn btn-info view"
+                                    data-toggle="tooltip" chapterId="${chapter.id}"
+                                    data-placement="left" title="查看该章节下所有的课件" style="margin-right: 20px">
+                                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
                                 查看
+                            </button>
+                            <button type="button" class="btn btn-info edit"
+                                    data-toggle="tooltip" chapterId="${chapter.id}"
+                                    data-placement="left" title="编辑该章节信息" style="margin-right: 20px">
+                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                                编辑
                             </button>
                         </td>
                     </tr>
@@ -172,8 +183,8 @@
             <nav aria-label="Page navigation">
                 <ul class="pagination">
                     <c:if test="${pageInfo.hasPreviousPage }">
-                        <li><a href="${APP_PATH}/admin/searchDiscussInfo?pageNum=1">首页</a></li>
-                        <li><a href="${APP_PATH}/admin/searchDiscussInfo?pageNum=${pageInfo.pageNum-1}"
+                        <li><a href="${APP_PATH}/teacher/searchChapter?pageNum=1">首页</a></li>
+                        <li><a href="${APP_PATH}/teacher/searchChapter?pageNum=${pageInfo.pageNum-1}"
                                aria-label="Previous"><span aria-hidden="true">&laquo;</span>
                         </a></li>
                     </c:if>
@@ -189,16 +200,16 @@
                             <li class="active"><a href="javascript:void(0)">${page_Num }</a></li>
                         </c:if>
                         <c:if test="${page_Num != pageInfo.pageNum }">
-                            <li><a href="${APP_PATH }/admin/searchDiscussInfo?pageNum=${page_Num }">${page_Num }</a>
+                            <li><a href="${APP_PATH }/teacher/searchChapter?pageNum=${page_Num }">${page_Num }</a>
                             </li>
                         </c:if>
                     </c:forEach>
 
                     <c:if test="${pageInfo.hasNextPage }">
-                        <li><a href="${APP_PATH }/admin/searchDiscussInfo?pageNum=${pageInfo.pageNum+1 }"
+                        <li><a href="${APP_PATH }/teacher/searchChapter?pageNum=${pageInfo.pageNum+1 }"
                                aria-label="Next"> <span aria-hidden="true">&raquo;</span>
                         </a></li>
-                        <li><a href="${APP_PATH }/admin/searchDiscussInfo?pageNum=${pageInfo.pages}">末页</a></li>
+                        <li><a href="${APP_PATH }/teacher/searchChapter?pageNum=${pageInfo.pages}">末页</a></li>
                     </c:if>
                     <c:if test="${!pageInfo.hasNextPage}">
                         <li><a href="javascript:void(0)" style="pointer-events: none"
@@ -218,20 +229,20 @@
         <button type="button" class="btn btn-success toPage" style="margin-left: 20px">确定跳转</button>
     </div>
 </c:if>
-<div class="modal fade" id="discussBatchDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+<div class="modal fade" id="chapterBatchDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">批量删除讨论</h5>
+                <h5 class="modal-title">批量删除章节</h5>
             </div>
             <div class="modal-body">
 
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary" id="discuss_batchDelete_btn">确定</button>
+                <button type="button" class="btn btn-primary" id="chapter_batchDelete_btn">确定</button>
             </div>
         </div>
     </div>
@@ -246,34 +257,43 @@
         //获取到将要跳转的页面值
         let pageNum = $("#pageNum").val();
         let total =${pageInfo.pages };
-        if (pageNum.trim() === "" || total < pageNum || pageNum < 0) {
+        if (pageNum.trim() === "" || total < pageNum || pageNum <= 0) {
             layer.msg("错误的跳转页码，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
-        window.location.href = "${APP_PATH}/admin/searchDiscussInfo?pageNum=" + pageNum;
+        if (pageNum ==${pageInfo.pageNum}) {
+            layer.msg("当前已经是第" + pageNum + "页", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        window.location.href = "${APP_PATH}/teacher/searchChapter?pageNum=" + pageNum;
     });
-    $(".viewReplyBtn").on("click", function () {
-        let discussId = $(this).attr("viewId");
-        window.location.href = "${APP_PATH}/admin/searchDiscussReply/" + discussId + "?pageNumber=${pageInfo.pageNum }";
+    $(".view").on("click", function () {
+        let chapterId = $(this).attr("chapterId");
+        window.location.href = "";
     });
-    $(".replyBtn").on("click", function () {
-        let discussId = $(this).attr("replyId");
-        window.location.href = "${APP_PATH}/admin/createReply/" + discussId;
+    $(".edit").on("click", function () {
+        let chapterId = $(this).attr("chapterId");
+        window.location.href = "";
     });
     //查询按钮
     $("#search").on("click", function () {
-        let course = $("#course").val().trim();
-        let teacher = $("#teacher").val().trim();
+        let courseId = $("#courseId").val().trim();
+        let title = $("#title").val().trim();
+        let minTime = $("#minTime").val().trim();
+        let maxTime = $("#maxTime").val().trim();
         let loadingIndex = layer.msg('处理中', {icon: 16});
         //发送ajax请求
         $.ajax({
-            url: "${APP_PATH}/admin/searchDiscussInfoByTerm",
+            url: "${APP_PATH}/teacher/searchChapterByTerm",
             type: "POST",
             dataType: "json",
             data: {
-                "course": course,
-                "teacher": teacher
+                "courseId": courseId,
+                "title": title,
+                "minTime": minTime,
+                "maxTime": maxTime
             },
             success: function (result) {
                 layer.close(loadingIndex);
@@ -284,7 +304,7 @@
                 if (result.code === 100) {
                     layer.msg("查询成功", {time: 1000, icon: 1}, function () {
                     });
-                    window.location.href = "${APP_PATH}/admin/searchDiscussInfo";
+                    window.location.href = "${APP_PATH}/teacher/searchChapter";
                 }
             },
             error: function () {
@@ -293,7 +313,7 @@
             }
         });
     });
-    //批量删除课程
+    //批量删除讨论
     //全选按钮
     $("#select_all").on("click", (function () {
         $(".select_item").prop("checked", $(this).prop("checked"));
@@ -315,7 +335,7 @@
     $(".batchDelete").on("click", function () {
         $.each($(".select_item:checked"), function () {
             //组装课程id字符串
-            ids += $(this).attr("discussId") + "-";
+            ids += $(this).attr("chapterId") + "-";
         });
         console.log(ids);
         if (ids.trim() === "") {
@@ -325,17 +345,17 @@
             //去除删除的id多余的"-"
             ids = ids.substring(0, ids.length - 1);
             console.log(ids);
-            $("#discussBatchDeleteModal .modal-body").text("你确定要删除这些讨论信息吗？");
-            $("#discussBatchDeleteModal").modal({
+            $("#chapterBatchDeleteModal .modal-body").text("删除这些章节信息将删除该章节的所有课件，你确定要这么做吗？");
+            $("#chapterBatchDeleteModal").modal({
                 backdrop: "static"
             });
         }
     });
-    $("#discuss_batchDelete_btn").on("click", function () {
+    $("#chapter_batchDelete_btn").on("click", function () {
         let loadingIndex = layer.msg('处理中', {icon: 16});
         //发送ajax请求删除
         $.ajax({
-            url: "${APP_PATH}/admin/deleteDiscussBatch",
+            url: "${APP_PATH}/teacher/deleteChapterBatch",
             type: "POST",
             dataType: "json",
             data: {
@@ -350,7 +370,7 @@
                 if (result.code === 100) {
                     layer.msg("批量删除成功", {time: 1000, icon: 1}, function () {
                     });
-                    window.location.href = "${APP_PATH}/admin/searchDiscussInfo?&pageNum=" + ${pageInfo.pageNum};
+                    window.location.href = "${APP_PATH}/teacher/searchChapter?&pageNum=" + ${pageInfo.pageNum};
                 }
             },
             error: function () {
@@ -359,4 +379,6 @@
             }
         });
     });
+
+
 </script>

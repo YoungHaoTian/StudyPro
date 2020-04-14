@@ -52,7 +52,7 @@
                 </div>
                 <div class="panel-footer wk-panel-footer">
                     <button type="button" class="btn btn-info" onclick="createReply()">提&nbsp;&nbsp;交</button>
-                    <button type="button" class="btn btn-info" onclick="window.history.back()"
+                    <button type="button" class="btn btn-info" onclick="back()"
                             style="margin-left: 30px">返&nbsp;&nbsp;回
                     </button>
                 </div>
@@ -65,12 +65,20 @@
 </html>
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
+    function back() {
+        window.location.href="${APP_PATH}/teacher/searchDiscussReply/${id}?pageNum=${pageNum}&pageNumber=${pageNumber}";
+    }
     function createReply() {
         let content = $("#content").val().trim();
+        if (content === "") {
+            layer.msg("回复内容不能为空", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
         let loadingIndex = layer.msg('处理中', {icon: 16});
         //发送ajax请求删除
         $.ajax({
-            url: "${APP_PATH}/admin/saveDiscussReply/${id}",
+            url: "${APP_PATH}/teacher/saveDiscussReply/${id}",
             type: "POST",
             dataType: "json",
             data: {
@@ -94,4 +102,3 @@
         });
     }
 </script>
-s

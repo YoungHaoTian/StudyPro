@@ -27,4 +27,10 @@ public interface TaskMapper {
     int updateByPrimaryKeySelective(Task record);
 
     int updateByPrimaryKey(Task record);
+
+    List<Task> selectByExampleWithCourseAndChapter(TaskExample taskExample);
+
+    Task selectByPrimaryKeyWithCourseAndChapter(Integer id);
+
+
 }

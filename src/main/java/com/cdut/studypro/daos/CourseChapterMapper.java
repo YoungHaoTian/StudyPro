@@ -20,6 +20,8 @@ public interface CourseChapterMapper {
 
     List<CourseChapter> selectByExampleWithBLOBs(CourseChapterExample example);
 
+    List<CourseChapter> selectByExampleWithBLOBsAndCourse(CourseChapterExample example);
+
     List<CourseChapter> selectByExample(CourseChapterExample example);
 
     CourseChapter selectByPrimaryKey(Integer id);

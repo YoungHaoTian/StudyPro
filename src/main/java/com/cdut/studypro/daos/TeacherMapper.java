@@ -23,6 +23,10 @@ public interface TeacherMapper {
 
     Teacher selectByPrimaryKey(Integer id);
 
+    Teacher selectByPrimaryKeyWithoutCollegeAndCourse(Integer id);
+
+    Teacher selectByPrimaryKeyWithCollege(Integer id);
+
     List<Teacher> selectByExampleWithIdNameAndCollege(TeacherExample example);
 
     int updateByExampleSelective(@Param("record") Teacher record, @Param("example") TeacherExample example);

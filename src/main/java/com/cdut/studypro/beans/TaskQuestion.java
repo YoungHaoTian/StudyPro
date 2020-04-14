@@ -1,5 +1,7 @@
 package com.cdut.studypro.beans;
 
+import java.util.Objects;
+
 public class TaskQuestion {
     private Integer id;
 
@@ -93,20 +95,37 @@ public class TaskQuestion {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
-        sb.append(", title=").append(title);
-        sb.append(", itemA=").append(itemA);
-        sb.append(", itemB=").append(itemB);
-        sb.append(", itemC=").append(itemC);
-        sb.append(", itemD=").append(itemD);
-        sb.append(", answer=").append(answer);
-        sb.append(", taskId=").append(taskId);
-        sb.append(", score=").append(score);
-        sb.append("]");
-        return sb.toString();
+        return "TaskQuestion{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", itemA='" + itemA + '\'' +
+                ", itemB='" + itemB + '\'' +
+                ", itemC='" + itemC + '\'' +
+                ", itemD='" + itemD + '\'' +
+                ", answer='" + answer + '\'' +
+                ", taskId=" + taskId +
+                ", score=" + score +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TaskQuestion that = (TaskQuestion) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(title, that.title) &&
+                Objects.equals(itemA, that.itemA) &&
+                Objects.equals(itemB, that.itemB) &&
+                Objects.equals(itemC, that.itemC) &&
+                Objects.equals(itemD, that.itemD) &&
+                Objects.equals(answer, that.answer) &&
+                Objects.equals(taskId, that.taskId) &&
+                Objects.equals(score, that.score);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, itemA, itemB, itemC, itemD, answer, taskId, score);
     }
 }

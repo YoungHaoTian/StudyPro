@@ -20,7 +20,6 @@
             text-align: center;
             height: 30px;
             border: #CCCCCC 1px solid;
-            s
         }
     </style>
 </head>
@@ -348,6 +347,11 @@
         let total =${pageInfo.pages };
         if (pageNum.trim() === "" || total < pageNum || pageNum <= 0) {
             layer.msg("错误的跳转页码，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        if (pageNum ==${pageInfo.pageNum}) {
+            layer.msg("当前已经是第" + pageNum + "页", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }

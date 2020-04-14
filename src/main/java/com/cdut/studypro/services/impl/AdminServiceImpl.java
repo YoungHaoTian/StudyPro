@@ -38,6 +38,9 @@ public class AdminServiceImpl implements AdminService {
     private DiscussMapper discussMapper;
 
     @Autowired
+    private DiscussPostMapper discussPostMapper;
+
+    @Autowired
     private NoticeMapper noticeMapper;
 
     @Override
@@ -331,5 +334,13 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public boolean updateAdminByPrimaryKeySelective(Admin admin) {
         return adminMapper.updateByPrimaryKeySelective(admin) > 0;
+    }
+
+    @Override
+    public boolean deleteDiscussPostByDiscussIds(List<Integer> discussIds) {
+        DiscussPostExample discussPostExample = new DiscussPostExample();
+        DiscussPostExample.Criteria criteria = discussPostExample.createCriteria();
+        criteria.andDiscussIdIn(discussIds);
+        return discussPostMapper.deleteByExample(discussPostExample) > 0;
     }
 }

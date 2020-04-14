@@ -1,5 +1,6 @@
 package com.cdut.studypro.daos;
 
+import com.cdut.studypro.beans.Student;
 import com.cdut.studypro.beans.TaskQuestion;
 import com.cdut.studypro.beans.TaskQuestionExample;
 import java.util.List;
@@ -27,4 +28,9 @@ public interface TaskQuestionMapper {
     int updateByPrimaryKeySelective(TaskQuestion record);
 
     int updateByPrimaryKey(TaskQuestion record);
+
+    List<TaskQuestion> selectByTaskId(Integer id);
+
+    //批量插入数据
+    int insertBatch(@Param("questions") List<TaskQuestion> questions);
 }

@@ -118,4 +118,6 @@ public interface AdminService {
     Admin getAdminById(Integer id);
 
     boolean updateAdminByPrimaryKeySelective(Admin admin);
+
+    boolean deleteDiscussPostByDiscussIds(List<Integer> discussIds);
 }
