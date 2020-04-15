@@ -2,6 +2,7 @@ package com.cdut.studypro.beans;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class CourseChapter {
     private Integer id;
@@ -103,5 +104,21 @@ public class CourseChapter {
                 ", recordTime=" + recordTime +
                 ", content='" + content + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CourseChapter that = (CourseChapter) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(title, that.title) &&
+                Objects.equals(courseId, that.courseId) &&
+                Objects.equals(content, that.content);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, courseId, content);
     }
 }

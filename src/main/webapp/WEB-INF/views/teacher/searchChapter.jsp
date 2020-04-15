@@ -58,7 +58,8 @@
                                 <c:choose>
                                     <c:when test="${course.id == sessionScope.chapterQueryCriteria.get('courseId')}">
                                         <option value="${course.id}"
-                                                selected="selected">${course.name}(${course.college.name})</option>
+                                                selected="selected">${course.name}(${course.college.name})
+                                        </option>
                                     </c:when>
                                     <c:otherwise>
                                         <option value="${course.id}">${course.name}(${course.college.name})</option>
@@ -152,7 +153,7 @@
                                 查看
                             </button>
                             <button type="button" class="btn btn-info edit"
-                                    data-toggle="tooltip" chapterId="${chapter.id}"
+                                    data-toggle="tooltip" chapterId="${chapter.id}" courseId="${chapter.courseId}"
                                     data-placement="left" title="编辑该章节信息" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                                 编辑
@@ -271,11 +272,13 @@
     });
     $(".view").on("click", function () {
         let chapterId = $(this).attr("chapterId");
-        window.location.href = "";
+        console.log(chapterId);
+        window.location.href = "${APP_PATH}/teacher/viewChapterFiles/" + chapterId + "?pageNum=${pageInfo.pageNum}";
     });
     $(".edit").on("click", function () {
         let chapterId = $(this).attr("chapterId");
-        window.location.href = "";
+        let courseId = $(this).attr("courseId");
+        window.location.href = "${APP_PATH}/teacher/editChapter/" + chapterId + "?courseId=" + courseId + "&pageNum=${pageInfo.pageNum}";
     });
     //查询按钮
     $("#search").on("click", function () {

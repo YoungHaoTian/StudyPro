@@ -133,17 +133,17 @@
                         <td><fmt:formatDate value="${video.recordTime}" pattern="yyyy-MM-dd  HH:mm:ss"/></td>
                         <td>
                             <button class="btn btn-success btn-sm view" data-toggle="tooltip" data-placement="left"
-                                    title="查看当前课程视频" view-id="${video.id}" style="margin-right: 20px">
+                                    title="查看当前课程视频" videoId="${video.id}" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
                                 查看视频
                             </button>
                             <button class="btn btn-primary btn-sm edit" data-toggle="tooltip" data-placement="left"
-                                    title="重新上传当前课程视频" edit-id="${video.id}" style="margin-right: 20px">
+                                    title="重新上传当前课程视频" videoId="${video.id}" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                                 重新上传
                             </button>
                             <a class="btn btn-danger btn-sm delete" data-toggle="tooltip" data-placement="left"
-                               title="删除当前课程视频" del-id="${video.id}">
+                               title="删除当前课程视频" videoId="${video.id}">
                                 <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                                 删除
                             </a>
@@ -262,7 +262,7 @@
     let id = "";
     //删除单个课程视频
     $(".delete").on("click", function () {
-        id = $(this).attr("del-id");
+        id = $(this).attr("videoId");
         console.log(id);
         //删除课程时弹出确认框
         let name = $(this).parents("tr").find("td:eq(0)").text();
@@ -275,11 +275,11 @@
             }
         );
     });
-    $("#file_delete_btn").on("click", function () {
+    $("#video_delete_btn").on("click", function () {
         let loadingIndex = layer.msg('处理中', {icon: 16});
         //确认，发送ajax请求删除即可
         $.ajax({
-            url: "${APP_PATH}/teacher/deleteCourseFile",
+            url: "${APP_PATH}/teacher/deleteCourseVideo",
             type: "POST",
             dataType: "json",
             data: {
@@ -292,7 +292,7 @@
                     });
                 }
                 if (result.code === 100) {
-                    window.location.href = "${APP_PATH}/teacher/searchCourseFile?pageNum=${pageInfo.pageNum }";
+                    window.location.href = "${APP_PATH}/teacher/deleteCourseVideo?pageNum=${pageInfo.pageNum }";
                 }
             },
             error: function () {
@@ -420,11 +420,11 @@
     });
     //编辑课程视频信息
     $(".edit").on("click", function () {
-        let id = $(this).attr("edit-id");
+        let id = $(this).attr("videoId");
         window.location.href = "${APP_PATH}/teacher/editCourseVideo/" + id + "?pageNum=${pageInfo.pageNum}";
     });
     $(".view").on("click", function () {
-        let id = $(this).attr("view-id");
+        let id = $(this).attr("videoId");
         window.location.href = "${APP_PATH}/teacher/viewCourseVideo/" + id + "?pageNum=${pageInfo.pageNum}";
     })
 </script>

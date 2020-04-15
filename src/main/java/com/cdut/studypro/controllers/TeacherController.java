@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -346,9 +347,18 @@ public class TeacherController {
     }
 
     @RequestMapping("/editCourseVideo/{id}")
-    public String editCourseVideo(@PathVariable("id") Integer id, Map<String, Object> map, @RequestParam("pageNum") Integer pageNum) {
+    public String editCourseVideo(@PathVariable("id") Integer id,
+                                  Map<String, Object> map, @RequestParam("pageNum") Integer pageNum,
+                                  @RequestParam(value = "chapterId", required = false) Integer chapterId,
+                                  @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
+                                  @RequestParam(value = "minTime", defaultValue = "") String minTime,
+                                  @RequestParam(value = "maxTime", defaultValue = "") String maxTime) {
         map.put("courseVideoId", id);
         map.put("pageNum", pageNum);
+        map.put("pageNumber", pageNumber);
+        map.put("chapterId", chapterId);
+        map.put("minTime", minTime);
+        map.put("maxTime", maxTime);
         return "teacher/editCourseVideo";
     }
 
@@ -368,12 +378,11 @@ public class TeacherController {
         System.out.println(basePath + dirPath + fileName);
         //删除原来的文件
         File oldFile = new File(basePath + video.getPath());
-        if (!oldFile.exists()) {
-            return RequestResult.failure("视频更新失败，请稍后再试");
-        }
-        boolean delete = oldFile.delete();
-        if (!delete) {
-            return RequestResult.failure("视频更新失败，请稍后再试");
+        if (oldFile.exists()) {
+            boolean delete = oldFile.delete();
+            if (!delete) {
+                return RequestResult.failure("视频更新失败，请稍后再试");
+            }
         }
         Date date = new Date();
         fileName = date.getTime() + "_" + file.getOriginalFilename();
@@ -449,7 +458,6 @@ public class TeacherController {
         }
         return RequestResult.success();
     }
-
 
     @RequestMapping("/searchCourseFile")
     public String searchCourseFile(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum, Map<String, Object> map) {
@@ -610,9 +618,18 @@ public class TeacherController {
     }
 
     @RequestMapping("/editCourseFile/{id}")
-    public String editCourseFile(@PathVariable("id") Integer id, Map<String, Object> map, @RequestParam("pageNum") Integer pageNum) {
+    public String editCourseFile(@PathVariable("id") Integer id,
+                                 Map<String, Object> map, @RequestParam("pageNum") Integer pageNum,
+                                 @RequestParam(value = "chapterId", required = false) Integer chapterId,
+                                 @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
+                                 @RequestParam(value = "minTime", defaultValue = "") String minTime,
+                                 @RequestParam(value = "maxTime", defaultValue = "") String maxTime) {
         map.put("courseFileId", id);
         map.put("pageNum", pageNum);
+        map.put("pageNumber", pageNumber);
+        map.put("chapterId", chapterId);
+        map.put("minTime", minTime);
+        map.put("maxTime", maxTime);
         return "teacher/editCourseFile";
     }
 
@@ -656,6 +673,12 @@ public class TeacherController {
             return RequestResult.failure("文档更新失败，请稍后再试");
         }
         return RequestResult.success();
+    }
+
+    @ExceptionHandler(IOException.class)
+    public String IOExceptionHandler(IOException e, Map<String, Object> map) {
+        map.put("exception", e);
+        return "error";
     }
 
     @RequestMapping("/downloadCourseFile/{id}")
@@ -973,13 +996,18 @@ public class TeacherController {
 
 
     //异常处理
-    @ResponseBody
     @ExceptionHandler(RuntimeException.class)
-    public RequestResult handException(RuntimeException e) {
-        return RequestResult.failure(e.getMessage());
+    public String handRuntimeException(RuntimeException e, HttpServletRequest request) {
+        request.setAttribute("exception", e);
+        return "error";
     }
 
-
+    //异常处理
+    @ExceptionHandler(ParseException.class)
+    public String handParseException(ParseException e, HttpServletRequest request) {
+        request.setAttribute("exception", e);
+        return "error";
+    }
 
     @ResponseBody
     @PostMapping("/deleteTask")
@@ -1483,7 +1511,6 @@ public class TeacherController {
     public String createChapter(Map<String, Object> map, @RequestParam(value = "courseId", defaultValue = "0") Integer courseId) {
         map.put("courses", teacherService.getAllCoursesWithChapterAndCollegeByTeacherId(15));
         map.put("courseId", courseId);
-        System.out.println(courseId);
         return "teacher/createChapter";
     }
 
@@ -1514,7 +1541,7 @@ public class TeacherController {
                 ids.add(0);
             }
             criteria.andCourseIdIn(ids);
-            chapterExample.setOrderByClause("record_time asc");
+            chapterExample.setOrderByClause("course_id asc,record_time asc");
         }
         PageHelper.startPage(pageNum, 10);
         List<CourseChapter> chapters = teacherService.getAllChapterWithBLOBsAndCourseByExample(chapterExample);
@@ -1568,6 +1595,7 @@ public class TeacherController {
         }
         return RequestResult.success();
     }
+
     @ResponseBody
     @PostMapping("/deleteChapterBatch")
     public RequestResult deleteChapterBatch(@RequestParam("ids") String id) {
@@ -1584,5 +1612,75 @@ public class TeacherController {
             return RequestResult.failure("批量删除失败，请稍后再试");
         }
         return RequestResult.success();
+    }
+
+
+    @RequestMapping("/editChapter/{id}")
+    public String editChapter(Map<String, Object> map, @PathVariable("id") Integer id, @RequestParam(value = "courseId", defaultValue = "0") Integer courseId, @RequestParam("pageNum") Integer pageNum) {
+        map.put("courses", teacherService.getAllCoursesWithChapterAndCollegeByTeacherId(15));
+        map.put("chapter", teacherService.getChapterById(id));
+        map.put("courseId", courseId);
+        map.put("pageNum", pageNum);
+        return "teacher/updateChapter";
+    }
+
+    @ResponseBody
+    @PostMapping("/updateChapter/{id}")
+    public RequestResult updateChapter(CourseChapter chapter) {
+        if (chapter == null) {
+            return RequestResult.failure("章节修改失败，请稍后再试");
+        }
+        CourseChapter chapterById = teacherService.getChapterById(chapter.getId());
+        System.out.println(chapter);
+        System.out.println(chapterById);
+        if (chapterById.equals(chapter)) {
+            return RequestResult.failure("未修改任何数据");
+        }
+        if (chapterById.getTitle().equals(chapter.getTitle())) {
+            chapter.setTitle(null);
+        }
+        if (chapterById.getContent().equals(chapter.getContent())) {
+            chapter.setContent(null);
+        }
+        if (chapterById.getCourseId().equals(chapter.getCourseId())) {
+            chapter.setCourseId(null);
+        }
+        boolean success = teacherService.updateCourseChapterByIdSelective(chapter);
+        if (!success) {
+            return RequestResult.failure("章节修改失败，请稍后再试");
+        }
+        return RequestResult.success();
+    }
+
+    @RequestMapping("/viewChapterFiles/{id}")
+    public String viewChapterFiles(@PathVariable("id") Integer id, Map<String, Object> map, @RequestParam(value = "minTime", defaultValue = "") String minTime, @RequestParam(value = "maxTime", defaultValue = "") String maxTime, @RequestParam("pageNum") Integer pageNum) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        CourseVideoExample courseVideoExample = new CourseVideoExample();
+        CourseVideoExample.Criteria videoExampleCriteria = courseVideoExample.createCriteria();
+        videoExampleCriteria.andChapterIdEqualTo(id);
+        CourseFileExample courseFileExample = new CourseFileExample();
+        CourseFileExample.Criteria fileExampleCriteria = courseFileExample.createCriteria();
+        fileExampleCriteria.andChapterIdEqualTo(id);
+        if (!"".equals(minTime.trim())) {
+            Date min = simpleDateFormat.parse(minTime.trim());
+            videoExampleCriteria.andRecordTimeGreaterThanOrEqualTo(min);
+            fileExampleCriteria.andRecordTimeGreaterThanOrEqualTo(min);
+        }
+        if (!"".equals(maxTime.trim())) {
+            Date max = simpleDateFormat.parse(maxTime.trim());
+            videoExampleCriteria.andRecordTimeLessThanOrEqualTo(max);
+            fileExampleCriteria.andRecordTimeLessThanOrEqualTo(max);
+        }
+        courseVideoExample.setOrderByClause("record_time asc");
+        courseFileExample.setOrderByClause("record_time asc");
+        List<CourseVideo> videos = teacherService.getCourseVideoByExample(courseVideoExample);
+        List<CourseFile> files = teacherService.getCourseFileByExample(courseFileExample);
+        map.put("videos", videos);
+        map.put("files", files);
+        map.put("id", id);
+        map.put("minTime", minTime);
+        map.put("maxTime", maxTime);
+        map.put("pageNum", pageNum);
+        return "teacher/viewChapterFiles";
     }
 }

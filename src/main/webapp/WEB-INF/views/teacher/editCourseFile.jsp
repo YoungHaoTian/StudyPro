@@ -53,7 +53,7 @@
 
                 <div class="panel-footer wk-panel-footer">
                     <button type="button" class="btn btn-info" onclick="updateCourseFile();">提&nbsp;&nbsp;交</button>
-                    <button type="button" class="btn btn-info" onclick="back();">反&nbsp;&nbsp;回</button>
+                    <button type="button" class="btn btn-info" onclick="back();" style="margin-left: 20px">反&nbsp;&nbsp;回</button>
                 </div>
             </form>
         </div>
@@ -100,7 +100,12 @@
             }
         });
     }
+
     function back() {
-        window.location.href = "${APP_PATH}/teacher/searchCourseFile?pageNum=${pageNum}";
+        if (0 ===${pageNum}) {
+            window.location.href = "${APP_PATH}/teacher/viewChapterFiles/${chapterId}?minTime=${minTime}&maxTime=${maxTime}&pageNum=${pageNumber}";
+        } else {
+            window.location.href = "${APP_PATH}/teacher/searchCourseFile?pageNum=${pageNum}";
+        }
     }
 </script>

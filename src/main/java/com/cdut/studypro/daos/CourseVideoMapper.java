@@ -2,7 +2,9 @@ package com.cdut.studypro.daos;
 
 import com.cdut.studypro.beans.CourseVideo;
 import com.cdut.studypro.beans.CourseVideoExample;
+
 import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface CourseVideoMapper {

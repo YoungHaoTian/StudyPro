@@ -19,24 +19,11 @@
     <!--加载layer组件-->
     <script src="resources/layer/layer.js"></script>
     <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
-<%--    <script src="${APP_PATH}/resources1/bootstrap/js/bootstrap.min.js"></script>
-    <!-- Bootstrap 样式-->
-    <link href="${APP_PATH}/resources1/bootstrap/css/bootstrap.min.css" rel="stylesheet">--%>
+    <%--    <script src="${APP_PATH}/resources1/bootstrap/js/bootstrap.min.js"></script>
+        <!-- Bootstrap 样式-->
+        <link href="${APP_PATH}/resources1/bootstrap/css/bootstrap.min.css" rel="stylesheet">--%>
 </head>
 <body>
-<!-- 16:9 aspect ratio -->
-
-<div class="embed-responsive embed-responsive-16by9">
-
-    <video width="320" height="240" controls>
-
-        <source src="${APP_PATH}/video/movie.mp4" type="video/mp4">
-
-    </video>
-
-</div>
-
-${APP_PATH}
 </body>
 </html>
 <script type="text/javascript">

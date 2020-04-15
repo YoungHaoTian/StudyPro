@@ -135,16 +135,16 @@
                         <td>
                             <button class="btn btn-success btn-sm download" data-toggle="tooltip" data-placement="left"
                                     title="下载当前课程文档" fileId="${file.id}" style="margin-right: 20px">
-                                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
                                 下载文档
                             </button>
                             <button class="btn btn-primary btn-sm edit" data-toggle="tooltip" data-placement="left"
-                                    title="重新上传当前课程文档" edit-id="${file.id}" style="margin-right: 20px">
+                                    title="重新上传当前课程文档" fileId="${file.id}" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                                 重新上传
                             </button>
                             <a class="btn btn-danger btn-sm delete" data-toggle="tooltip" data-placement="left"
-                               title="删除当前课程文档" del-id="${file.id}">
+                               title="删除当前课程文档" fileId="${file.id}">
                                 <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                                 删除
                             </a>
@@ -420,7 +420,7 @@
     });
     //编辑课程文档
     $(".edit").on("click", function () {
-        let id = $(this).attr("edit-id");
+        let id = $(this).attr("fileId");
         window.location.href = "${APP_PATH}/teacher/editCourseFile/" + id + "?pageNum=${pageInfo.pageNum}";
     });
     $(".download").on("click", function () {

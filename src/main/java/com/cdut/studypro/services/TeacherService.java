@@ -121,4 +121,18 @@ public interface TeacherService {
     List<CourseChapter> getAllChapterWithBLOBsAndCourseByExample(CourseChapterExample chapterExample);
 
     boolean deleteChapterByIdBatch(List<Integer> chapterIds);
+
+    CourseChapter getChapterById(Integer id);
+
+    boolean updateCourseChapterByIdSelective(CourseChapter chapter);
+
+    List<CourseVideo> getCourseVideoByChapterId(Integer id);
+
+    List<CourseFile> getCourseFileByChapterId(Integer id);
+
+    List<Task> getTaskByChapterId(Integer id);
+
+    List<CourseVideo> getCourseVideoByExample(CourseVideoExample example);
+
+    List<CourseFile> getCourseFileByExample(CourseFileExample courseFileExample);
 }

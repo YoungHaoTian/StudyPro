@@ -248,6 +248,50 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public CourseChapter getChapterById(Integer id) {
+        return courseChapterMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public boolean updateCourseChapterByIdSelective(CourseChapter chapter) {
+        return courseChapterMapper.updateByPrimaryKeySelective(chapter) > 0;
+    }
+
+    @Override
+    public List<CourseVideo> getCourseVideoByChapterId(Integer id) {
+        CourseVideoExample courseVideoExample = new CourseVideoExample();
+        CourseVideoExample.Criteria criteria = courseVideoExample.createCriteria();
+        criteria.andChapterIdEqualTo(id);
+        return courseVideoMapper.selectByExample(courseVideoExample);
+    }
+
+    @Override
+    public List<CourseFile> getCourseFileByChapterId(Integer id) {
+        CourseFileExample courseFileExample = new CourseFileExample();
+        CourseFileExample.Criteria criteria = courseFileExample.createCriteria();
+        criteria.andChapterIdEqualTo(id);
+        return courseFileMapper.selectByExample(courseFileExample);
+    }
+
+    @Override
+    public List<Task> getTaskByChapterId(Integer id) {
+        TaskExample taskExample = new TaskExample();
+        TaskExample.Criteria criteria = taskExample.createCriteria();
+        criteria.andChapterIdEqualTo(id);
+        return taskMapper.selectByExample(taskExample);
+    }
+
+    @Override
+    public List<CourseVideo> getCourseVideoByExample(CourseVideoExample example) {
+        return courseVideoMapper.selectByExample(example);
+    }
+
+    @Override
+    public List<CourseFile> getCourseFileByExample(CourseFileExample courseFileExample) {
+        return courseFileMapper.selectByExample(courseFileExample);
+    }
+
+    @Override
     public boolean deleteDiscussPostByIdBatch(List<Integer> ids) {
         DiscussPostExample discussPostExample = new DiscussPostExample();
         DiscussPostExample.Criteria criteria = discussPostExample.createCriteria();

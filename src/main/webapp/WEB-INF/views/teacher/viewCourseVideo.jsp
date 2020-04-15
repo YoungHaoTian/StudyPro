@@ -32,22 +32,35 @@
 
 <div class="row">
     <div class="col-lg-12">
-        <div class="panel panel-default wk-panel ">
+        <div class="panel panel-default wk-panel wk-table-tools-panel">
             <div class="panel-heading">
                 查看视频 View Video
             </div>
-            <div class="col-lg-12" style="text-align: center">
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default wk-panel">
+            <div style="text-align: center">
                 <video src="${APP_PATH}/video/${video.path}" preload="preload" controls="controls" width="60%"
                        height="500px" style="margin:20px 0px 20px 0px"></video>
             </div>
-        </div>
-
-        <div class="panel-footer wk-panel-footer">
-            <button type="button" class="btn btn-info"
-                    onclick="window.location.href='${APP_PATH}/teacher/searchCourseVideo?pageNum=${pageNum}'">反&nbsp;&nbsp;回
-            </button>
+            <div class="panel-footer wk-panel-footer">
+                <button type="button" class="btn btn-info" onclick="back()">返&nbsp;&nbsp;回
+                </button>
+            </div>
         </div>
     </div>
 </div>
 </body>
 </html>
+<script type="text/javascript">
+    function back() {
+        if (0 ===${pageNum}) {
+            window.history.back();
+        } else {
+            window.location.href = "${APP_PATH}/teacher/searchCourseVideo?pageNum=${pageNum}";
+        }
+    }
+</script>

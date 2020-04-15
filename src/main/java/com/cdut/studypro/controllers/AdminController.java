@@ -191,8 +191,8 @@ public class AdminController {
 
 
     @ExceptionHandler(NotExistException.class)
-    public String notExistException(NotExistException e, Map<String, Object> map) {
-        map.put("exception", e);
+    public String notExistException(NotExistException e, HttpServletRequest request) {
+        request.setAttribute("exception", e);
         return "error";
     }
 
@@ -428,13 +428,12 @@ public class AdminController {
     }
 
     @RequestMapping("/updateStudent/{id}")
-    public String updateStudent(@PathVariable("id") Integer id, Map<String, Object> map, @RequestParam("pageNum") Integer pageNum) {
+    public String updateStudent(@PathVariable("id") Integer id, Map<String, Object> map, @RequestParam("pageNum") Integer pageNum) throws NotExistException {
         System.out.println(pageNum);
         //判断id是否存在
         Student student = adminService.getStudentByPrimaryKey(id);
         if (student == null) {
-            map.put("exception", new NotExistException("该id对应的学生不存在"));
-            return "error";
+            throw new NotExistException("该id对应的学生不存在");
         }
         map.put("colleges", adminService.getAllColleges());
         map.put("student", student);
@@ -874,12 +873,11 @@ public class AdminController {
     }
 
     @RequestMapping("/updateTeacher/{id}")
-    public String updateTeacher(@PathVariable("id") Integer id, Map<String, Object> map, @RequestParam("pageNum") Integer pageNum) {
+    public String updateTeacher(@PathVariable("id") Integer id, Map<String, Object> map, @RequestParam("pageNum") Integer pageNum) throws NotExistException {
         //判断id是否存在
         Teacher teacher = adminService.getTeacherByPrimaryKey(id);
         if (teacher == null) {
-            map.put("exception", new NotExistException("该id对应的老师不存在"));
-            return "error";
+            throw new NotExistException("该id对应的老师不存在");
         }
         map.put("colleges", adminService.getAllColleges());
         map.put("teacher", teacher);
@@ -1088,12 +1086,11 @@ public class AdminController {
     }
 
     @RequestMapping("/updateCollege/{id}")
-    public String updateCollege(@PathVariable("id") Integer id, Map<String, Object> map, @RequestParam("pageNum") Integer pageNum) {
+    public String updateCollege(@PathVariable("id") Integer id, Map<String, Object> map, @RequestParam("pageNum") Integer pageNum) throws NotExistException {
         //判断id是否存在
         College college = adminService.getCollegeByPrimaryKey(id);
         if (college == null) {
-            map.put("exception", new NotExistException("该id对应的学院不存在"));
-            return "error";
+            throw new NotExistException("该id对应的学院不存在");
         }
         map.put("college", college);
         map.put("pageNum", pageNum);
@@ -1244,12 +1241,11 @@ public class AdminController {
     }
 
     @RequestMapping("/updateCourse/{id}")
-    public String updateCourse(@PathVariable("id") Integer id, Map<String, Object> map, @RequestParam("pageNum") Integer pageNum) {
+    public String updateCourse(@PathVariable("id") Integer id, Map<String, Object> map, @RequestParam("pageNum") Integer pageNum) throws NotExistException {
         //判断id是否存在
         Course course = adminService.getCourseByPrimaryKey(id);
         if (course == null) {
-            map.put("exception", new NotExistException("该id对应的课程不存在"));
-            return "error";
+            throw new NotExistException("该id对应的课程不存在");
         }
         map.put("course", course);
         map.put("colleges", adminService.getAllColleges());
@@ -1361,12 +1357,11 @@ public class AdminController {
     }
 
     @RequestMapping("/updateDiscuss/{id}")
-    public String updateDiscuss(@PathVariable("id") Integer id, Map<String, Object> map, @RequestParam("pageNum") Integer pageNum) {
+    public String updateDiscuss(@PathVariable("id") Integer id, Map<String, Object> map, @RequestParam("pageNum") Integer pageNum) throws NotExistException {
         //判断id是否存在
         Discuss discuss = adminService.getDiscussByPrimaryKey(id);
         if (discuss == null) {
-            map.put("exception", new NotExistException("该id对应的讨论不存在"));
-            return "error";
+            throw new NotExistException("该id对应的讨论不存在");
         }
         map.put("courses", adminService.getAllCoursesWithWithCollegeAndTeacher());
         map.put("discuss", discuss);
@@ -1530,12 +1525,11 @@ public class AdminController {
     }
 
     @RequestMapping("/updateNotice/{id}")
-    public String updateNotice(@PathVariable("id") Integer id, Map<String, Object> map, @RequestParam("pageNum") Integer pageNum) {
+    public String updateNotice(@PathVariable("id") Integer id, Map<String, Object> map, @RequestParam("pageNum") Integer pageNum) throws NotExistException {
         //判断id是否存在
         Notice notice = adminService.getNoticeByPrimaryKey(id);
         if (notice == null) {
-            map.put("exception", new NotExistException("该id对应的公告不存在"));
-            return "error";
+            throw new NotExistException("该id对应的公告不存在");
         }
         map.put("notice", notice);
         map.put("pageNum", pageNum);

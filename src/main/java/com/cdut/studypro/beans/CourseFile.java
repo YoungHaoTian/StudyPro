@@ -55,15 +55,12 @@ public class CourseFile {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
-        sb.append(", path=").append(path);
-        sb.append(", chapterId=").append(chapterId);
-        sb.append(", recordTime=").append(recordTime);
-        sb.append("]");
-        return sb.toString();
+        return "CourseFile{" +
+                "id=" + id +
+                ", path='" + path + '\'' +
+                ", chapterId=" + chapterId +
+                ", recordTime=" + recordTime +
+                ", courseChapter=" + courseChapter +
+                '}';
     }
 }
