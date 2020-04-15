@@ -152,7 +152,7 @@
                                                       aria-hidden="true"></span>
                                 </button>
                                 <button type="button" class="list-group-item"
-                                        href="${APP_PATH}/teacher/updateTeacherInfo">
+                                        href="${APP_PATH}/teacher/editTeacherInfo">
                                     个人信息修改&nbsp;<span class=" glyphicon glyphicon-triangle-right"
                                                       aria-hidden="true"></span>
                                 </button>
@@ -188,7 +188,8 @@
         </div>
     </div>
 </div>
-<script>
+<script src="${APP_PATH}/resources/js/layer/layer.js"></script>
+<script type="text/javascript">
     $(document).ready(function () {
         let flag = true;
         let span = $("#leftNav span");
@@ -283,7 +284,7 @@
     $(".wk-main-menu-item").each(function () {
         $(this).on("click", function () {
             let url = $(this).attr("id");
-            $("#mainFrame").attr("src", "${APP_PATH}/admin/" + url);
+            $("#mainFrame").attr("src", "${APP_PATH}/teacher/" + url);
         });
     });
     $("#logout").on("click", function () {

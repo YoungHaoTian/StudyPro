@@ -47,7 +47,7 @@
                 工具栏 Tools
             </div>
             <!-- 搜索 start -->
-            <div style="position: absolute;top: -11px;left: 200px;">
+            <div style="position: absolute;top: -11px;left: 150px;">
                 <form class="navbar-form navbar-right" role="search"
                       action="" method="post">
                     <div class="form-group">

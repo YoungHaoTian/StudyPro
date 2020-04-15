@@ -277,7 +277,7 @@
                     if (!$(this).hasClass("current")) {
                         $(this).addClass("current");
                     }
-                     previous = $(this);
+                    previous = $(this);
                 }
             }
         });
@@ -351,7 +351,7 @@
             $("#mainFrame").attr("src", url);
         });
     });
-
+    //为主的按钮设置点击事件
     $(".wk-main-menu-item").each(function () {
         $(this).on("click", function () {
             let url = $(this).attr("id");

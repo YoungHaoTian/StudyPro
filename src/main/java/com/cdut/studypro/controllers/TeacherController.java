@@ -1683,4 +1683,11 @@ public class TeacherController {
         map.put("pageNum", pageNum);
         return "teacher/viewChapterFiles";
     }
+
+    @ResponseBody
+    @PostMapping("/logout")
+    public RequestResult logout(HttpSession session) {
+        session.invalidate();
+        return RequestResult.success();
+    }
 }
