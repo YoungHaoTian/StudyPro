@@ -2,6 +2,7 @@ package com.cdut.studypro.services;
 
 
 import com.cdut.studypro.beans.AdminExample;
+import com.cdut.studypro.beans.Course;
 import com.cdut.studypro.beans.Student;
 import com.cdut.studypro.beans.StudentExample;
 
@@ -25,4 +26,7 @@ public interface StudentService {
 
     Integer getIdByTelephone(String phone);
 
+    List<Course> getAllCourseWithBLOBsAndTeacherAndCollege();
+
+    List<Course> getAllCourseWithBLOBsAndTeacherAndCollegeByCollegeId(Integer id);
 }

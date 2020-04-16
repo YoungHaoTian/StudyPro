@@ -86,7 +86,7 @@ public class TeacherServiceImpl implements TeacherService {
         CourseExample.Criteria criteria = courseExample.createCriteria();
         criteria.andTeacherIdEqualTo(id);
         courseExample.setOrderByClause("CONVERT(name using gbk) asc");
-        return courseMapper.selectByExampleWithCollegeAndTeacher(courseExample);
+        return courseMapper.selectByExampleWithCollege(courseExample);
     }
 
     @Override
@@ -289,6 +289,35 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public List<CourseFile> getCourseFileByExample(CourseFileExample courseFileExample) {
         return courseFileMapper.selectByExample(courseFileExample);
+    }
+
+    @Override
+    public List<Course> getAllCoursesWithCollegeByExample(CourseExample courseExample) {
+        return courseMapper.selectByExampleWithBLOBsAndCollege(courseExample);
+    }
+
+    @Override
+    public List<College> getAllCollegesByTeacherId(Integer id) {
+        CourseExample courseExample = new CourseExample();
+        CourseExample.Criteria criteria = courseExample.createCriteria();
+        criteria.andTeacherIdEqualTo(id);
+        courseExample.setDistinct(true);
+        List<Integer> ids = courseMapper.selectCollegeIdByExample(courseExample);
+        if (ids.size() == 0) {
+            ids.add(0);
+        }
+        CollegeExample collegeExample = new CollegeExample();
+        CollegeExample.Criteria criteria1 = collegeExample.createCriteria();
+        criteria1.andIdIn(ids);
+        return collegeMapper.selectByExample(collegeExample);
+    }
+
+    @Override
+    public List<Task> getTaskByChapterIdWithChapterAndCourse(Integer id) {
+        TaskExample taskExample=new TaskExample();
+        TaskExample.Criteria criteria = taskExample.createCriteria();
+        criteria.andChapterIdEqualTo(id);
+        return taskMapper.selectByExampleWithCourseAndChapter(taskExample);
     }
 
     @Override

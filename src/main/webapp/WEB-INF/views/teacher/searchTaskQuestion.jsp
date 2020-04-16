@@ -133,12 +133,25 @@
                 <ul class="pagination">
                     <c:if test="${pageInfo.hasPreviousPage }">
                         <li>
-                            <a href="${APP_PATH}/teacher/searchTaskQuestion/${taskId}?pageNum=1&pageNumber=${pageNumber}">首页</a>
+                            <c:if test="${page==null}">
+                                <a href="${APP_PATH}/teacher/searchTaskQuestion/${taskId}?pageNum=1&pageNumber=${pageNumber}">首页</a>
+                            </c:if>
+                            <c:if test="${page!=null}">
+                                <a href="${APP_PATH}/teacher/searchTaskQuestion/${taskId}?pageNum=1&page=${page}&courseId=${courseId}&chapterId=${chapterId}">首页</a>
+                            </c:if>
                         </li>
                         <li>
-                            <a href="${APP_PATH}/teacher/searchTaskQuestion/${taskId}?pageNum=${pageInfo.pageNum-1}&pageNumber=${pageNumber}"
-                               aria-label="Previous"><span aria-hidden="true">&laquo;</span>
-                            </a></li>
+                            <c:if test="${page==null}">
+                                <a href="${APP_PATH}/teacher/searchTaskQuestion/${taskId}?pageNum=${pageInfo.pageNum-1}&pageNumber=${pageNumber}"
+                                   aria-label="Previous"><span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </c:if>
+                            <c:if test="${page!=null}">
+                                <a href="${APP_PATH}/teacher/searchTaskQuestion/${taskId}?pageNum=${pageInfo.pageNum-1}&page=${page}&courseId=${courseId}&chapterId=${chapterId}"
+                                   aria-label="Previous"><span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </c:if>
+                        </li>
                     </c:if>
                     <c:if test="${!pageInfo.hasPreviousPage}">
                         <li><a href="javascript:void(0)" style="pointer-events: none">首页</a></li>
@@ -153,18 +166,35 @@
                         </c:if>
                         <c:if test="${page_Num != pageInfo.pageNum }">
                             <li>
-                                <a href="${APP_PATH }/teacher/searchTaskQuestion/${taskId}?pageNum=${page_Num }&pageNumber=${pageNumber}">${page_Num }</a>
+                                <c:if test="${page==null}">
+                                    <a href="${APP_PATH }/teacher/searchTaskQuestion/${taskId}?pageNum=${page_Num }&pageNumber=${pageNumber}">${page_Num }</a>
+                                </c:if>
+                                <c:if test="${page!=null}">
+                                    <a href="${APP_PATH }/teacher/searchTaskQuestion/${taskId}?pageNum=${page_Num }&page=${page}&courseId=${courseId}&chapterId=${chapterId}">${page_Num }</a>
+                                </c:if>
                             </li>
                         </c:if>
                     </c:forEach>
-
                     <c:if test="${pageInfo.hasNextPage }">
                         <li>
-                            <a href="${APP_PATH }/teacher/searchTaskQuestion/${taskId}?pageNum=${pageInfo.pageNum+1 }&pageNumber=${pageNumber}"
-                               aria-label="Next"> <span aria-hidden="true">&raquo;</span>
-                            </a></li>
+                            <c:if test="${page==null}">
+                                <a href="${APP_PATH }/teacher/searchTaskQuestion/${taskId}?pageNum=${pageInfo.pageNum+1 }&pageNumber=${pageNumber}"
+                                   aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </c:if>
+                            <c:if test="${page!=null}">
+                                <a href="${APP_PATH }/teacher/searchTaskQuestion/${taskId}?pageNum=${pageInfo.pageNum+1 }&page=${page}&courseId=${courseId}&chapterId=${chapterId}"
+                                   aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </c:if>
+                        </li>
                         <li>
-                            <a href="${APP_PATH }/teacher/searchTaskQuestion/${taskId}?pageNum=${pageInfo.pages}&pageNumber=${pageNumber}">末页</a>
+                            <c:if test="${page==null}">
+                                <a href="${APP_PATH }/teacher/searchTaskQuestion/${taskId}?pageNum=${pageInfo.pages}&pageNumber=${pageNumber}">末页</a>
+                            </c:if>
+                            <c:if test="${page!=null}">
+                                <a href="${APP_PATH }/teacher/searchTaskQuestion/${taskId}?pageNum=${pageInfo.pages}&page=${page}&courseId=${courseId}&chapterId=${chapterId}">末页</a>
+                            </c:if>
                         </li>
                     </c:if>
                     <c:if test="${!pageInfo.hasNextPage}">
@@ -223,7 +253,11 @@
             });
             return;
         }
-        window.location.href = "${APP_PATH}/teacher/searchTaskQuestion/${taskId}?pageNum=" + pageNum + "&pageNumber=${pageNumber}";
+        if (${page!=null}) {
+            window.location.href = "${APP_PATH }/teacher/searchTaskQuestion/${taskId}?pageNum=" + pageNum + "&page=${page}&courseId=${courseId}&chapterId=${chapterId}";
+        } else {
+            window.location.href = "${APP_PATH}/teacher/searchTaskQuestion/${taskId}?pageNum=" + pageNum + "&pageNumber=${pageNumber}";
+        }
     });
 
     //批量删除题目
@@ -294,11 +328,19 @@
     });
 
     function back() {
-        window.location.href="${APP_PATH}/teacher/searchTask?pageNum=${pageNumber}";
+        if (${page!=null}) {
+            window.location.href = "${APP_PATH}/teacher/searchChapterTask/${chapterId}?pageNum=${page}&courseId=${courseId}";
+        } else {
+            window.location.href = "${APP_PATH}/teacher/searchTask?pageNum=${pageNumber}";
+        }
     }
 
-    $(".edit").on("click",function () {
-        let questionId=$(this).attr("questionId");
-        window.location.href="${APP_PATH}/teacher/editTaskQuestion/"+questionId+"?pageNum=${pageInfo.pageNum}&pageNumber=${pageNumber}";
+    $(".edit").on("click", function () {
+        let questionId = $(this).attr("questionId");
+        if (${page!=null}) {
+            window.location.href = "${APP_PATH }/teacher/editTaskQuestion/" + questionId + "?pageNum=${pageInfo.pageNum}&page=${page}&courseId=${courseId}&chapterId=${chapterId}";
+        } else {
+            window.location.href = "${APP_PATH}/teacher/editTaskQuestion/" + questionId + "?pageNum=${pageInfo.pageNum}&pageNumber=${pageNumber}";
+        }
     });
 </script>

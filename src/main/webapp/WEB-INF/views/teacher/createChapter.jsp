@@ -57,7 +57,7 @@
                                                 </li>
                                                 <c:forEach items="${courses}" var="course" varStatus="statu">
                                                     <c:if test="${course.id==courseId&&courseId!=0}">
-                                                        <li class="list-group-item">
+                                                        <li class="list-group-item" style="color: red">
                                                     </c:if>
                                                     <c:if test="${course.id!=courseId||courseId==0}">
                                                         <li class="list-group-item tree-closed">
@@ -88,7 +88,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-inline">
+                       <%-- <div class="form-inline">
                             <div class="form-group">
                                 <label for="courseId" class="control-label wk-filed-label">章节所属课程: </label>
                                 <select class="selectpicker" id="courseId" name="courseId">
@@ -98,7 +98,7 @@
                                     </c:forEach>
                                 </select>
                             </div>
-                        </div>
+                        </div>--%>
                         <div class="form-inline">
                             <div class="form-group">
                                 <label for="title" class="control-label wk-filed-label">章节标题: </label>
@@ -121,6 +121,7 @@
                 </div>
                 <div class="panel-footer wk-panel-footer">
                     <button type="button" class="btn btn-info" onclick="createChapter();">提&nbsp;&nbsp;交</button>
+                    <button type="button" class="btn btn-info" onclick="window.history.back()" style="margin-left: 20px">返&nbsp;&nbsp;回</button>
                 </div>
             </form>
         </div>
@@ -146,14 +147,8 @@
     });
 
     function createChapter() {
-        let courseId = $("#courseId").val();
         let title = $("#title").val();
         let content = $("#content").val();
-        if (courseId === "0") {
-            layer.msg("你还没有选择章节所属课程", {time: 1500, icon: 5, shift: 6}, function () {
-            });
-            return;
-        }
         if (title.trim() === "") {
             layer.msg("章节标题不能为空", {time: 1500, icon: 5, shift: 6}, function () {
             });
@@ -181,7 +176,7 @@
             // contentType: "application/json",//不使用contentType: “application/json”则data可以是对象,使用contentType: “application/json”则data只能是json字符串
             dataType: "json",
             data: {
-                "courseId": courseId,
+                "courseId": ${courseId},
                 "title": title.trim(),
                 "content": content.trim()
             },
@@ -196,7 +191,7 @@
                     console.log("success");
                     layer.msg("章节添加成功", {time: 1500, icon: 6}, function () {
                     });
-                    window.location.href = "${APP_PATH}/teacher/createChapter?courseId=" + courseId;
+                    window.location.href = "${APP_PATH}/teacher/createChapter?courseId=${courseId}";
                 }
             },
             error: function () {

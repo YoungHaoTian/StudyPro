@@ -47,54 +47,12 @@
                 工具栏 Tools
             </div>
             <!-- 搜索 start -->
-            <div style="position: absolute;top: -11px;left: 150px;">
+            <div style="position: absolute;top: -2px;right: 150px;">
                 <form class="navbar-form navbar-right" role="search" action="" method="post">
-                    <div class="form-group">
-                        <label for="courseId" class="control-label wk-filed-label"
-                               style="margin-top: 20px">所属课程:</label>
-                        <select id="courseId" class="selectpicker" name="courseId">
-                            <option value="0">请选择所属课程</option>
-                            <c:forEach items="${courses}" var="course">
-                                <c:choose>
-                                    <c:when test="${course.id == sessionScope.chapterQueryCriteria.get('courseId')}">
-                                        <option value="${course.id}"
-                                                selected="selected">${course.name}(${course.college.name})
-                                        </option>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <option value="${course.id}">${course.name}(${course.college.name})</option>
-                                    </c:otherwise>
-                                </c:choose>
-                            </c:forEach>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="title" class="control-label wk-filed-label"
-                               style="margin-top: 20px">章节标题:</label>
-                        <input type="text" maxlength="18"
-                               class="form-control" id="title" name="title" placeholder="请输入章节标题"
-                               value="${sessionScope.chapterQueryCriteria.get("title")}">
-                    </div>
-                    <div class="form-group">
-                        <label for="minTime" class="control-label wk-filed-label" style="margin-top: 20px">发布时间:</label>
-                        <input type="date" class="form-control" name="name" id="minTime"
-                               value="${sessionScope.chapterQueryCriteria.get("minTime")}"/>
-                        <label for="maxTime" class="control-label wk-filed-label" style="margin-top: 20px">到:</label>
-                        <input type="date" class="form-control" name="name" id="maxTime"
-                               value="${sessionScope.chapterQueryCriteria.get("maxTime")}"/>
-                    </div>
-                    <div class="form-group" style="margin-left: 20px">
-                        <button type="button" id="search" class="btn btn-success search" data-toggle="tooltip"
-                                data-placement="left" title="查询章节" style="margin-right: 20px">
-                            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-                            查询
-                        </button>
-                    </div>
                     <div class="form-group">
                         <button type="button" class="btn btn-danger batchDelete" data-toggle="tooltip"
                                 data-placement="left"
-                                title="批量删除讨论">
+                                title="批量删除章节">
                             <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                             批量删除
                         </button>
@@ -120,11 +78,11 @@
                     <th>章节内容</th>
                     <th>所属课程(学院)</th>
                     <th style="width:200px">发布日期</th>
-                    <th style="width:300px">选择操作</th>
+                    <th style="width:400px">选择操作</th>
                 </tr>
                 </thead>
                 <tbody>
-                <c:forEach items="${pageInfo.list}" var="chapter">
+                <c:forEach items="${chapters}" var="chapter">
                     <tr>
                         <th>
                             <label>
@@ -146,11 +104,17 @@
                             <td>未录入</td>
                         </c:if>
                         <td>
-                            <button type="button" class="btn btn-info view"
+                            <button type="button" class="btn btn-info viewFiles"
                                     data-toggle="tooltip" chapterId="${chapter.id}"
                                     data-placement="left" title="查看该章节下所有的课件" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-                                查看
+                                查看课件
+                            </button>
+                            <button type="button" class="btn btn-info viewTask"
+                                    data-toggle="tooltip" chapterId="${chapter.id}"
+                                    data-placement="left" title="查看该章节下所有的作业" style="margin-right: 20px">
+                                <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
+                                查看作业
                             </button>
                             <button type="button" class="btn btn-info edit"
                                     data-toggle="tooltip" chapterId="${chapter.id}" courseId="${chapter.courseId}"
@@ -162,74 +126,16 @@
                     </tr>
                 </c:forEach>
                 </tbody>
-
             </table>
+            <div class="panel-footer wk-panel-footer" style="margin-top: 50px">
+                <button type="button" class="btn btn-info"
+                        onclick="window.location.href='${APP_PATH}/teacher/searchCourse?pageNum=${pageNum}'"
+                        style="margin-left: 20px">返&nbsp;&nbsp;回
+                </button>
+            </div>
         </div>
     </div>
 </div>
-<c:if test="${!empty pageInfo.list}">
-    <!--显示分页信息-->
-    <div class="row">
-        <!--分页文字信息  -->
-        <div class="col-md-6 col-md-offset-2">当前
-            <kbd>${pageInfo.pageNum }</kbd>
-            页，总<kbd>${pageInfo.pages }</kbd>
-            页，总<kbd>${pageInfo.total }</kbd>
-            条记录
-        </div>
-    </div>
-    <!-- 分页条信息 -->
-    <div class="row">
-        <div class="col-md-6 col-md-offset-6">
-            <nav aria-label="Page navigation">
-                <ul class="pagination">
-                    <c:if test="${pageInfo.hasPreviousPage }">
-                        <li><a href="${APP_PATH}/teacher/searchChapter?pageNum=1">首页</a></li>
-                        <li><a href="${APP_PATH}/teacher/searchChapter?pageNum=${pageInfo.pageNum-1}"
-                               aria-label="Previous"><span aria-hidden="true">&laquo;</span>
-                        </a></li>
-                    </c:if>
-                    <c:if test="${!pageInfo.hasPreviousPage}">
-                        <li><a href="javascript:void(0)" style="pointer-events: none">首页</a></li>
-                        <li><a href="javascript:void(0)" style="pointer-events: none"
-                               aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
-                        </a></li>
-                    </c:if>
-
-                    <c:forEach items="${pageInfo.navigatepageNums }" var="page_Num">
-                        <c:if test="${page_Num == pageInfo.pageNum }">
-                            <li class="active"><a href="javascript:void(0)">${page_Num }</a></li>
-                        </c:if>
-                        <c:if test="${page_Num != pageInfo.pageNum }">
-                            <li><a href="${APP_PATH }/teacher/searchChapter?pageNum=${page_Num }">${page_Num }</a>
-                            </li>
-                        </c:if>
-                    </c:forEach>
-
-                    <c:if test="${pageInfo.hasNextPage }">
-                        <li><a href="${APP_PATH }/teacher/searchChapter?pageNum=${pageInfo.pageNum+1 }"
-                               aria-label="Next"> <span aria-hidden="true">&raquo;</span>
-                        </a></li>
-                        <li><a href="${APP_PATH }/teacher/searchChapter?pageNum=${pageInfo.pages}">末页</a></li>
-                    </c:if>
-                    <c:if test="${!pageInfo.hasNextPage}">
-                        <li><a href="javascript:void(0)" style="pointer-events: none"
-                               aria-label="Next"> <span aria-hidden="true">&raquo;</span>
-                        </a></li>
-                        <li><a href="javascript:void(0)" style="pointer-events: none">末页</a></li>
-                    </c:if>
-                </ul>
-            </nav>
-        </div>
-    </div>
-    <!-- 页面跳转信息 -->
-    <div class="row" style="margin-bottom: 50px">
-        <div class="col-sm-2 col-md-offset-6">
-            <input type="number" class="form-control" id="pageNum" placeholder="跳转到...">
-        </div>
-        <button type="button" class="btn btn-success toPage" style="margin-left: 20px">确定跳转</button>
-    </div>
-</c:if>
 <div class="modal fade" id="chapterBatchDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
@@ -253,70 +159,22 @@
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
     let ids = "";
-    //页面跳转
-    $(".toPage").on("click", function () {
-        //获取到将要跳转的页面值
-        let pageNum = $("#pageNum").val();
-        let total =${pageInfo.pages };
-        if (pageNum.trim() === "" || total < pageNum || pageNum <= 0) {
-            layer.msg("错误的跳转页码，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
-            });
-            return;
-        }
-        if (pageNum ==${pageInfo.pageNum}) {
-            layer.msg("当前已经是第" + pageNum + "页", {time: 1500, icon: 5, shift: 6}, function () {
-            });
-            return;
-        }
-        window.location.href = "${APP_PATH}/teacher/searchChapter?pageNum=" + pageNum;
-    });
-    $(".view").on("click", function () {
+    $(".viewFiles").on("click", function () {
         let chapterId = $(this).attr("chapterId");
         console.log(chapterId);
-        window.location.href = "${APP_PATH}/teacher/viewChapterFiles/" + chapterId + "?pageNum=${pageInfo.pageNum}";
+        window.location.href = "${APP_PATH}/teacher/viewChapterFiles/" + chapterId + "?pageNum=${pageNum}&courseId=${courseId}";
+    });
+    $(".viewTask").on("click", function () {
+        let chapterId = $(this).attr("chapterId");
+        console.log(chapterId);
+        window.location.href = "${APP_PATH}/teacher/searchChapterTask/" + chapterId + "?pageNum=${pageNum}&courseId=${courseId}";
     });
     $(".edit").on("click", function () {
         let chapterId = $(this).attr("chapterId");
         let courseId = $(this).attr("courseId");
-        window.location.href = "${APP_PATH}/teacher/editChapter/" + chapterId + "?courseId=" + courseId + "&pageNum=${pageInfo.pageNum}";
+        window.location.href = "${APP_PATH}/teacher/editChapter/" + chapterId + "?preCourseId=" + courseId + "&pageNum=${pageNum}";
     });
-    //查询按钮
-    $("#search").on("click", function () {
-        let courseId = $("#courseId").val().trim();
-        let title = $("#title").val().trim();
-        let minTime = $("#minTime").val().trim();
-        let maxTime = $("#maxTime").val().trim();
-        let loadingIndex = layer.msg('处理中', {icon: 16});
-        //发送ajax请求
-        $.ajax({
-            url: "${APP_PATH}/teacher/searchChapterByTerm",
-            type: "POST",
-            dataType: "json",
-            data: {
-                "courseId": courseId,
-                "title": title,
-                "minTime": minTime,
-                "maxTime": maxTime
-            },
-            success: function (result) {
-                layer.close(loadingIndex);
-                if (result.code === 200) {
-                    layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
-                    });
-                }
-                if (result.code === 100) {
-                    layer.msg("查询成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.location.href = "${APP_PATH}/teacher/searchChapter";
-                }
-            },
-            error: function () {
-                layer.msg("网络异常，请稍后再试", {time: 1500, icon: 5, shift: 6}, function () {
-                });
-            }
-        });
-    });
-    //批量删除讨论
+    //批量删除章节
     //全选按钮
     $("#select_all").on("click", (function () {
         $(".select_item").prop("checked", $(this).prop("checked"));
@@ -373,7 +231,7 @@
                 if (result.code === 100) {
                     layer.msg("批量删除成功", {time: 1000, icon: 1}, function () {
                     });
-                    window.location.href = "${APP_PATH}/teacher/searchChapter?&pageNum=" + ${pageInfo.pageNum};
+                    window.location.href = "${APP_PATH}/teacher/searchChapter?courseId=${courseId}";
                 }
             },
             error: function () {
@@ -382,6 +240,4 @@
             }
         });
     });
-
-
 </script>

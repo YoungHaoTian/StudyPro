@@ -26,7 +26,7 @@
 <div class="row">
     <div class="col-lg-12">
         <ul class="nav nav-tabs wk-nav-menu" id="wk-nav-menu">
-            <li role="presentation"><a id="leftNav">教师模块&nbsp;&nbsp;<span class="glyphicon glyphicon-menu-up"
+            <li role="presentation"><a id="leftNav">&nbsp;教师模块&nbsp;<span class="glyphicon glyphicon-menu-up"
                                                                           aria-hidden="true"></span></a></li>
             <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item" id="createCourseVideo">上传课程视频</a>
             </li>
@@ -54,28 +54,28 @@
                     <div class="panel panel-info wk-accordion-header">
                         <div class="panel-heading">
                             <a data-toggle="collapse" href="#BMenu" data-parent="#accordion" class="click">课程文件管理&nbsp;<span
-                                    class="glyphicon glyphicon-hand-down" aria-hidden="true"></span></a>
+                                    class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
                         </div>
                         <div id="BMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
                                 <button type="button" class="list-group-item"
                                         href="${APP_PATH}/teacher/createCourseVideo">上传课程视频&nbsp;<span
-                                        class=" glyphicon glyphicon-triangle-right"
+                                        class=" glyphicon glyphicon-hand-right"
                                         aria-hidden="true"></span>
                                 </button>
                                 <button type="button" class="list-group-item"
                                         href="${APP_PATH}/teacher/searchCourseVideo">查询课程视频&nbsp;<span
-                                        class=" glyphicon glyphicon-triangle-right"
+                                        class=" glyphicon glyphicon-hand-right"
                                         aria-hidden="true"></span>
                                 </button>
                                 <button type="button" class="list-group-item"
                                         href="${APP_PATH}/teacher/createCourseFile">上传课程文档&nbsp;<span
-                                        class=" glyphicon glyphicon-triangle-right"
+                                        class=" glyphicon glyphicon-hand-right"
                                         aria-hidden="true"></span>
                                 </button>
                                 <button type="button" class="list-group-item"
                                         href="${APP_PATH}/teacher/searchCourseFile">查询课程文档&nbsp;<span
-                                        class=" glyphicon glyphicon-triangle-right"
+                                        class=" glyphicon glyphicon-hand-right"
                                         aria-hidden="true"></span>
                                 </button>
                             </div>
@@ -85,17 +85,17 @@
                     <div class="panel panel-info wk-accordion-header">
                         <div class="panel-heading">
                             <a data-toggle="collapse" href="#CMenu" data-parent="#accordion" class="click">讨论管理&nbsp;<span
-                                    class=" glyphicon glyphicon-hand-down" aria-hidden="true"></span></a>
+                                    class=" glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
                         </div>
 
                         <div id="CMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
                                 <button type="button" class="list-group-item" href="${APP_PATH}/teacher/createDiscuss">
-                                    新增讨论&nbsp;<span class=" glyphicon glyphicon-triangle-right"
+                                    新增讨论&nbsp;<span class=" glyphicon glyphicon-hand-right"
                                                     aria-hidden="true"></span>
                                 </button>
                                 <button type="button" class="list-group-item" href="${APP_PATH}/teacher/searchDiscuss">
-                                    讨论信息查询&nbsp;<span class=" glyphicon glyphicon-triangle-right"
+                                    讨论信息查询&nbsp;<span class=" glyphicon glyphicon-hand-right"
                                                       aria-hidden="true"></span>
                                 </button>
                             </div>
@@ -105,17 +105,13 @@
                     <div class="panel panel-info wk-accordion-header">
                         <div class="panel-heading">
                             <a data-toggle="collapse" href="#DMenu" data-parent="#accordion" class="click">课程章节管理&nbsp;<span
-                                    class=" glyphicon glyphicon-hand-down" aria-hidden="true"></span></a>
+                                    class=" glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
                         </div>
                         <div id="DMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
-                                <button type="button" class="list-group-item" href="${APP_PATH}/teacher/createChapter">
-                                    新增章节&nbsp;<span class=" glyphicon glyphicon-triangle-right"
+                                <button type="button" class="list-group-item" href="${APP_PATH}/teacher/searchCourse">
+                                    课程查询&nbsp;<span class=" glyphicon glyphicon-hand-right"
                                                     aria-hidden="true"></span>
-                                </button>
-                                <button type="button" class="list-group-item" href="${APP_PATH}/teacher/searchChapter">
-                                    章节查询&nbsp;<span class=" glyphicon glyphicon-triangle-right"
-                                                      aria-hidden="true"></span>
                                 </button>
                             </div>
                         </div>
@@ -124,15 +120,15 @@
                     <div class="panel panel-info wk-accordion-header">
                         <div class="panel-heading">
                             <a data-toggle="collapse" href="#EMenu" data-parent="#accordion" class="click">作业管理&nbsp;<span
-                                    class=" glyphicon glyphicon-hand-down" aria-hidden="true"></span></a>
+                                    class=" glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
                         </div>
                         <div id="EMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
                                 <button type="button" class="list-group-item" href="${APP_PATH}/teacher/createTask">发布作业&nbsp;<span
-                                        class=" glyphicon glyphicon-triangle-right"
+                                        class=" glyphicon glyphicon-hand-right"
                                         aria-hidden="true"></span></button>
                                 <button type="button" class="list-group-item" href="${APP_PATH}/teacher/searchTask">
-                                    作业信息查询&nbsp;<span class=" glyphicon glyphicon-triangle-right"
+                                    作业信息查询&nbsp;<span class=" glyphicon glyphicon-hand-right"
                                                       aria-hidden="true"></span></button>
                                 <!-- <button type="button" class="list-group-item" id="wk-menu-panel-item-searchTask"> >&nbsp;&nbsp;作业完成情况查询</button> -->
                             </div>
@@ -142,18 +138,18 @@
                     <div class="panel panel-info wk-accordion-header">
                         <div class="panel-heading">
                             <a data-toggle="collapse" href="#FMenu" data-parent="#accordion" class="click">个人信息管理&nbsp;<span
-                                    class=" glyphicon glyphicon-hand-down" aria-hidden="true"></span></a>
+                                    class=" glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
                         </div>
                         <div id="FMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
                                  <button type="button" class="list-group-item"
                                         href="${APP_PATH}/teacher/viewTeacherInfo">
-                                    个人信息查看&nbsp;<span class=" glyphicon glyphicon-triangle-right"
+                                    个人信息查看&nbsp;<span class=" glyphicon glyphicon-hand-right"
                                                       aria-hidden="true"></span>
                                 </button>
                                 <button type="button" class="list-group-item"
                                         href="${APP_PATH}/teacher/editTeacherInfo">
-                                    个人信息修改&nbsp;<span class=" glyphicon glyphicon-triangle-right"
+                                    个人信息修改&nbsp;<span class=" glyphicon glyphicon-hand-right"
                                                       aria-hidden="true"></span>
                                 </button>
                             </div>

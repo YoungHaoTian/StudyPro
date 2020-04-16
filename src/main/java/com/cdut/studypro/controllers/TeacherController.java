@@ -232,7 +232,7 @@ public class TeacherController {
         if (courseVideo == null) {
             return RequestResult.failure("课程视频删除失败，请稍后再试");
         }
-        //删除课程视频在数据库中的记录
+        //先删除数据库中的记录，再删除课程视频
         boolean success = teacherService.deleteCourseVideoById(id);
         if (!success) {
             return RequestResult.failure("课程视频删除失败，请稍后再试");
@@ -348,17 +348,20 @@ public class TeacherController {
 
     @RequestMapping("/editCourseVideo/{id}")
     public String editCourseVideo(@PathVariable("id") Integer id,
-                                  Map<String, Object> map, @RequestParam("pageNum") Integer pageNum,
-                                  @RequestParam(value = "chapterId", required = false) Integer chapterId,
+                                  Map<String, Object> map,
+                                  @RequestParam("pageNum") Integer pageNum,
                                   @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
+                                  @RequestParam(value = "chapterId", required = false) Integer chapterId,
                                   @RequestParam(value = "minTime", defaultValue = "") String minTime,
-                                  @RequestParam(value = "maxTime", defaultValue = "") String maxTime) {
+                                  @RequestParam(value = "maxTime", defaultValue = "") String maxTime,
+                                  @RequestParam(value = "courseId", required = false) Integer courseId) {
         map.put("courseVideoId", id);
         map.put("pageNum", pageNum);
         map.put("pageNumber", pageNumber);
         map.put("chapterId", chapterId);
         map.put("minTime", minTime);
         map.put("maxTime", maxTime);
+        map.put("courseId", courseId);
         return "teacher/editCourseVideo";
     }
 
@@ -619,17 +622,20 @@ public class TeacherController {
 
     @RequestMapping("/editCourseFile/{id}")
     public String editCourseFile(@PathVariable("id") Integer id,
-                                 Map<String, Object> map, @RequestParam("pageNum") Integer pageNum,
+                                 Map<String, Object> map,
+                                 @RequestParam("pageNum") Integer pageNum,
                                  @RequestParam(value = "chapterId", required = false) Integer chapterId,
                                  @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
                                  @RequestParam(value = "minTime", defaultValue = "") String minTime,
-                                 @RequestParam(value = "maxTime", defaultValue = "") String maxTime) {
+                                 @RequestParam(value = "maxTime", defaultValue = "") String maxTime,
+                                 @RequestParam(value = "courseId", required = false) Integer courseId) {
         map.put("courseFileId", id);
         map.put("pageNum", pageNum);
         map.put("pageNumber", pageNumber);
         map.put("chapterId", chapterId);
         map.put("minTime", minTime);
         map.put("maxTime", maxTime);
+        map.put("courseId", courseId);
         return "teacher/editCourseFile";
     }
 
@@ -952,6 +958,7 @@ public class TeacherController {
         return "teacher/createDiscussReply";
     }
 
+
     @RequestMapping("/createTask")
     public String createTask(Map<String, Object> map) {
         map.put("courses", teacherService.getAllCoursesWithChapterAndCollegeByTeacherId(15));
@@ -1090,11 +1097,21 @@ public class TeacherController {
     }
 
     @RequestMapping("/editTask/{id}")
-    public String updateTask(@PathVariable("id") Integer id, Map<String, Object> map, HttpSession session, @RequestParam("pageNum") Integer pageNum) {
+    public String updateTask(@PathVariable("id") Integer id,
+                             Map<String, Object> map,
+                             HttpSession session,
+                             @RequestParam("pageNum") Integer pageNum,
+                             @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
+                             @RequestParam(value = "courseId", required = false) Integer courseId,
+                             @RequestParam(value = "chapterId", required = false) Integer chapterId) {
         Teacher teacher = (Teacher) session.getAttribute("user");
         map.put("task", teacherService.getTaskWithCourseAndChapterById(id));
         map.put("courses", teacherService.getAllCoursesWithChapterAndCollegeByTeacherId(15));
         map.put("pageNum", pageNum);
+        map.put("pageNumber", pageNumber);
+        map.put("courseId", courseId);
+        map.put("chapterId", chapterId);
+        map.put("taskId", id);
         return "teacher/updateTask";
     }
 
@@ -1128,13 +1145,22 @@ public class TeacherController {
     }
 
     @RequestMapping("/searchTaskQuestion/{id}")
-    public String searchQuestion(@PathVariable("id") Integer id, @RequestParam("pageNumber") Integer pageNumber, @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum, Map<String, Object> map) {
+    public String searchQuestion(@PathVariable("id") Integer id,
+                                 @RequestParam(value = "pageNumber", defaultValue = "0") Integer pageNumber,
+                                 @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                 Map<String, Object> map,
+                                 @RequestParam(value = "page", required = false) Integer p,
+                                 @RequestParam(value = "courseId", required = false) Integer courseId,
+                                 @RequestParam(value = "chapterId", required = false) Integer chapterId) {
         PageHelper.startPage(pageNum, 10);
         List<TaskQuestion> questions = teacherService.getTaskQuestionsByTaskId(id);
         PageInfo<TaskQuestion> page = new PageInfo(questions, 10);
         map.put("pageInfo", page);
         map.put("pageNumber", pageNumber);
         map.put("taskId", id);
+        map.put("courseId", courseId);
+        map.put("page", p);
+        map.put("chapterId", chapterId);
         return "teacher/searchTaskQuestion";
     }
 
@@ -1177,10 +1203,19 @@ public class TeacherController {
     }
 
     @RequestMapping("/editTaskQuestion/{id}")
-    public String editTaskQuestion(@PathVariable("id") Integer id, Map<String, Object> map, @RequestParam("pageNumber") Integer pageNumber, @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
+    public String editTaskQuestion(@PathVariable("id") Integer id,
+                                   Map<String, Object> map,
+                                   @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
+                                   @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                   @RequestParam(value = "page", required = false) Integer page,
+                                   @RequestParam(value = "courseId", required = false) Integer courseId,
+                                   @RequestParam(value = "chapterId", required = false) Integer chapterId) {
 
         map.put("pageNum", pageNum);
         map.put("pageNumber", pageNumber);
+        map.put("page", page);
+        map.put("courseId", courseId);
+        map.put("chapterId", chapterId);
         map.put("taskQuestion", teacherService.getTaskQuestionsById(id));
         return "teacher/updateTaskQuestion";
     }
@@ -1506,6 +1541,48 @@ public class TeacherController {
         return "teacher/viewTeacherInfo";
     }
 
+    @RequestMapping("/searchCourse")
+    public String searchCourse(Map<String, Object> map, HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
+        /*Teacher teacher = (Teacher) session.getAttribute("user");
+        teacherService.getAllCoursesWithCollegeByTeacherId(teacher.getId());*/
+        CourseExample courseExample = (CourseExample) session.getAttribute("courseExample");
+        if (courseExample == null) {
+            courseExample = new CourseExample();
+            CourseExample.Criteria criteria = courseExample.createCriteria();
+            criteria.andTeacherIdEqualTo(15);
+            courseExample.setOrderByClause("CONVERT(name using gbk) asc");
+        }
+        PageHelper.startPage(pageNum, 10);
+        List<Course> courses = teacherService.getAllCoursesWithCollegeByExample(courseExample);
+        PageInfo<Course> page = new PageInfo(courses, 10);
+        map.put("pageInfo", page);
+        map.put("colleges", teacherService.getAllCollegesByTeacherId(15));
+        return "teacher/searchCourse";
+    }
+
+    @ResponseBody
+    @PostMapping("/searchCourseByTerm")
+    public RequestResult searchCourseByTerm(HttpSession session, @RequestParam("collegeId") Integer collegeId, @RequestParam("name") String name) {
+        Map<String, Object> map = new HashMap<>();
+        CourseExample courseExample = new CourseExample();
+        CourseExample.Criteria criteria = courseExample.createCriteria();
+        map.put("collegeId", null);
+        map.put("name", null);
+        if (collegeId != 0) {
+            criteria.andCollegeIdEqualTo(collegeId);
+            map.put("collegeId", collegeId);
+        }
+        if (!"".equals(name.trim())) {
+            criteria.andNameLike("%" + name.trim() + "%");
+            map.put("name", name.trim());
+        }
+        criteria.andTeacherIdEqualTo(15);
+        courseExample.setOrderByClause("CONVERT(name using gbk) asc");
+        session.setAttribute("courseExample", courseExample);
+        session.setAttribute("courseQueryCriteria", map);
+        return RequestResult.success();
+    }
+
 
     @RequestMapping("/createChapter")
     public String createChapter(Map<String, Object> map, @RequestParam(value = "courseId", defaultValue = "0") Integer courseId) {
@@ -1528,72 +1605,18 @@ public class TeacherController {
         return RequestResult.success();
     }
 
-
     @RequestMapping("/searchChapter")
-    public String searchChapter(Map<String, Object> map, HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
+    public String searchChapter(Map<String, Object> map, HttpSession session, @RequestParam("courseId") Integer courseId, @RequestParam("pageNum") Integer pageNum) {
         Teacher teacher = (Teacher) session.getAttribute("user");
-        CourseChapterExample chapterExample = (CourseChapterExample) session.getAttribute("chapterExample");
-        if (chapterExample == null) {
-            chapterExample = new CourseChapterExample();
-            CourseChapterExample.Criteria criteria = chapterExample.createCriteria();
-            List<Integer> ids = teacherService.getCourseIdsByTeacherId(15);
-            if (ids.size() == 0) {
-                ids.add(0);
-            }
-            criteria.andCourseIdIn(ids);
-            chapterExample.setOrderByClause("course_id asc,record_time asc");
-        }
-        PageHelper.startPage(pageNum, 10);
-        List<CourseChapter> chapters = teacherService.getAllChapterWithBLOBsAndCourseByExample(chapterExample);
-        PageInfo<CourseChapter> page = new PageInfo(chapters, 10);
-        map.put("pageInfo", page);
-        map.put("courses", teacherService.getAllCoursesWithCollegeByTeacherId(15));
+        CourseChapterExample courseChapterExample = new CourseChapterExample();
+        CourseChapterExample.Criteria criteria = courseChapterExample.createCriteria();
+        criteria.andCourseIdEqualTo(courseId);
+        courseChapterExample.setOrderByClause("record_time asc");
+        List<CourseChapter> chapters = teacherService.getAllChapterWithBLOBsAndCourseByExample(courseChapterExample);
+        map.put("chapters", chapters);
+        map.put("courseId", courseId);
+        map.put("pageNum", pageNum);
         return "teacher/searchChapter";
-    }
-
-    @ResponseBody
-    @PostMapping("/searchChapterByTerm")
-    public RequestResult searchChapterByTerm(@RequestParam("courseId") Integer courseId, @RequestParam("minTime") String minTime, @RequestParam("maxTime") String maxTime, @RequestParam("title") String title, HttpSession session) {
-        try {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            //将查询条件存放进session中，以回显查询条件
-            Map<String, Object> map = new HashMap<>();
-            map.put("courseId", null);
-            map.put("title", null);
-            map.put("minTime", null);
-            map.put("maxTime", null);
-            CourseChapterExample chapterExample = new CourseChapterExample();
-            CourseChapterExample.Criteria criteria = chapterExample.createCriteria();
-            if (!"".equals(title.trim())) {
-                map.put("title", title.trim());
-                criteria.andTitleLike("%" + title.trim() + "%");
-            }
-            if (courseId != 0) {
-                map.put("courseId", courseId);
-                criteria.andCourseIdEqualTo(courseId);
-            }
-            if (!"".equals(minTime.trim())) {
-                Date min = simpleDateFormat.parse(minTime);
-                criteria.andRecordTimeGreaterThanOrEqualTo(min);
-                map.put("minTime", minTime);
-            }
-            if (!"".equals(maxTime.trim())) {
-                Date max = simpleDateFormat.parse(maxTime);
-                criteria.andRecordTimeLessThanOrEqualTo(max);
-                map.put("maxTime", maxTime);
-            }
-            List<Integer> ids = teacherService.getCourseIdsByTeacherId(15);
-            if (ids.size() == 0) {
-                ids.add(0);
-            }
-            criteria.andCourseIdIn(ids);
-            chapterExample.setOrderByClause("record_time asc");
-            session.setAttribute("chapterQueryCriteria", map);
-            session.setAttribute("chapterExample", chapterExample);
-        } catch (Exception e) {
-            return RequestResult.failure("查询失败，请稍后再试");
-        }
-        return RequestResult.success();
     }
 
     @ResponseBody
@@ -1614,13 +1637,17 @@ public class TeacherController {
         return RequestResult.success();
     }
 
-
     @RequestMapping("/editChapter/{id}")
-    public String editChapter(Map<String, Object> map, @PathVariable("id") Integer id, @RequestParam(value = "courseId", defaultValue = "0") Integer courseId, @RequestParam("pageNum") Integer pageNum) {
+    public String editChapter(Map<String, Object> map, @PathVariable("id") Integer id, @RequestParam(value = "courseId", defaultValue = "0") Integer courseId, @RequestParam("pageNum") Integer pageNum, @RequestParam("preCourseId") Integer preCourseId) {
         map.put("courses", teacherService.getAllCoursesWithChapterAndCollegeByTeacherId(15));
         map.put("chapter", teacherService.getChapterById(id));
-        map.put("courseId", courseId);
+        if (courseId == 0) {
+            map.put("courseId", preCourseId);
+        } else {
+            map.put("courseId", courseId);
+        }
         map.put("pageNum", pageNum);
+        map.put("preCourseId", preCourseId);
         return "teacher/updateChapter";
     }
 
@@ -1652,8 +1679,27 @@ public class TeacherController {
         return RequestResult.success();
     }
 
+    @RequestMapping("/searchChapterTask/{id}")
+    public String searchChapterTask(@PathVariable("id") Integer id,
+                                    Map<String, Object> map,
+                                    @RequestParam("pageNum") Integer pageNum,
+                                    @RequestParam("courseId") Integer courseId) {
+
+        List<Task> tasks = teacherService.getTaskByChapterIdWithChapterAndCourse(id);
+        map.put("pageNum", pageNum);
+        map.put("courseId", courseId);
+        map.put("tasks", tasks);
+        map.put("chapterId", id);
+        return "teacher/searchChapterTask";
+    }
+
     @RequestMapping("/viewChapterFiles/{id}")
-    public String viewChapterFiles(@PathVariable("id") Integer id, Map<String, Object> map, @RequestParam(value = "minTime", defaultValue = "") String minTime, @RequestParam(value = "maxTime", defaultValue = "") String maxTime, @RequestParam("pageNum") Integer pageNum) throws ParseException {
+    public String viewChapterFiles(@PathVariable("id") Integer id,
+                                   Map<String, Object> map,
+                                   @RequestParam(value = "minTime", defaultValue = "") String minTime,
+                                   @RequestParam(value = "maxTime", defaultValue = "") String maxTime,
+                                   @RequestParam("pageNum") Integer pageNum,
+                                   @RequestParam("courseId") Integer courseId) throws ParseException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         CourseVideoExample courseVideoExample = new CourseVideoExample();
         CourseVideoExample.Criteria videoExampleCriteria = courseVideoExample.createCriteria();
@@ -1681,6 +1727,7 @@ public class TeacherController {
         map.put("minTime", minTime);
         map.put("maxTime", maxTime);
         map.put("pageNum", pageNum);
+        map.put("courseId", courseId);
         return "teacher/viewChapterFiles";
     }
 

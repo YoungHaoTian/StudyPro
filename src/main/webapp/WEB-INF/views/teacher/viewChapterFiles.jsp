@@ -231,7 +231,7 @@
         let id = $(this).attr("fileId");
         let minTime = $("#minTime").val().trim();
         let maxTime = $("#maxTime").val().trim();
-        window.location.href = "${APP_PATH}/teacher/editCourseFile/" + id + "?pageNum=0&chapterId=${id}&pageNumber=${pageNum}&minTime=" + minTime + "&maxTime=" + maxTime + "&pageNum=${pageNum}";
+        window.location.href = "${APP_PATH}/teacher/editCourseFile/" + id + "?pageNum=0&chapterId=${id}&pageNumber=${pageNum}&minTime=" + minTime + "&maxTime=" + maxTime + "&courseId=${courseId}";
     });
     //下载文档
     $(".downloadFile").on("click", function () {
@@ -286,7 +286,7 @@
         let id = $(this).attr("videoId");
         let minTime = $("#minTime").val().trim();
         let maxTime = $("#maxTime").val().trim();
-        window.location.href = "${APP_PATH}/teacher/editCourseVideo/" + id + "?pageNum=0&chapterId=${id}&pageNumber=${pageNum}&minTime=" + minTime + "&maxTime=" + maxTime + "&pageNum=${pageNum}";
+        window.location.href = "${APP_PATH}/teacher/editCourseVideo/" + id + "?pageNum=0&chapterId=${id}&minTime=" + minTime + "&maxTime=" + maxTime + "&pageNumber=${pageNum}&courseId=${courseId}";
     });
     //在线观看
     $(".viewVideo").on("click", function () {
@@ -298,10 +298,10 @@
     $("#search").on("click", function () {
         let minTime = $("#minTime").val().trim();
         let maxTime = $("#maxTime").val().trim();
-        window.location.href = "${APP_PATH}/teacher/viewChapterFiles/${id}?minTime=" + minTime + "&maxTime=" + maxTime + "&pageNum=${pageNum}";
+        window.location.href = "${APP_PATH}/teacher/viewChapterFiles/${id}?courseId=${courseId}&minTime=" + minTime + "&maxTime=" + maxTime + "&pageNum=${pageNum}";
     });
 
     function back() {
-        window.location.href = "${APP_PATH}/teacher/searchChapter?pageNum=${pageNum}";
+        window.location.href = "${APP_PATH}/teacher/searchChapter?courseId=${courseId}&pageNum=${pageNum}";
     }
 </script>

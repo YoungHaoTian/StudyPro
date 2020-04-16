@@ -6,7 +6,7 @@
   Description: 
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:forward page="/teacher/teacherIndex"/>
+<jsp:forward page="/teacher/searchCourse"/>
 <html>
 <head>
     <meta charset="utf-8">

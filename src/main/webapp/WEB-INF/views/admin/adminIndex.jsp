@@ -28,7 +28,7 @@
 <div class="row">
     <div class="col-lg-12">
         <ul class="nav nav-tabs wk-nav-menu" id="wk-nav-menu">
-            <li role="presentation"><a id="leftNav">管理员模块&nbsp;&nbsp;<span class="glyphicon glyphicon-menu-up"
+            <li role="presentation"><a id="leftNav">&nbsp;管理员模块&nbsp;<span class="glyphicon glyphicon-menu-up"
                                                                            aria-hidden="true"></span></a></li>
             <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item" id="createStudent">新增学生</a>
             </li>
@@ -66,24 +66,24 @@
                         <div class="panel-heading">
                             <a data-toggle="collapse" href="#AMenu" data-parent="#accordion"
                                class="click">学生信息管理&nbsp;<span
-                                    class=" glyphicon glyphicon-hand-down"
+                                    class=" glyphicon glyphicon-chevron-down"
                                     aria-hidden="true"></span></a>
                         </div>
                         <div id="AMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
                                 <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/createStudent">
-                                    新增学生&nbsp;<span class=" glyphicon glyphicon-triangle-right"
+                                    新增学生&nbsp;<span class=" glyphicon glyphicon-hand-right"
                                                     aria-hidden="true"></span>
                                 </button>
                                 <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/createStudentBatch">
-                                    批量新增学生&nbsp;<span class=" glyphicon glyphicon-triangle-right"
+                                    批量新增学生&nbsp;<span class=" glyphicon glyphicon-hand-right"
                                                       aria-hidden="true"></span>
                                 </button>
                                 <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/searchStudent">
-                                    学生信息查询&nbsp;<span class=" glyphicon glyphicon-triangle-right"
+                                    学生信息查询&nbsp;<span class=" glyphicon glyphicon-hand-right"
                                                       aria-hidden="true"></span>
                                 </button>
                             </div>
@@ -94,24 +94,24 @@
                         <div class="panel-heading">
                             <a data-toggle="collapse" href="#BMenu" data-parent="#accordion"
                                class="click">教师信息管理&nbsp;<span
-                                    class=" glyphicon glyphicon-hand-down"
+                                    class=" glyphicon glyphicon-chevron-down"
                                     aria-hidden="true"></span></a>
                         </div>
                         <div id="BMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
                                 <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/createTeacher">
-                                    新增教师&nbsp;<span class=" glyphicon glyphicon-triangle-right"
+                                    新增教师&nbsp;<span class=" glyphicon glyphicon-hand-right"
                                                     aria-hidden="true"></span>
                                 </button>
                                 <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/createTeacherBatch">
-                                    批量新增教师&nbsp;<span class=" glyphicon glyphicon-triangle-right"
+                                    批量新增教师&nbsp;<span class=" glyphicon glyphicon-hand-right"
                                                       aria-hidden="true"></span>
                                 </button>
                                 <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/searchTeacher">
-                                    教师信息查询&nbsp;<span class=" glyphicon glyphicon-triangle-right"
+                                    教师信息查询&nbsp;<span class=" glyphicon glyphicon-hand-right"
                                                       aria-hidden="true"></span>
                                 </button>
                             </div>
@@ -122,7 +122,7 @@
                         <div class="panel-heading">
                             <a data-toggle="collapse" href="#CMenu" data-parent="#accordion"
                                class="click">学院管理&nbsp;<span
-                                    class=" glyphicon glyphicon-hand-down"
+                                    class=" glyphicon glyphicon-chevron-down"
                                     aria-hidden="true"></span></a>
                         </div>
 
@@ -130,12 +130,12 @@
                             <div class="list-group wk-accordion-list-group">
                                 <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/createCollege">
-                                    新增学院&nbsp;<span class=" glyphicon glyphicon-triangle-right"
+                                    新增学院&nbsp;<span class=" glyphicon glyphicon-hand-right"
                                                     aria-hidden="true"></span>
                                 </button>
                                 <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/searchCollege">
-                                    学院信息查询&nbsp;<span class=" glyphicon glyphicon-triangle-right"
+                                    学院信息查询&nbsp;<span class=" glyphicon glyphicon-hand-right"
                                                       aria-hidden="true"></span>
                                 </button>
                             </div>
@@ -147,19 +147,19 @@
                         <div class="panel-heading">
                             <a data-toggle="collapse" href="#DMenu" data-parent="#accordion"
                                class="click">课程管理&nbsp;<span
-                                    class=" glyphicon glyphicon-hand-down"
+                                    class=" glyphicon glyphicon-chevron-down"
                                     aria-hidden="true"></span></a>
                         </div>
                         <div id="DMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
                                 <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/createCourse">
-                                    新增课程&nbsp;<span class=" glyphicon glyphicon-triangle-right"
+                                    新增课程&nbsp;<span class=" glyphicon glyphicon-hand-right"
                                                     aria-hidden="true"></span>
                                 </button>
                                 <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/searchCourse">
-                                    课程信息查询&nbsp;<span class=" glyphicon glyphicon-triangle-right"
+                                    课程信息查询&nbsp;<span class=" glyphicon glyphicon-hand-right"
                                                       aria-hidden="true"></span>
                                 </button>
                             </div>
@@ -170,14 +170,14 @@
                         <div class="panel-heading">
                             <a data-toggle="collapse" href="#EMenu" data-parent="#accordion"
                                class="click">论坛管理&nbsp;<span
-                                    class=" glyphicon glyphicon-hand-down"
+                                    class=" glyphicon glyphicon-chevron-down"
                                     aria-hidden="true"></span></a>
                         </div>
                         <div id="EMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
                                 <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/searchDiscuss">
-                                    话题讨论&nbsp;<span class=" glyphicon glyphicon-triangle-right"
+                                    话题讨论&nbsp;<span class=" glyphicon glyphicon-hand-right"
                                                     aria-hidden="true"></span>
                                 </button>
                             </div>
@@ -188,17 +188,17 @@
                         <div class="panel-heading">
                             <a data-toggle="collapse" href="#FMenu" data-parent="#accordion"
                                class="click">公告管理&nbsp;<span
-                                    class=" glyphicon glyphicon-hand-down"
+                                    class=" glyphicon glyphicon-chevron-down"
                                     aria-hidden="true"></span></a>
                         </div>
                         <div id="FMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
                                 <button type="button" class="list-group-item" href="${APP_PATH}/admin/createNotice">
-                                    新增公告&nbsp;<span class=" glyphicon glyphicon-triangle-right"
+                                    新增公告&nbsp;<span class=" glyphicon glyphicon-hand-right"
                                                     aria-hidden="true"></span>
                                 </button>
                                 <button type="button" class="list-group-item" href="${APP_PATH}/admin/searchNotice">
-                                    公告信息查询&nbsp;<span class=" glyphicon glyphicon-triangle-right"
+                                    公告信息查询&nbsp;<span class=" glyphicon glyphicon-hand-right"
                                                       aria-hidden="true"></span>
                                 </button>
                             </div>
@@ -210,19 +210,19 @@
                         <div class="panel-heading">
                             <a data-toggle="collapse" href="#GMenu" data-parent="#accordion"
                                class="click">个人信息管理&nbsp;<span
-                                    class=" glyphicon glyphicon-hand-down"
+                                    class=" glyphicon glyphicon-chevron-down"
                                     aria-hidden="true"></span></a>
                         </div>
                         <div id="GMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
                                 <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/viewAdminInfo">
-                                    个人信息查看&nbsp;<span class=" glyphicon glyphicon-triangle-right"
+                                    个人信息查看&nbsp;<span class=" glyphicon glyphicon-hand-right"
                                                       aria-hidden="true"></span>
                                 </button>
                                 <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/updateAdminInfo">
-                                    个人信息修改&nbsp;<span class=" glyphicon glyphicon-triangle-right"
+                                    个人信息修改&nbsp;<span class=" glyphicon glyphicon-hand-right"
                                                       aria-hidden="true"></span>
                                 </button>
                             </div>

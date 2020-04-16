@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 
@@ -147,5 +148,19 @@ public class StudentController {
         //删除session中的验证码
         request.getSession().removeAttribute("ForgetCode");
         return RequestResult.success();
+    }
+
+    @RequestMapping("/studentIndex")
+    public String teacherIndex() {
+        return "student/studentIndex";
+    }
+
+
+    @RequestMapping("/searchCourseInfo")
+    public String searchCourseInfo(Map<String, Object> map, HttpSession session) {
+        /*Student student = (Student) session.getAttribute("user");
+        map.put("courses", studentService.getAllCourseWithBLOBsAndTeacherByCollegeId(student.getCollegeId()));*/
+        map.put("courses", studentService.getAllCourseWithBLOBsAndTeacherAndCollegeByCollegeId(8));
+        return "student/searchCourseInfo";
     }
 }

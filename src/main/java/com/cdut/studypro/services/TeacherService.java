@@ -135,4 +135,10 @@ public interface TeacherService {
     List<CourseVideo> getCourseVideoByExample(CourseVideoExample example);
 
     List<CourseFile> getCourseFileByExample(CourseFileExample courseFileExample);
+
+    List<Course> getAllCoursesWithCollegeByExample(CourseExample courseExample);
+
+    List<College> getAllCollegesByTeacherId(Integer id);
+
+    List<Task> getTaskByChapterIdWithChapterAndCourse(Integer id);
 }

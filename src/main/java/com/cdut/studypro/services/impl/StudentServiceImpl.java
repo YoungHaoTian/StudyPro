@@ -1,7 +1,10 @@
 package com.cdut.studypro.services.impl;
 
+import com.cdut.studypro.beans.Course;
+import com.cdut.studypro.beans.CourseExample;
 import com.cdut.studypro.beans.Student;
 import com.cdut.studypro.beans.StudentExample;
+import com.cdut.studypro.daos.CourseMapper;
 import com.cdut.studypro.daos.StudentMapper;
 import com.cdut.studypro.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,9 @@ public class StudentServiceImpl implements StudentService {
 
     @Autowired
     private StudentMapper studentMapper;
+
+    @Autowired
+    private CourseMapper courseMapper;
 
     @Override
     public List<Student> selectStudentByExample(StudentExample example) {
@@ -48,6 +54,19 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Integer getIdByTelephone(String phone) {
         return studentMapper.getIdByTelephone(phone);
+    }
+
+    @Override
+    public List<Course> getAllCourseWithBLOBsAndTeacherAndCollege() {
+        return courseMapper.selectByExampleWithBLOBsAndCollegeAndTeacher(null);
+    }
+
+    @Override
+    public List<Course> getAllCourseWithBLOBsAndTeacherAndCollegeByCollegeId(Integer id) {
+        CourseExample courseExample=new CourseExample();
+        CourseExample.Criteria criteria = courseExample.createCriteria();
+        criteria.andCollegeIdEqualTo(id);
+        return courseMapper.selectByExampleWithBLOBsAndCollegeAndTeacher(courseExample);
     }
 
 

@@ -115,7 +115,8 @@
                                            courseId="${task.courseChapter.course.id}"
                                            type="text"
                                            readonly="readonly"
-                                           class="form-control wk-long-2col-input" value="${task.courseChapter.course.name}(${task.courseChapter.course.college.name}) > ${task.courseChapter.title}"/>
+                                           class="form-control wk-long-2col-input"
+                                           value="${task.courseChapter.course.name}(${task.courseChapter.course.college.name}) > ${task.courseChapter.title}"/>
                                 </div>
                             </div>
                         </div>
@@ -133,7 +134,7 @@
                 <div class="panel-footer wk-panel-footer">
                     <button type="button" class="btn btn-info" onclick="updateTask();">提&nbsp;&nbsp;交</button>
                     <button type="button" class="btn btn-info" style="margin-left: 20px"
-                            onclick="window.location.href='${APP_PATH}/teacher/searchTask?pageNum=${pageNum}'">反&nbsp;&nbsp;回
+                            onclick="back()">返&nbsp;&nbsp;回
                     </button>
                 </div>
             </form>
@@ -163,6 +164,7 @@
         $("#chapter").attr("chapterId", $(this).attr("chapterId"));
         $("#chapter").attr("courseId", $(this).attr("courseId"));
     });
+
     function updateTask() {
         let chapterId = $("#chapter").attr("chapterId");
         let courseId = $("#chapter").attr("courseId");
@@ -203,6 +205,12 @@
                     console.log("success");
                     layer.msg("作业修改成功", {time: 1500, icon: 6}, function () {
                     });
+                    if (0 ===${pageNum}) {
+                        window.location.href = "${APP_PATH}/teacher/editTask/${taskId}?pageNum=0&pageNumber=${pageNumber}&courseId=${courseId}&chapterId=${chapterId}";
+                    } else {
+                        window.location.href = "${APP_PATH}/teacher/editTask/${taskId}?pageNum=${pageNum}";
+                    }
+
                 }
             },
             error: function () {
@@ -210,5 +218,13 @@
                 });
             }
         });
+    }
+
+    function back() {
+        if (0 ===${pageNum}) {
+            window.location.href = "${APP_PATH}/teacher/searchChapterTask/${chapterId}?pageNum=${pageNumber}&courseId=${chapterId}";
+        } else {
+            window.location.href = "${APP_PATH}/teacher/searchTask?pageNum=${pageNum}";
+        }
     }
 </script>

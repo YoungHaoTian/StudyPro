@@ -186,12 +186,12 @@
             return;
         }
         if (title.trim().length > 100) {
-            layer.msg("章节标题长度不能超过100", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("章节标题不能超过100", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
         if (content.trim() === "") {
-            layer.msg("章节内容长度不能为空", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("章节内容不能为空", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
@@ -217,7 +217,7 @@
                     console.log("success");
                     layer.msg("章节修改成功", {time: 1500, icon: 6}, function () {
                     });
-                    window.location.href = "${APP_PATH}/teacher/editChapter/${chapter.id}?courseId=" + courseId + "&pageNum=${pageNum}";
+                    window.location.href = "${APP_PATH}/teacher/editChapter/${chapter.id}?courseId=" + courseId + "&pageNum=${pageNum}&preCourseId=${preCourseId}";
                 }
             },
             error: function () {
@@ -228,6 +228,6 @@
     }
 
     function back() {
-        window.location.href = "${APP_PATH}/teacher/searchChapter?pageNum=${pageNum}";
+        window.location.href = "${APP_PATH}/teacher/searchChapter?courseId=${preCourseId}&pageNum=${pageNum}";
     }
 </script>

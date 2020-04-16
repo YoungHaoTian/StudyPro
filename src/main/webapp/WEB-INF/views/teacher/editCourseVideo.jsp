@@ -110,7 +110,7 @@
 
     function back() {
         if (0 ===${pageNum}) {
-            window.location.href = "${APP_PATH}/teacher/viewChapterFiles/${chapterId}?minTime=${minTime}&maxTime=${maxTime}&pageNum=${pageNumber}";
+            window.location.href = "${APP_PATH}/teacher/viewChapterFiles/${chapterId}?minTime=${minTime}&maxTime=${maxTime}&pageNum=${pageNumber}&courseId=${courseId}";
         } else {
             window.location.href = "${APP_PATH}/teacher/searchCourseVideo?pageNum=${pageNum}";
         }

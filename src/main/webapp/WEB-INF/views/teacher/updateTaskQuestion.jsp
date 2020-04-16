@@ -140,8 +140,7 @@
                 <div class="panel-footer wk-panel-footer" style="margin-top:50px">
                     <button type="button" class="btn btn-info" onclick="updateTaskQuestion()">提&nbsp;&nbsp;交</button>
                     <button type="button" class="btn btn-info"
-                            onclick="window.location.href='${APP_PATH}/teacher/searchTaskQuestion/${taskQuestion.taskId}?pageNum=${pageNum}&pageNumber=${pageNumber}'"
-                            style="margin-left: 20px">返&nbsp;&nbsp;回
+                            onclick="back()" style="margin-left: 20px">返&nbsp;&nbsp;回
                     </button>
                 </div>
             </form>
@@ -218,5 +217,12 @@
                 });
             }
         });
+    }
+    function back() {
+        if (${page!=null}){
+            window.location.href="${APP_PATH}/teacher/searchTaskQuestion/${taskQuestion.taskId}?page=${page}&courseId=${courseId}&chapterId=${chapterId}";
+        }else {
+            window.location.href="${APP_PATH}/teacher/searchTaskQuestion/${taskQuestion.taskId}?pageNum=${pageNum}&pageNumber=${pageNumber}";
+        }
     }
 </script>
