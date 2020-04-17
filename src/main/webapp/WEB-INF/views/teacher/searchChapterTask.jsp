@@ -51,6 +51,14 @@
             <div style="position: absolute;top: -2px;right: 150px;">
                 <form class="navbar-form navbar-right" role="search" action="" method="post">
                     <div class="form-group">
+                        <button type="button" class="btn btn-info createTask" data-toggle="tooltip"
+                                data-placement="left"
+                                title="新增作业">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            新增作业
+                        </button>
+                    </div>
+                    <div class="form-group" style="margin-left: 20px">
                         <button type="button" class="btn btn-danger batchDelete" data-toggle="tooltip"
                                 data-placement="left"
                                 title="批量删除作业">
@@ -135,15 +143,15 @@
 </div>
 
 <div class="modal fade" id="taskDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-    <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">作业删除</h5>
+                <h5 class="modal-title" style="color: red">作业删除</h5>
             </div>
-            <div class="modal-body">
-
+            <div class="modal-body" style="text-align: center">
+                <span>删除当前作业将删除对应的题目，你确定这么做吗？</span>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -153,15 +161,15 @@
     </div>
 </div>
 <div class="modal fade" id="taskBatchDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-    <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">作业批量删除</h5>
+                <h5 class="modal-title" style="color: red">作业批量删除</h5>
             </div>
-            <div class="modal-body">
-
+            <div class="modal-body" style="text-align: center">
+                <span>删除这些作业将删除对应的题目，你确定这么做吗？</span>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -170,6 +178,34 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="createTaskModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title" style="color: red">作业添加</h5>
+            </div>
+            <div class="modal-body" style="text-align: center">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="title" class="col-sm-2 control-label">作业标题：</label>
+                        <div class="col-sm-9">
+                            <textarea type="text" name="title" class="form-control" id="title"
+                                      placeholder="请输入作业标题"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="createTaskBtn">添加</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
     let ids = "";
@@ -179,9 +215,6 @@
         id = $(this).attr("taskId");
         console.log(id);
         //删除课程时弹出确认框
-        let message = "删除当前作业将删除对应的题目，你确定这么做吗？";
-
-        $("#taskDeleteModal .modal-body").text(message);
         $("#taskDeleteModal").modal({
                 backdrop: "static"
             }
@@ -204,7 +237,8 @@
                     });
                 }
                 if (result.code === 100) {
-                    window.location.href = "${APP_PATH}/teacher/searchChapterTask/${chapterId}?pageNum=${pageNum}&courseId=${chapterId}";
+                    <%--window.location.href = "${APP_PATH}/teacher/searchChapterTask/${chapterId}?pageNum=${pageNum}&courseId=${chapterId}";--%>
+                    window.location.reload(true);
                 }
             },
             error: function () {
@@ -234,6 +268,7 @@
     });
     //点击批量删除按钮
     $(".batchDelete").on("click", function () {
+        ids="";
         $.each($(".select_item:checked"), function () {
             //组装课程id字符串
             ids += $(this).attr("taskId") + "-";
@@ -246,7 +281,6 @@
             //去除删除的id多余的"-"
             ids = ids.substring(0, ids.length - 1);
             console.log(ids);
-            $("#taskBatchDeleteModal .modal-body").text("删除这些作业将删除对应的题目，你确定这么做吗？");
             $("#taskBatchDeleteModal").modal({
                 backdrop: "static"
             });
@@ -271,7 +305,8 @@
                 if (result.code === 100) {
                     layer.msg("批量删除成功", {time: 1000, icon: 1}, function () {
                     });
-                    window.location.href = "${APP_PATH}/teacher/searchChapterTask/${chapterId}?pageNum=${pageNum}&courseId=${courseId}";
+                    <%--window.location.href = "${APP_PATH}/teacher/searchChapterTask/${chapterId}?pageNum=${pageNum}&courseId=${courseId}";--%>
+                    window.location.reload(true);
                 }
             },
             error: function () {
@@ -294,7 +329,55 @@
         let id = $(this).attr("taskId");
         window.location.href = "${APP_PATH}/teacher/searchTaskQuestion/" + id + "?page=${pageNum}&courseId=${courseId}&chapterId=${chapterId}";
     });
-
+    $(".createTask").on("click", function () {
+        $("#createTaskModal").modal({
+                backdrop: "static"
+            }
+        );
+    });
+    $("#createTaskBtn").on("click", function () {
+        let title = $("#title").val();
+        let chapterId = ${chapterId};
+        if (title.trim() === "") {
+            layer.msg("作业标题不能为空", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        if (title.trim().length > 100) {
+            layer.msg("作业标题内容长度不能超过100", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        let loadingIndex = layer.msg('处理中', {icon: 16});
+        $.ajax({
+            url: "${APP_PATH}/teacher/saveTask",
+            type: "POST",
+            // contentType: "application/json",//不使用contentType: “application/json”则data可以是对象,使用contentType: “application/json”则data只能是json字符串
+            dataType: "json",
+            data: {
+                "chapterId": chapterId,
+                "title": title.trim()
+            },
+            success: function (result) {
+                layer.close(loadingIndex);
+                console.log(result);
+                if (result.code === 200) {
+                    layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
+                    });
+                }
+                if (result.code === 100) {
+                    console.log("success");
+                    layer.msg("作业添加成功", {time: 1500, icon: 6}, function () {
+                    });
+                    window.location.reload(true);
+                }
+            },
+            error: function () {
+                layer.msg("网络异常，请稍后再试", {time: 1500, icon: 5, shift: 6}, function () {
+                });
+            }
+        });
+    });
 </script>
 </body>
 </html>

@@ -46,6 +46,10 @@ public interface CourseMapper {
     //带学院信息和教师信息的条件查询
     List<Course> selectByExampleWithBLOBsAndCollegeAndTeacher(CourseExample example);
 
+    List<Course> selectByExampleWithBLOBsAndCollege(CourseExample courseExample);
+
+    List<Course> selectByExampleWithBLOBsAndTeacher(CourseExample example);
+
     //带id、name、teacher的条件查询
     List<Course> selectByExampleWithCollegeAndTeacher(CourseExample courseExample);
 
@@ -64,5 +68,5 @@ public interface CourseMapper {
     //根据teacher的id值查找该teacher所教授的所有课程，包含章节信息
     List<Course> selectByTeacherIdWithChapterAndCollege(Integer id);
 
-    List<Course> selectByExampleWithBLOBsAndCollege(CourseExample courseExample);
+
 }

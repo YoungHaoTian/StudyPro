@@ -1,10 +1,7 @@
 package com.cdut.studypro.services;
 
 
-import com.cdut.studypro.beans.AdminExample;
-import com.cdut.studypro.beans.Course;
-import com.cdut.studypro.beans.Student;
-import com.cdut.studypro.beans.StudentExample;
+import com.cdut.studypro.beans.*;
 
 import java.util.List;
 
@@ -26,7 +23,7 @@ public interface StudentService {
 
     Integer getIdByTelephone(String phone);
 
-    List<Course> getAllCourseWithBLOBsAndTeacherAndCollege();
+    List<Course> getAllCourseWithBLOBsAndTeacherByExample(CourseExample courseExample);
 
-    List<Course> getAllCourseWithBLOBsAndTeacherAndCollegeByCollegeId(Integer id);
+    List<Integer> getTeacherIdByTeacherExample(TeacherExample teacherExample);
 }

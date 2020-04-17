@@ -116,7 +116,7 @@
                                            type="text"
                                            readonly="readonly"
                                            class="form-control wk-long-2col-input"
-                                           value="${task.courseChapter.course.name}(${task.courseChapter.course.college.name}) > ${task.courseChapter.title}"/>
+                                           value="${task.courseChapter.course.name} (${task.courseChapter.course.college.name}) > ${task.courseChapter.title}"/>
                                 </div>
                             </div>
                         </div>

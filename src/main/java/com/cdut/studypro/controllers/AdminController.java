@@ -72,6 +72,9 @@ public class AdminController {
 //        criteria.andPasswordEqualTo(map.get("password"));
         List<Admin> admins = adminService.selectAdminByExample(adminExample);
         if (admins != null && admins.size() != 0) {
+            if (admins.size() != 1) {
+                return RequestResult.failure("登录异常，请选择其他方式登录");
+            }
             Admin admin = admins.get(0);
             String password = map.get("password");
             if (password.equals(MD5Util.stringToMD5(admin.getPassword()))) {
@@ -1176,7 +1179,7 @@ public class AdminController {
         PageInfo<Course> page = new PageInfo(courses, 10);
         map.put("pageInfo", page);
         map.put("colleges", adminService.getAllColleges());
-        map.put("courses", courses);
+//        map.put("courses", courses);
         return "admin/searchCourse";
     }
 
@@ -1214,7 +1217,11 @@ public class AdminController {
 
     @ResponseBody
     @PostMapping("/searchCourseByTerm")
-    private RequestResult searchCourseByTerm(@RequestParam("name") String name, @RequestParam("collegeId") Integer collegeId, @RequestParam("teacher") String teacher, HttpSession session) {
+    private RequestResult searchCourseByTerm(@RequestParam("name") String name,
+                                             @RequestParam("collegeId") Integer collegeId,
+                                             @RequestParam("teacher") String teacher,
+                                             HttpSession session,
+                                             @RequestParam("number") String number) {
         //将查询条件存放进session中，以回显查询条件
         Map<String, Object> map = new HashMap<>();
         CourseExample courseExample = new CourseExample();
@@ -1228,12 +1235,19 @@ public class AdminController {
             TeacherExample.Criteria criteria1 = teacherExample.createCriteria();
             criteria1.andNameLike("%" + teacher.trim() + "%");
             List<Integer> ids = adminService.getTeacherIdByTeacherExample(teacherExample);
+            if (ids.size() == 0) {
+                ids.add(0);
+            }
             criteria.andTeacherIdIn(ids);
             map.put("teacher", teacher.trim());
         }
         if (collegeId != 0) {
             criteria.andCollegeIdEqualTo(collegeId);
             map.put("collegeId", collegeId);
+        }
+        if (!"".equals(number.trim())) {
+            criteria.andNumberLike("%" + number.trim() + "%");
+            map.put("number", number.trim());
         }
         session.setAttribute("courseExample", courseExample);
         session.setAttribute("courseQueryCriteria", map);

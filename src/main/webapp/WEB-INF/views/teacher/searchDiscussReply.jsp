@@ -221,14 +221,14 @@
 </c:if>
 
 <div class="modal fade" id="postBatchDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-    <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">回复批量删除</h5>
+                <h5 class="modal-title" style="color: red">回复批量删除</h5>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="text-align: center">
 
             </div>
             <div class="modal-footer">
@@ -327,6 +327,7 @@
     });
     //点击批量删除按钮
     $(".batchDelete").on("click", function () {
+        ids="";
         $.each($(".select_item:checked"), function () {
             //组装课程id字符串
             ids += $(this).attr("postId") + "-";
@@ -339,7 +340,6 @@
             //去除删除的id多余的"-"
             ids = ids.substring(0, ids.length - 1);
             console.log(ids);
-
             $("#postBatchDeleteModal .modal-body").text("你确定要删除这些回复信息吗？");
             $("#postBatchDeleteModal").modal({
                 backdrop: "static"

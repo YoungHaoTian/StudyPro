@@ -16,6 +16,17 @@
     <script type="text/javascript" src="${APP_PATH}/resources1/js/jquery-3.1.1.js"></script>
     <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap-select.min.js"></script>
     <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap.min.js"></script>
+    <style>
+        th, td {
+            text-align: center;
+            height: 30px;
+            border: #CCCCCC 1px solid;
+        }
+
+        td {
+            word-wrap: break-word;
+        }
+    </style>
 </head>
 
 <body>
@@ -35,8 +46,40 @@
             <div class="panel-heading">
                 工具栏 Tools
             </div>
-            <div class="panel-body">
-                <button id="addBtn" type="button" class="btn btn-default wk-tool-btn">加入课程</button>
+            <div style="position: absolute;top: -11px;left: 240px;">
+                <form class="navbar-form navbar-right" role="search"
+                      action="" method="post">
+                    <div class="form-group">
+                        <label for="name" class="control-label wk-filed-label" style="margin-top: 20px">课程名称:</label>
+                        <input type="text" class="form-control" name="name" id="name" placeholder="课程名称"
+                               value="${sessionScope.courseQueryCriteria.get("name")}">
+                    </div>
+                    <div class="form-group">
+                        <label for="number" class="control-label wk-filed-label" style="margin-top: 20px">课程编号:</label>
+                        <input type="text" class="form-control" name="number" id="number" placeholder="课程编号"
+                               value="${sessionScope.courseQueryCriteria.get("number")}">
+                    </div>
+                    <div class="form-group">
+                        <label for="teacher" class="control-label wk-filed-label" style="margin-top: 20px">授课教师:</label>
+                        <input type="text" class="form-control" name="teacher" id="teacher" placeholder="授课教师"
+                               value="${sessionScope.courseQueryCriteria.get("teacher")}">
+                    </div>
+                    <div class="form-group" style="margin-left: 20px">
+                        <button type="button" id="search" class="btn btn-success search" data-toggle="tooltip"
+                                data-placement="left" title="查询课程" style="margin-right: 20px">
+                            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                            查询
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary batchJoin" data-toggle="tooltip"
+                                data-placement="left"
+                                title="批量加入课程">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            批量加入
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -47,24 +90,37 @@
         <div class="panel panel-default  wk-panel">
             <table class="table table-striped table-hover">
                 <thead>
-                <tr>
-                    <th>选择</th>
+                <tr class="info">
+                    <th style="width: 80px">
+                        <input type="checkbox" id="select_all"/>
+                        <label for="select_all" style="margin-bottom: 0px;font-weight: 200">全选</label>
+                    </th>
                     <th>课程名称</th>
                     <th>课程编号</th>
-                    <th>所属学院</th>
+                    <th>授课教师</th>
                     <th>课程简介</th>
+                    <th style="width: 200px">选择操作</th>
                 </tr>
                 </thead>
                 <tbody>
-                <c:forEach items="${courses}" var="var">
+                <c:forEach items="${pageInfo.list}" var="course">
                     <tr>
-                        <td><input id="grid_${var.id}" name="workerRadio"
-                                   type="radio" aria-label="选择"/>
+                        <th>
+                            <label>
+                                <input courseId="${course.id}" type="checkbox" class="select_item"/>
+                            </label>
+                        </th>
+                        <td>${course.name}</td>
+                        <td>${course.number}</td>
+                        <td>${course.teacher.name}</td>
+                        <td>${course.intro}</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm join" data-toggle="tooltip" data-placement="left"
+                                    title="编辑当前课程" courseId="${course.id}">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                加入当前课程
+                            </button>
                         </td>
-                        <td>${var.name}</td>
-                        <td>${var.number}</td>
-                        <td>${var.college.name}</td>
-                        <td>${var.intro}</td>
                     </tr>
                 </c:forEach>
                 </tbody>
@@ -73,77 +129,266 @@
         </div>
     </div>
 </div>
+<c:if test="${!empty pageInfo.list}">
+    <!--显示分页信息-->
+    <div class="row">
+        <!--分页文字信息  -->
+        <div class="col-md-6 col-md-offset-2">当前
+            <kbd>${pageInfo.pageNum }</kbd>
+            页，总<kbd>${pageInfo.pages }</kbd>
+            页，总<kbd>${pageInfo.total }</kbd>
+            条记录
+        </div>
+    </div>
+    <!-- 分页条信息 -->
+    <div class="row">
+        <div class="col-md-6 col-md-offset-6">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <c:if test="${pageInfo.hasPreviousPage }">
+                        <li><a href="${APP_PATH}/student/searchCourseInfo?pageNum=1">首页</a></li>
+                        <li><a href="${APP_PATH}/student/searchCourseInfo?pageNum=${pageInfo.pageNum-1}"
+                               aria-label="Previous"><span aria-hidden="true">&laquo;</span>
+                        </a></li>
+                    </c:if>
+                    <c:if test="${!pageInfo.hasPreviousPage}">
+                        <li><a href="javascript:void(0)" style="pointer-events: none">首页</a></li>
+                        <li><a href="javascript:void(0)" style="pointer-events: none"
+                               aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
+                        </a></li>
+                    </c:if>
 
-<div class="modal fade" tabindex="-1" role="dialog"
-     id="deleteConfirm">
-    <div class="modal-dialog" role="document">
+                    <c:forEach items="${pageInfo.navigatepageNums }" var="page_Num">
+                        <c:if test="${page_Num == pageInfo.pageNum }">
+                            <li class="active"><a href="javascript:void(0)">${page_Num }</a></li>
+                        </c:if>
+                        <c:if test="${page_Num != pageInfo.pageNum }">
+                            <li><a href="${APP_PATH }/student/searchCourseInfo?pageNum=${page_Num }">${page_Num }</a>
+                            </li>
+                        </c:if>
+                    </c:forEach>
+
+                    <c:if test="${pageInfo.hasNextPage }">
+                        <li><a href="${APP_PATH }/student/searchCourseInfo?pageNum=${pageInfo.pageNum+1 }"
+                               aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+                        </a></li>
+                        <li><a href="${APP_PATH }/student/searchCourseInfo?pageNum=${pageInfo.pages}">末页</a></li>
+                    </c:if>
+                    <c:if test="${!pageInfo.hasNextPage}">
+                        <li><a href="javascript:void(0)" style="pointer-events: none"
+                               aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+                        </a></li>
+                        <li><a href="javascript:void(0)" style="pointer-events: none">末页</a></li>
+                    </c:if>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <!-- 页面跳转信息 -->
+    <div class="row">
+        <div class="col-sm-2 col-md-offset-6">
+            <input type="number" class="form-control" id="pageNum" placeholder="跳转到...">
+        </div>
+        <button type="button" class="btn btn-success toPage" style="margin-left: 20px">确定跳转</button>
+    </div>
+</c:if>
+<div class="modal fade" id="courseJoinModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
-            <div class="modal-header wk-modal-header">
-                <button class="close" type="button" data-dismiss="modal">
-                    <span aria-hidden="true">&times;</span>
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h4>系统提示</h4>
+                <h5 class="modal-title">加入课程</h5>
             </div>
-            <div class="modal-body">您确定要删除这些记录？</div>
-            <div class="modal-footer wk-modal-footer">
-                <button id="deleteBtnOK" type="submit"
-                        class="btn btn-default wk-btn" data-dismiss="modal">确定
-                </button>
-                <button type="button" class="btn btn-default wk-tool-btn"
-                        data-dismiss="modal">取消
-                </button>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="course_join_btn">确定</button>
             </div>
         </div>
     </div>
 </div>
+<div class="modal fade" id="courseBatchJoinModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title">批量加入课程</h5>
+            </div>
+            <div class="modal-body">
 
-<script>
-
-    $("#addBtn").on("click", function () {
-        var id = "";
-        $(":radio").each(function () {
-            if ($(this).is(":checked")) {
-                id = $(this).attr("id").substr(5, $(this).attr("id").length);
-            }
-        });
-
-        if (id != "") {
-            location.href = "addCourse/" + id + ".html";
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="course_batchJoin_btn">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${APP_PATH}/resources/js/layer/layer.js"></script>
+<script type="text/javascript">
+    let ids = "";
+    let id = "";
+    //页面跳转
+    $(".toPage").on("click", function () {
+        //获取到将要跳转的页面值
+        let pageNum = $("#pageNum").val();
+        let total =${pageInfo.pages };
+        if (pageNum.trim() === "" || total < pageNum || pageNum <= 0) {
+            layer.msg("错误的跳转页码，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
         }
+        if (pageNum ==${pageInfo.pageNum}) {
+            layer.msg("当前已经是第" + pageNum + "页", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        window.location.href = "${APP_PATH}/student/searchCourseInfo?pageNum=" + pageNum;
     });
-
-
-    $("#deleteBtn").on("click", function () {
-        var id = "";
-        $(":radio").each(function () {
-            if ($(this).is(":checked")) {
-                id = $(this).attr("id").substr(5, $(this).attr("id").length);
+    //查询按钮
+    $("#search").on("click", function () {
+        let name = $("#name").val().trim();
+        let teacher = $("#teacher").val().trim();
+        let number = $("#number").val().trim();
+        let loadingIndex = layer.msg('处理中', {icon: 16});
+        //发送ajax请求
+        $.ajax({
+            url: "${APP_PATH}/student/searchCourseInfoByTerm",
+            type: "POST",
+            dataType: "json",
+            data: {
+                "name": name,
+                "teacher": teacher,
+                "number": number
+            },
+            success: function (result) {
+                layer.close(loadingIndex);
+                if (result.code === 200) {
+                    layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
+                    });
+                }
+                if (result.code === 100) {
+                    layer.msg("查询成功", {time: 1000, icon: 1}, function () {
+                    });
+                    window.location.href = "${APP_PATH}/student/searchCourseInfo";
+                }
+            },
+            error: function () {
+                layer.msg("网络异常，请稍后再试", {time: 1500, icon: 5, shift: 6}, function () {
+                });
             }
         });
-
-        if (id != "") {
-            $("#deleteConfirm").modal();
-            $("#deleteBtnOK").on("click", function () {
-                location.href = "deleteCourse/" + id + ".html";
+    });
+    //批量加入课程
+    //全选按钮
+    $("#select_all").on("click", (function () {
+        $(".select_item").prop("checked", $(this).prop("checked"));
+        let checked = $(this).prop("checked");
+        console.log(checked);
+        console.log(checked === true);
+        if (checked === true) {
+            $(this).parent("th").children("label").text("取消");
+        } else {
+            $(this).parent("th").children("label").text("全选");
+        }
+    }));
+    //单选按钮
+    $(".select_item").on("click", function () {
+        let flag = $(".select_item:checked").length == $(".select_item").length;
+        $("#select_all").prop("checked", flag);
+    });
+    //点击批量加入按钮
+    $(".batchJoin").on("click", function () {
+        $.each($(".select_item:checked"), function () {
+            //组装课程id字符串
+            ids += $(this).attr("courseId") + "-";
+        });
+        console.log(ids);
+        if (ids.trim() === "") {
+            layer.msg("操作失败，你未选择任何课程", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+        } else {
+            //去除删除的id多余的"-"
+            ids = ids.substring(0, ids.length - 1);
+            console.log(ids);
+            $("#courseBatchJoinModal .modal-body").text("你确定要加入这些课程吗？");
+            $("#courseBatchJoinModal").modal({
+                backdrop: "static"
             });
         }
     });
-
-
-    $("#updateBtn").on("click", function () {
-        var id = "";
-        $(":radio").each(function () {
-            if ($(this).is(":checked")) {
-                id = $(this).attr("id").substr(5, $(this).attr("id").length);
+    $("#course_batchJoin_btn").on("click", function () {
+        let loadingIndex = layer.msg('处理中', {icon: 16});
+        $.ajax({
+            url: "${APP_PATH}/student/joinCourseBatch",
+            type: "POST",
+            dataType: "json",
+            data: {
+                "ids": ids
+            },
+            success: function (result) {
+                layer.close(loadingIndex);
+                if (result.code === 200) {
+                    layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
+                    });
+                }
+                if (result.code === 100) {
+                    layer.msg("批量加入课程成功", {time: 1000, icon: 1}, function () {
+                    });
+                }
+            },
+            error: function () {
+                layer.msg("网络异常，请稍后再试", {time: 1500, icon: 5, shift: 6}, function () {
+                });
             }
         });
-
-        if (id != "") {
-            location.href = "updateCourse/" + id + ".html";
-        }
     });
 
-
+    $(".join").on("click", function () {
+        id = $(this).attr("courseId");
+        console.log(id);
+        let name = $(this).parents("tr").find("td:eq(0)").text();
+        console.log(name);
+        let message = "确定加入课程 【" + name + "】 吗？";
+        if (name === "未录入") {
+            message = "确定加入该课程吗？";
+        }
+        $("#courseJoinModal .modal-body").text(message);
+        $("#courseJoinModal").modal({
+                backdrop: "static"
+            }
+        );
+    });
+    $("#course_join_btn").on("click", function () {
+        let loadingIndex = layer.msg('处理中', {icon: 16});
+        $.ajax({
+            url: "${APP_PATH}/student/joinCourse",
+            type: "POST",
+            dataType: "json",
+            data: {
+                "id": id
+            },
+            success: function (result) {
+                layer.close(loadingIndex);
+                if (result.code === 200) {
+                    layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
+                    });
+                }
+                if (result.code === 100) {
+                    layer.msg("加入课程成功", {time: 1000, icon: 1}, function () {
+                    });
+                }
+            },
+            error: function () {
+                layer.msg("网络异常，请稍后再试", {time: 1500, icon: 5, shift: 6}, function () {
+                });
+            }
+        })
+    });
 </script>
 </body>
 </html>

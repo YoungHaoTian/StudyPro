@@ -31,13 +31,16 @@
         <association property="college" select="com.cdut.studypro.daos.CollegeMapper.selectByPrimaryKeyWithIdAndName"
                      column="college_id"/>
     </resultMap>
+    <resultMap extends="ResultMapWithBLOBs" id="ResultMapWithBLOBsAndTeacher"
+               type="com.cdut.studypro.beans.Course">
+       <association property="teacher"
+                     select="com.cdut.studypro.daos.TeacherMapper.selectByPrimaryKeyWithIdNameAndCollege"
+                     column="teacher_id"/>
+    </resultMap>
     <resultMap extends="ResultMapWithBLOBs" id="ResultMapWithBLOBsAndCollegeAndTeacher"
                type="com.cdut.studypro.beans.Course">
         <association property="college" select="com.cdut.studypro.daos.CollegeMapper.selectByPrimaryKeyWithIdAndName"
                      column="college_id"/>
-        <association property="teacher"
-                     select="com.cdut.studypro.daos.TeacherMapper.selectByPrimaryKeyWithIdNameAndCollege"
-                     column="teacher_id"/>
     </resultMap>
     <resultMap extends="BaseResultMap" id="ResultMapWithCollegeAndTeacher"
                type="com.cdut.studypro.beans.Course">
@@ -395,6 +398,23 @@
     </select>
     <select id="selectByExampleWithBLOBsAndCollege" parameterType="com.cdut.studypro.beans.CourseExample"
             resultMap="ResultMapWithBLOBsAndCollege">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from course
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByExampleWithBLOBsAndTeacher" parameterType="com.cdut.studypro.beans.CourseExample"
+            resultMap="ResultMapWithBLOBsAndTeacher">
         select
         <if test="distinct">
             distinct

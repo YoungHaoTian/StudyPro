@@ -55,6 +55,12 @@
                         <input type="text" class="form-control" name="name" id="name" placeholder="课程名称"
                                value="${sessionScope.courseQueryCriteria.get("name")}">
                     </div>
+
+                    <div class="form-group">
+                        <label for="number" class="control-label wk-filed-label" style="margin-top: 20px">课程编号:</label>
+                        <input type="text" class="form-control" name="number" id="number" placeholder="课程编号"
+                               value="${sessionScope.courseQueryCriteria.get("number")}">
+                    </div>
                     <div class="form-group">
                         <label for="collegeId" class="control-label wk-filed-label"
                                style="margin-top: 20px">所属学院:</label>
@@ -414,6 +420,7 @@
         let name = $("#name").val().trim();
         let collegeId = $("#collegeId").val().trim();
         let teacher = $("#teacher").val().trim();
+        let number = $("#number").val().trim();
         let loadingIndex = layer.msg('处理中', {icon: 16});
         //发送ajax请求
         $.ajax({
@@ -423,7 +430,8 @@
             data: {
                 "name": name,
                 "collegeId": collegeId,
-                "teacher": teacher
+                "teacher": teacher,
+                "number":number
             },
             success: function (result) {
                 layer.close(loadingIndex);

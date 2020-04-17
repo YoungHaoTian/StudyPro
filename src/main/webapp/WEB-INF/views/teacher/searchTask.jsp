@@ -232,14 +232,14 @@
     </div>
 </c:if>
 <div class="modal fade" id="taskDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-    <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">作业删除</h5>
+                <h5 class="modal-title" style="color: red">作业删除</h5>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="text-align: center">
 
             </div>
             <div class="modal-footer">
@@ -250,14 +250,14 @@
     </div>
 </div>
 <div class="modal fade" id="taskBatchDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-    <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">作业批量删除</h5>
+                <h5 class="modal-title" style="color: red">作业批量删除</h5>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="text-align: center">
 
             </div>
             <div class="modal-footer">
@@ -277,7 +277,6 @@
         console.log(id);
         //删除课程时弹出确认框
         let message = "删除当前作业将删除对应的题目，你确定这么做吗？";
-
         $("#taskDeleteModal .modal-body").text(message);
         $("#taskDeleteModal").modal({
                 backdrop: "static"
@@ -348,6 +347,7 @@
     });
     //点击批量删除按钮
     $(".batchDelete").on("click", function () {
+        ids="";
         $.each($(".select_item:checked"), function () {
             //组装课程id字符串
             ids += $(this).attr("taskId") + "-";

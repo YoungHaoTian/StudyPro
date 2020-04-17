@@ -73,6 +73,9 @@ public class TeacherController {
 //        criteria.andPasswordEqualTo(map.get("password"));
         List<Teacher> teachers = teacherService.selectTeacherByExample(teacherExample);
         if (teachers != null && teachers.size() != 0) {
+            if (teachers.size() != 1) {
+                return RequestResult.failure("登录异常，请选择其他方式登录");
+            }
             Teacher teacher = teachers.get(0);
             String password = map.get("password");
             if (password.equals(MD5Util.stringToMD5(teacher.getPassword()))) {

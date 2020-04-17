@@ -1,11 +1,9 @@
 package com.cdut.studypro.services.impl;
 
-import com.cdut.studypro.beans.Course;
-import com.cdut.studypro.beans.CourseExample;
-import com.cdut.studypro.beans.Student;
-import com.cdut.studypro.beans.StudentExample;
+import com.cdut.studypro.beans.*;
 import com.cdut.studypro.daos.CourseMapper;
 import com.cdut.studypro.daos.StudentMapper;
+import com.cdut.studypro.daos.TeacherMapper;
 import com.cdut.studypro.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +25,9 @@ public class StudentServiceImpl implements StudentService {
 
     @Autowired
     private CourseMapper courseMapper;
+
+    @Autowired
+    private TeacherMapper teacherMapper;
 
     @Override
     public List<Student> selectStudentByExample(StudentExample example) {
@@ -57,16 +58,13 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<Course> getAllCourseWithBLOBsAndTeacherAndCollege() {
-        return courseMapper.selectByExampleWithBLOBsAndCollegeAndTeacher(null);
+    public List<Course> getAllCourseWithBLOBsAndTeacherByExample(CourseExample courseExample) {
+        return courseMapper.selectByExampleWithBLOBsAndTeacher(courseExample);
     }
 
     @Override
-    public List<Course> getAllCourseWithBLOBsAndTeacherAndCollegeByCollegeId(Integer id) {
-        CourseExample courseExample=new CourseExample();
-        CourseExample.Criteria criteria = courseExample.createCriteria();
-        criteria.andCollegeIdEqualTo(id);
-        return courseMapper.selectByExampleWithBLOBsAndCollegeAndTeacher(courseExample);
+    public List<Integer> getTeacherIdByTeacherExample(TeacherExample teacherExample) {
+        return teacherMapper.selectIdsByExample(teacherExample);
     }
 
 

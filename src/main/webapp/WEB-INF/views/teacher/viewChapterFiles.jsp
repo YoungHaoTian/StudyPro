@@ -65,6 +65,20 @@
                             查询
                         </button>
                     </div>
+                    <div class="form-group" style="margin-left: 20px">
+                        <button type="button" id="createVideo" class="btn btn-primary" data-toggle="tooltip"
+                                data-placement="left" title="为该章节添加视频" style="margin-right: 20px">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            添加视频
+                        </button>
+                    </div>
+                    <div class="form-group" style="margin-left: 20px">
+                        <button type="button" id="createFile" class="btn btn-primary" data-toggle="tooltip"
+                                data-placement="left" title="为该章节添加课件" style="margin-right: 20px">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            添加课件
+                        </button>
+                    </div>
                 </form>
             </div>
             <!-- 搜索 end -->
@@ -143,14 +157,14 @@
     </div>
 </div>
 <div class="modal fade" id="fileDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-    <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">文档删除</h5>
+                <h5 class="modal-title" style="color: red">文档删除</h5>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="text-align: center">
 
             </div>
             <div class="modal-footer">
@@ -161,19 +175,69 @@
     </div>
 </div>
 <div class="modal fade" id="videoDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-    <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">视频删除</h5>
+                <h5 class="modal-title" style="color: red">视频删除</h5>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="text-align: center">
 
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                 <button type="button" class="btn btn-primary" id="video_delete_btn">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="createCourseVideoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title" style="color: blue">章节视频添加</h5>
+            </div>
+            <div class="modal-body" style="text-align: center">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="video" class="col-sm-2 control-label">选择文件:</label>
+                        <div class="col-sm-9">
+                            <input type="file" id="video" name="video" class="form-control">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="createCourseVideoBtn">添加</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="createCourseFileModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title" style="color: blue">章节课件添加</h5>
+            </div>
+            <div class="modal-body" style="text-align: center">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="file" class="col-sm-2 control-label">选择文件:</label>
+                        <div class="col-sm-9">
+                            <input type="file" id="file" name="file" class="form-control">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="createCourseFileBtn">添加</button>
             </div>
         </div>
     </div>
@@ -216,7 +280,8 @@
                     });
                 }
                 if (result.code === 100) {
-                    window.location.href = "${APP_PATH}/teacher/viewChapterFiles/${id}";
+                    <%--window.location.href = "${APP_PATH}/teacher/viewChapterFiles/${id}?pageNum=${pageNum}&courseId=${courseId}";--%>
+                    window.location.reload(true);
                 }
             },
             error: function () {
@@ -271,7 +336,8 @@
                     });
                 }
                 if (result.code === 100) {
-                    window.location.href = "${APP_PATH}/teacher/viewChapterFiles/${id}";
+                    <%--window.location.href = "${APP_PATH}/teacher/viewChapterFiles/${id}?pageNum=${pageNum}&courseId=${courseId}";--%>
+                    window.location.reload(true);
                 }
             },
             error: function () {
@@ -304,4 +370,108 @@
     function back() {
         window.location.href = "${APP_PATH}/teacher/searchChapter?courseId=${courseId}&pageNum=${pageNum}";
     }
+
+    $("#createVideo").on("click", function () {
+        $("#createCourseVideoModal").modal({
+                backdrop: "static"
+            }
+        );
+    });
+    $("#createCourseVideoBtn").on("click", function () {
+        let chapterId =${id};
+        let courseId =${courseId};
+        let file = $("#video").val();
+        if (file === "") {
+            layer.msg("请选择需要上传的文件", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        //判断上传文件的后缀名
+        let strExtension = file.substr(file.lastIndexOf('.') + 1);
+        if (strExtension !== "mp4" && strExtension !== "avi") {
+            layer.msg("请上传mp4或avi格式的视频文件", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        //上传文件
+        let formData = new FormData();
+        let loadingIndex = layer.msg('处理中', {icon: 16});
+        formData.append("file", $("#video")[0].files[0]);
+        formData.append("chapterId", chapterId);
+        formData.append("courseId", courseId);
+        $.ajax({
+            url: "${APP_PATH}/teacher/saveCourseVideo",
+            type: 'POST',
+            dataType: 'json',
+            crossDomain: true, // 如果用到跨域，需要后台开启CORS
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                layer.close(loadingIndex);
+                if (result.code === 200) {
+                    layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
+                    });
+                }
+                if (result.code === 100) {
+                    layer.msg("视频上传成功", {time: 1000, icon: 1}, function () {
+                    });
+                    window.location.reload(true);
+                }
+            },
+            error: function () {
+                layer.msg("网络异常，请稍后再试", {time: 1500, icon: 5, shift: 6}, function () {
+                });
+            }
+        });
+    });
+
+
+    $("#createFile").on("click", function () {
+        $("#createCourseFileModal").modal({
+                backdrop: "static"
+            }
+        );
+    });
+    $("#createCourseFileBtn").on("click", function () {
+        let chapterId =${id};
+        let courseId =${courseId};
+        let file = $("#file").val();
+        if (file === "") {
+            layer.msg("请选择需要上传的文件", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        //上传文件
+        let formData = new FormData();
+        let loadingIndex = layer.msg('处理中', {icon: 16});
+        formData.append("file", $("#file")[0].files[0]);
+        formData.append("chapterId", chapterId);
+        formData.append("courseId", courseId);
+        $.ajax({
+            url: "${APP_PATH}/teacher/saveCourseFile",
+            type: 'POST',
+            dataType: 'json',
+            crossDomain: true, // 如果用到跨域，需要后台开启CORS
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                layer.close(loadingIndex);
+                if (result.code === 200) {
+                    layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
+                    });
+                }
+                if (result.code === 100) {
+                    layer.msg("文档上传成功", {time: 1000, icon: 1}, function () {
+                    });
+                    window.location.reload(true);
+                }
+            },
+            error: function () {
+                layer.msg("网络异常，请稍后再试", {time: 1500, icon: 5, shift: 6}, function () {
+                });
+            }
+        });
+    });
 </script>

@@ -98,7 +98,7 @@
                         <td>
                             <button type="button" class="btn btn-info edit"
                                     data-toggle="tooltip" questionId="${question.id}"
-                                    data-placement="left" title="修改该题目" style="margin-right: 20px">
+                                    data-placement="left" title="修改该题目">
                                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                                 修改题目
                             </button>
@@ -216,14 +216,14 @@
     </div>
 </c:if>
 <div class="modal fade" id="questionBatchDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-    <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">作题目批量删除</h5>
+                <h5 class="modal-title" style="color: red">作题目批量删除</h5>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="text-align: center">
 
             </div>
             <div class="modal-footer">
@@ -280,6 +280,7 @@
     });
     //点击批量删除按钮
     $(".batchDelete").on("click", function () {
+        ids="";
         $.each($(".select_item:checked"), function () {
             //组装课程id字符串
             ids += $(this).attr("questionId") + "-";
@@ -317,7 +318,8 @@
                 if (result.code === 100) {
                     layer.msg("批量删除成功", {time: 1000, icon: 1}, function () {
                     });
-                    window.location.href = "${APP_PATH}/teacher/searchTaskQuestion/${taskId}?pageNum=${pageInfo.pageNum}&pageNumber=${pageNumber}";
+                    <%--window.location.href = "${APP_PATH}/teacher/searchTaskQuestion/${taskId}?pageNum=${pageInfo.pageNum}&pageNumber=${pageNumber}";--%>
+                    window.location.reload(true);
                 }
             },
             error: function () {

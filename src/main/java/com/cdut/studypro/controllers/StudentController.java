@@ -1,11 +1,12 @@
 package com.cdut.studypro.controllers;
 
-import com.cdut.studypro.beans.Student;
-import com.cdut.studypro.beans.StudentExample;
+import com.cdut.studypro.beans.*;
 import com.cdut.studypro.beans.StudentExample.*;
 import com.cdut.studypro.services.StudentService;
 import com.cdut.studypro.utils.MD5Util;
 import com.cdut.studypro.utils.RequestResult;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +52,9 @@ public class StudentController {
         }
         List<Student> students = studentService.selectStudentByExample(studentExample);
         if (students != null && students.size() != 0) {
+            if (students.size() != 1) {
+                return RequestResult.failure("登录异常，请选择其他方式登录");
+            }
             Student student = students.get(0);
             String password = map.get("password");
             if (password.equals(MD5Util.stringToMD5(student.getPassword()))) {
@@ -60,7 +65,6 @@ public class StudentController {
                 return RequestResult.failure("密码错误，请稍后重试");
             }
         }
-
         return RequestResult.failure(message);
     }
 
@@ -157,10 +161,57 @@ public class StudentController {
 
 
     @RequestMapping("/searchCourseInfo")
-    public String searchCourseInfo(Map<String, Object> map, HttpSession session) {
+    public String searchCourseInfo(Map<String, Object> map, HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
+        //根据学生所属的学院，查询该学院所有的课程
         /*Student student = (Student) session.getAttribute("user");
         map.put("courses", studentService.getAllCourseWithBLOBsAndTeacherByCollegeId(student.getCollegeId()));*/
-        map.put("courses", studentService.getAllCourseWithBLOBsAndTeacherAndCollegeByCollegeId(8));
+
+        CourseExample courseExample = (CourseExample) session.getAttribute("courseExample");
+        if (courseExample == null) {
+            courseExample = new CourseExample();
+            CourseExample.Criteria criteria = courseExample.createCriteria();
+            criteria.andCollegeIdEqualTo(8);
+        }
+        PageHelper.startPage(pageNum, 10);
+        List<Course> courses = studentService.getAllCourseWithBLOBsAndTeacherByExample(courseExample);
+        PageInfo<Course> page = new PageInfo(courses, 10);
+        map.put("pageInfo", page);
         return "student/searchCourseInfo";
+    }
+
+    @ResponseBody
+    @PostMapping("/searchCourseInfoByTerm")
+    private RequestResult searchCourseInfoByTerm(@RequestParam("name") String name,
+                                                 @RequestParam("teacher") String teacher,
+                                                 HttpSession session,
+                                                 @RequestParam("number") String number) {
+        Student student = (Student) session.getAttribute("user");
+        //将查询条件存放进session中，以回显查询条件
+        Map<String, Object> map = new HashMap<>();
+        CourseExample courseExample = new CourseExample();
+        CourseExample.Criteria criteria = courseExample.createCriteria();
+        if (!"".equals(name.trim())) {
+            criteria.andNameLike("%" + name.trim() + "%");
+            map.put("name", name.trim());
+        }
+        if (!"".equals(teacher.trim())) {
+            TeacherExample teacherExample = new TeacherExample();
+            TeacherExample.Criteria criteria1 = teacherExample.createCriteria();
+            criteria1.andNameLike("%" + teacher.trim() + "%");
+            List<Integer> ids = studentService.getTeacherIdByTeacherExample(teacherExample);
+            if (ids.size() == 0) {
+                ids.add(0);
+            }
+            criteria.andTeacherIdIn(ids);
+            map.put("teacher", teacher.trim());
+        }
+        if (!"".equals(number.trim())) {
+            criteria.andNumberLike("%" + number.trim() + "%");
+            map.put("number", number.trim());
+        }
+        criteria.andCollegeIdEqualTo(8);
+        session.setAttribute("courseExample", courseExample);
+        session.setAttribute("courseQueryCriteria", map);
+        return RequestResult.success();
     }
 }
