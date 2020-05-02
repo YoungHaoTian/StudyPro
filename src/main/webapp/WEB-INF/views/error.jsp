@@ -17,7 +17,7 @@
 </head>
 <body>
 <div style="text-align: center;margin-top: 10%">
-    <img src="${APP_PATH}/images/error.jpg" width="400">
+    <img src="${APP_PATH}/images/error.jpg" width="300px">
 </div>
 <div style="text-align: center">
     <h3>出错啦！${exception.message}</h3> <button type="button" class="btn btn-link" onclick="window.history.back()"><h3>返回</h3></button>
