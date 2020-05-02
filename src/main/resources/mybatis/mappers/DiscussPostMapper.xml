@@ -138,6 +138,20 @@
             order by ${orderByClause}
         </if>
     </select>
+    <select id="selectPostIdByExample" parameterType="com.cdut.studypro.beans.DiscussPostExample" resultType="java.lang.Integer">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        id
+        from discuss_post
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
         select
         <include refid="Base_Column_List"/>
@@ -311,9 +325,6 @@
         <if test="maxDate!=null">
             and d.record_time &lt;= #{maxDate,jdbcType=TIMESTAMP}
         </if>
-        <!--<if test="name==null">
-            or d.student_id=0
-        </if>-->
         order by record_time asc
     </select>
 </mapper>

@@ -8,7 +8,8 @@
         <result column="record_time" jdbcType="TIMESTAMP" property="recordTime"/>
     </resultMap>
     <resultMap extends="BaseResultMap" id="ResultMapWithChapter" type="com.cdut.studypro.beans.CourseFile">
-        <association property="courseChapter" column="chapter_id" select="com.cdut.studypro.daos.CourseChapterMapper.selectByPrimaryKeyWithIdTitleAndCourse"/>
+        <association property="courseChapter" column="chapter_id"
+                     select="com.cdut.studypro.daos.CourseChapterMapper.selectByPrimaryKeyWithIdTitleAndCourse"/>
     </resultMap>
     <sql id="Example_Where_Clause">
         <where>
@@ -73,12 +74,12 @@
     <sql id="Base_Column_List">
     id, path, chapter_id, record_time
   </sql>
-    <select id="selectByExample" parameterType="com.cdut.studypro.beans.CourseFileExample" resultMap="BaseResultMap">
+    <select id="selectPathByExample" parameterType="com.cdut.studypro.beans.CourseFileExample" resultType="java.lang.String">
         select
         <if test="distinct">
             distinct
         </if>
-        <include refid="Base_Column_List"/>
+        path
         from course_file
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
@@ -87,11 +88,19 @@
             order by ${orderByClause}
         </if>
     </select>
+
+
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from course_file
         where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectByChapterId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from course_file
+        where chapter_id = #{id,jdbcType=INTEGER}
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from course_file
@@ -210,7 +219,8 @@
             order by ${orderByClause}
         </if>
     </select>
-    <select id="selectByExampleWithCourseChapter" parameterType="com.cdut.studypro.beans.CourseFileExample" resultMap="ResultMapWithChapter">
+    <select id="selectByExampleWithCourseChapter" parameterType="com.cdut.studypro.beans.CourseFileExample"
+            resultMap="ResultMapWithChapter">
         select
         <if test="distinct">
             distinct

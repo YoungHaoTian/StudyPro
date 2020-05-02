@@ -22,6 +22,8 @@ public interface CourseVideoMapper {
 
     CourseVideo selectByPrimaryKey(Integer id);
 
+    CourseVideo selectByChapterId(Integer id);
+
     int updateByExampleSelective(@Param("record") CourseVideo record, @Param("example") CourseVideoExample example);
 
     int updateByExample(@Param("record") CourseVideo record, @Param("example") CourseVideoExample example);
@@ -33,4 +35,8 @@ public interface CourseVideoMapper {
     List<Integer> selectVideoIdByExample(CourseVideoExample courseVideoExample);
 
     List<CourseVideo> selectByExampleWithCourseChapter(CourseVideoExample courseVideoExample);
+
+    List<CourseVideo> selectByExampleWithChapterAndCourseAndTeacher(CourseVideoExample courseVideoExample);
+
+    List<String> selectPathByExample(CourseVideoExample courseVideoExample);
 }

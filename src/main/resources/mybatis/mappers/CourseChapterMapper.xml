@@ -5,9 +5,27 @@
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="title" jdbcType="VARCHAR" property="title"/>
     </resultMap>
-    <resultMap extends="BriefResultMap" id="ResultMapWithCourse" type="com.cdut.studypro.beans.CourseChapter">
+    <resultMap id="BriefResultMapWithVideo" type="com.cdut.studypro.beans.CourseChapter">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <collection column="id" property="videos" ofType="com.cdut.studypro.beans.CourseVideo"
+                    select="com.cdut.studypro.daos.CourseVideoMapper.selectByChapterId"/>
+    </resultMap>
+    <resultMap id="BriefResultMapWithFile" type="com.cdut.studypro.beans.CourseChapter">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <collection column="id" property="files" ofType="com.cdut.studypro.beans.CourseFile"
+                    select="com.cdut.studypro.daos.CourseFileMapper.selectByChapterId"/>
+    </resultMap>
+    <resultMap extends="BriefResultMap" id="ResultMapWithCourseAndCollege" type="com.cdut.studypro.beans.CourseChapter">
         <result column="course_id" property="courseId" jdbcType="INTEGER"/>
-        <association property="course" column="course_id" select="com.cdut.studypro.daos.CourseMapper.selectByPrimaryKeyWithIdNameAndCollege"/>
+        <association property="course" column="course_id"
+                     select="com.cdut.studypro.daos.CourseMapper.selectByPrimaryKeyWithIdNameAndCollege"/>
+    </resultMap>
+    <resultMap extends="BriefResultMap" id="ResultMapWithCourseAndTeacher" type="com.cdut.studypro.beans.CourseChapter">
+        <result column="course_id" property="courseId" jdbcType="INTEGER"/>
+        <association property="course" column="course_id"
+                     select="com.cdut.studypro.daos.CourseMapper.selectByPrimaryKeyWithIdNameAndTeacher"/>
     </resultMap>
     <resultMap id="BaseResultMap" type="com.cdut.studypro.beans.CourseChapter">
         <id column="id" jdbcType="INTEGER" property="id"/>
@@ -18,8 +36,15 @@
     <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.cdut.studypro.beans.CourseChapter">
         <result column="content" jdbcType="LONGVARCHAR" property="content"/>
     </resultMap>
-    <resultMap extends="ResultMapWithBLOBs" id="ResultMapWithBLOBsAndCourse" type="com.cdut.studypro.beans.CourseChapter">
-        <association property="course" column="course_id" select="com.cdut.studypro.daos.CourseMapper.selectByPrimaryKeyWithIdNameAndCollege"/>
+    <resultMap extends="ResultMapWithBLOBs" id="ResultMapWithBLOBsAndCourse"
+               type="com.cdut.studypro.beans.CourseChapter">
+        <association property="course" column="course_id"
+                     select="com.cdut.studypro.daos.CourseMapper.selectByPrimaryKeyWithIdNameAndCollege"/>
+    </resultMap>
+    <resultMap extends="ResultMapWithBLOBs" id="ResultMapWithBLOBsAndCourseWithoutCollege"
+               type="com.cdut.studypro.beans.CourseChapter">
+        <association property="course" column="course_id"
+                     select="com.cdut.studypro.daos.CourseMapper.selectByPrimaryKeyWithIdNameAndTeacher"/>
     </resultMap>
     <sql id="Example_Where_Clause">
         <where>
@@ -104,8 +129,26 @@
             order by ${orderByClause}
         </if>
     </select>
-     <select id="selectByExampleWithBLOBsAndCourse" parameterType="com.cdut.studypro.beans.CourseChapterExample"
+    <select id="selectByExampleWithBLOBsAndCourse" parameterType="com.cdut.studypro.beans.CourseChapterExample"
             resultMap="ResultMapWithBLOBsAndCourse">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from course_chapter
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByExampleWithBLOBsAndCourseWithoutCollege"
+            parameterType="com.cdut.studypro.beans.CourseChapterExample"
+            resultMap="ResultMapWithBLOBsAndCourseWithoutCollege">
         select
         <if test="distinct">
             distinct
@@ -144,6 +187,12 @@
         from course_chapter
         where id = #{id,jdbcType=INTEGER}
     </select>
+    <select id="selectByPrimaryKeyWithIdTitle" parameterType="java.lang.Integer" resultMap="BriefResultMap">
+        select
+        id,title
+        from course_chapter
+        where id = #{id,jdbcType=INTEGER}
+    </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from course_chapter
     where id = #{id,jdbcType=INTEGER}
@@ -155,9 +204,9 @@
         </if>
     </delete>
     <insert id="insert" parameterType="com.cdut.studypro.beans.CourseChapter">
-    insert into course_chapter (id, title, course_id, 
+    insert into course_chapter (id, title, course_id,
       record_time, content)
-    values (#{id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{courseId,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{courseId,jdbcType=INTEGER},
       #{recordTime,jdbcType=TIMESTAMP}, #{content,jdbcType=LONGVARCHAR})
   </insert>
     <insert id="insertSelective" parameterType="com.cdut.studypro.beans.CourseChapter">
@@ -299,11 +348,33 @@
             order by ${orderByClause}
         </if>
     </select>
-    <select id="selectByPrimaryKeyWithIdTitleAndCourse" parameterType="java.lang.Integer" resultMap="ResultMapWithCourse">
+    <select id="selectByPrimaryKeyWithIdTitleAndCourseAndCollege" parameterType="java.lang.Integer"
+            resultMap="ResultMapWithCourseAndCollege">
         select
         id,title,course_id
         from course_chapter
         where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectByPrimaryKeyWithIdTitleAndCourseAndTeacher" parameterType="java.lang.Integer"
+            resultMap="ResultMapWithCourseAndTeacher">
+        select
+        id,title,course_id
+        from course_chapter
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectByCourseIdWithIdAndTitleAndVideo" parameterType="java.lang.Integer"
+            resultMap="BriefResultMapWithVideo">
+        select id,title
+        from course_chapter
+        where course_id=#{id,jdbcType=INTEGER}
+        order by record_time asc
+    </select>
+    <select id="selectByCourseIdWithIdAndTitleAndFile" parameterType="java.lang.Integer"
+            resultMap="BriefResultMapWithFile">
+        select id,title
+        from course_chapter
+        where course_id=#{id,jdbcType=INTEGER}
+        order by record_time asc
     </select>
 
 </mapper>

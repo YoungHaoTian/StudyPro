@@ -15,6 +15,23 @@
     <link rel="stylesheet" href="${APP_PATH}/resources1/css/wukong-ui.css">
     <link rel="stylesheet" href="${APP_PATH}/resources1/bootstrap/css/bootstrap-select.min.css">
     <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap-select.min.js"></script>
+    <style>
+        th, td {
+            /*vertical-align: middle;*/
+            text-align: center;
+            height: 30px;
+            width: 50%;
+            border: #CCCCCC 1px solid;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        .left {
+            text-align: left;
+        }
+    </style>
 </head>
 
 <body>
@@ -34,60 +51,81 @@
             <form id="adminData" action="" method="POST">
                 <div class="panel-body">
                     <div class="row">
-                        <div class="form-inline">
-                            <div class="form-group">
-                                <label for="name" class="control-label wk-filed-label">管理员姓名:
-                                </label>
-                                <div class="input-group">
-                                    <input required="required" id="name" name="name" type="text"
-                                           class="form-control wk-normal-input" value="${admin.name}"
-                                           placeholder="请输入姓名"/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="account" class="control-label wk-filed-label">登录账户: </label>
-                                <div class="input-group">
-                                    <input required="required" id="account" name="account" type="text"
-                                           class="form-control wk-normal-input" value="${admin.account}"
-                                           placeholder="请输入登录账户"/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="password" class="control-label wk-filed-label">登录密码: </label>
-                                <div class="input-group">
-                                    <input required="required" id="password" name="password" type="text"
-                                           class="form-control wk-normal-input" value="${admin.password}"
-                                           placeholder="请输入登录密码"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-inline">
-                            <div class="form-group">
-                                <label for="telephone" class="control-label wk-filed-label">联系电话:</label>
-                                <div class="input-group">
-                                    <input required="required" id="telephone" name="telephone" type="text"
-                                           oninput="value=value.replace(/[^\d]/g,'')" maxlength="11"
-                                           class="form-control wk-normal-input"
-                                           value="${admin.telephone.trim()=="0"?"":(admin.telephone.trim()==""?"":admin.telephone) }"
-                                           placeholder="请输入联系电话"/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="email" class="control-label wk-filed-label">邮箱: </label>
-                                <div class="input-group">
-                                    <input required="required" id="email" name="email" type="text" maxlength="20"
-                                           class="form-control wk-normal-input"
-                                           value="${admin.email.trim()=="0"?"":(admin.email.trim()==""?"":admin.email) }"
-                                           placeholder="请输入邮箱"/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel-footer wk-panel-footer">
-                        <button type="button" class="btn btn-info" onclick="updateAdmin()">提&nbsp;&nbsp;交</button>
+                        <table class="table table-striped table-hover table-bordered"
+                               style="width: 500px;margin: 0 auto">
+                            <thead>
+                            <tr class="danger">
+                                <th colspan=2>查看管理员信息</th>
+                            </tr>
+                            <tr class="info">
+                                <th colspan=2>管理员：<span style="color: red">${admin.name}</span>的信息如下</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="right" style="display:table-cell; vertical-align:middle">管理员姓名：</td>
+                                <td class="left"><input required="required" id="name"
+                                                        name="name" maxlength="5"
+                                                        type="text"
+                                                        class="form-control"
+                                                        value="${admin.name}"
+                                                        placeholder="请输入姓名"/></td>
+                            </tr>
+                            <tr>
+                                <td class="right" style="display:table-cell; vertical-align:middle">登录账户：</td>
+                                <td class="left"><input required="required" id="account" name="account"
+                                                        type="text" maxlength="18"
+                                                        class="form-control" value="${admin.account}"
+                                                        placeholder="请输入登录账户"/></td>
+                            </tr>
+                            <tr>
+                                <td class="right" style="display:table-cell; vertical-align:middle">登录密码：</td>
+                                <td class="left"><input required="required" id="password" name="password"
+                                                        type="text" maxlength="18"
+                                                        class="form-control" value="${admin.password}"
+                                                        placeholder="请输入登录密码"/></td>
+                            </tr>
+                            <tr>
+                                <td class="right" style="display:table-cell; vertical-align:middle">联系电话：</td>
+                                <td class="left"><input required="required" id="telephone" name="telephone"
+                                                        type="text"
+                                                        oninput="value=value.replace(/[^\d]/g,'')"
+                                                        maxlength="11"
+                                                        class="form-control"
+                                                        value="${admin.telephone.trim()=="0"?"":admin.telephone.trim() }"
+                                                        placeholder="请输入联系电话"/></td>
+                            </tr>
+                            <tr>
+                                <td class="right" style="display:table-cell; vertical-align:middle">邮箱地址：</td>
+                                <td class="left"><input required="required" id="email" name="email"
+                                                        type="text" maxlength="30"
+                                                        class="form-control"
+                                                        value="${admin.email.trim()=="0"?"":admin.email.trim() }"
+                                                        placeholder="请输入邮箱"/></td>
+                            </tr>
+                            <tr>
+                                <td class="right" style="display:table-cell; vertical-align:middle">验证码：</td>
+                                <td class="left"><input required="required" id="code" name="code" type="text"
+                                                        maxlength="6"
+                                                        oninput="value=value.replace(/[^\d]/g,'')"
+                                                        class="form-control" placeholder="请输入验证码"/>
+                            </tr>
+                            <tr>
+                                <td colspan=2><input type="button" class="btn btn-danger btn_mfyzm" onclick="getCode()"
+                                                     style="font-family: 宋体;width:100px;" value="获取验证码"></td>
+                            </tr>
+                            <tr>
+                                <td colspan=2><span style="color: red">注：接收验证码的手机号码是修改之前的手机号码</span></td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </form>
+        </div>
+        <div class="panel-footer wk-panel-footer">
+            <button type="button" class="btn btn-info" onclick="updateAdmin()">提&nbsp;&nbsp;交</button>
+            <button type="reset" class="btn btn-info" style="margin-left: 20px" onclick="$('#adminData')[0].reset();">重&nbsp;&nbsp;填</button>
         </div>
     </div>
 </div>
@@ -95,18 +133,23 @@
 </html>
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
-
+    let validCode = true;
     let phones = /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\d{8}$/;
     let han = /^[\u4e00-\u9fa5]{2,5}$/;
     let accounts = /^[a-zA-Z0-9_-]{12,18}$/;
     let emails = /^(\w+\.)*\w+\@+[0-9a-zA-Z]+\.(com|com.cn|edu|hk|cn|net)$/;
     let passwords = /^[a-zA-Z0-9]{6,18}$/;
+
     function updateAdmin() {
         //表单验证
         // 对姓名的验证
         let name = $("#name").val();
         if ($.trim(name) === "") {
             layer.msg("姓名不能为空", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        } else if (name.indexOf(" ") !== -1) {
+            layer.msg("姓名不能包含空格，请重新输入", {time: 2000, icon: 5, shift: 6}, function () {
             });
             return;
         } else if (!han.test(name)) {
@@ -121,7 +164,7 @@
             });
             return;
         } else if (!phones.test(telephone)) {
-            layer.msg("联系电话格式不正确，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("联系电话格式不正确，请重新输入", {time: 2000, icon: 5, shift: 6}, function () {
             });
             return;
         }
@@ -133,7 +176,7 @@
             return;
         }
         if (!accounts.test(account)) {
-            layer.msg("账户至少是12位，且由数字、字母、下划线组成", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("账户是12-18位，且由数字、字母、下划线组成", {time: 2500, icon: 5, shift: 6}, function () {
             });
             return;
         }
@@ -144,11 +187,11 @@
             });
             return;
         } else if (password.indexOf(" ") !== -1) {
-            layer.msg("登录密码不能包含空格，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("登录密码不能包含空格，请重新输入", {time: 2000, icon: 5, shift: 6}, function () {
             });
             return;
         } else if (!passwords.test(password)) {
-            layer.msg("登录密码只能由字母和数字组成，长度6-18位，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("登录密码只能由字母和数字组成，长度6-18位，请重新输入", {time: 3000, icon: 5, shift: 6}, function () {
             });
             return;
         }
@@ -159,7 +202,13 @@
             });
             return;
         } else if (!emails.test(email)) {
-            layer.msg("邮箱格式不正确，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("邮箱格式不正确，请重新输入", {time: 2000, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        let code = $("#code").val();
+        if ($.trim(code) === "") {
+            layer.msg("验证码不能为空", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
@@ -168,11 +217,43 @@
         data = decodeURIComponent(data);
         // console.log(data);
         $.ajax({
-            url: "${APP_PATH}/admin/editAdminInfo/${admin.id}",
+            url: "${APP_PATH}/admin/updateAdminInfo",
             type: "POST",
-            // contentType: "application/json",//不使用contentType: “application/json”则data可以是对象,使用contentType: “application/json”则data只能是json字符串
             dataType: "json",
             data: data,
+            success: function (result) {
+                layer.close(loadingIndex);
+                console.log(result);
+                if (result.code === 200) {
+                    layer.msg(result.message, {time: 3000, icon: 5, shift: 6}, function () {
+                    });
+                }
+                if (result.code === 100) {
+                    console.log("success");
+                    layer.msg("修改成功", {time: 1500, icon: 6}, function () {
+                    });
+                    window.setTimeout(function () {//一秒后刷新页面
+                        window.location.reload();
+                    }, 1000);
+                }
+            },
+            error: function () {
+                layer.msg("网络异常，请稍后再试", {time: 1500, icon: 5, shift: 6}, function () {
+                });
+            }
+        });
+    }
+
+    function getCode() {
+        //60s倒计时，使用之前的手机号来收取验证码
+        let time = 60;
+        let data = {"phone": ${admin.telephone}, "type": "update"};
+        let loadingIndex = layer.msg('处理中', {icon: 16});
+        $.ajax({
+            url: "${APP_PATH}/index/code",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(data),
             success: function (result) {
                 layer.close(loadingIndex);
                 console.log(result);
@@ -181,8 +262,22 @@
                     });
                 }
                 if (result.code === 100) {
-                    console.log("success");
-                    layer.msg("修改成功", {time: 1500, icon: 6}, function () {
+                    let code = $(".btn_mfyzm");
+                    if (validCode) {
+                        validCode = false;
+                        code.attr("disabled", true);
+                        let t = setInterval(function () {
+                            time--;
+                            code.val(time + "秒");
+                            if (time === 0) {
+                                clearInterval(t);
+                                code.val("重新获取");
+                                validCode = true;
+                                code.attr("disabled", false);
+                            }
+                        }, 1000);
+                    }
+                    layer.msg("获取成功，请注意查收", {time: 1000, icon: 6}, function () {
                     });
                 }
             },

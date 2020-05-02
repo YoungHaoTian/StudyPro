@@ -23,11 +23,15 @@ public interface TeacherMapper {
 
     Teacher selectByPrimaryKey(Integer id);
 
+    Teacher selectByPrimaryKeyWithCourse(Integer id);
+
     Teacher selectByPrimaryKeyWithoutCollegeAndCourse(Integer id);
 
     Teacher selectByPrimaryKeyWithCollege(Integer id);
 
     List<Teacher> selectByExampleWithIdNameAndCollege(TeacherExample example);
+
+    List<Teacher> selectByExampleWithIdNameNumberAndCollege(TeacherExample example);
 
     int updateByExampleSelective(@Param("record") Teacher record, @Param("example") TeacherExample example);
 
@@ -49,4 +53,7 @@ public interface TeacherMapper {
 
     //根据教师姓名返回其主键值
     List<Integer> selectIdsByExample(TeacherExample example);
+
+    List<String> selectTelephoneByExample(TeacherExample example);
+
 }

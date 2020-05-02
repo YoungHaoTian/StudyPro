@@ -32,12 +32,6 @@ public class IndexController {
     private static final String APPID = "105088";
     private static final String APPSERCRET = "bd4deaea-c9df-4076-a7b2-0f540c1c8e0a";
 
-    @Autowired
-    private StudentService studentService;
-
-    @Autowired
-    private TeacherService teacherService;
-
     @RequestMapping("/login")
     public String login() {
         return "login";
@@ -53,9 +47,14 @@ public class IndexController {
         return "forget";
     }
 
+    @RequestMapping("/welcome")
+    public String welcome() {
+        return "welcome";
+    }
+
     @ResponseBody
-    @RequestMapping(value = "/code",method = RequestMethod.POST)
-    public RequestResult code(@RequestBody Map<String, String> map, HttpServletRequest request) {
+    @RequestMapping(value = "/code", method = RequestMethod.POST)
+    public RequestResult code(@RequestBody Map<String, String> map, HttpSession session) {
         try {
             String phone = map.get("phone");
             String type = map.get("type");
@@ -66,17 +65,21 @@ public class IndexController {
             //发送短信
             ZhenziSmsClient client = new ZhenziSmsClient(APIURL, APPID, APPSERCRET);
             Map<String, String> data = new HashMap<>();
+            String message = null;
             if ("register".equals(type)) {
-                String message = "<好学习>验证码：" + verifyCode + "，您正在注册好学习账号，验证码在5分钟内有效。";
-                data.put("message", message);
-                data.put("number", phone);
+                message = "<好学习>验证码：" + verifyCode + "，您正在注册好学习账号，验证码在5分钟内有效。";
             }
             if ("forget".equals(type)) {
-                String message = "<好学习>验证码：" + verifyCode + "，您找回好学习账号密码，验证码在5分钟内有效。";
-                data.put("message", message);
-                data.put("number", phone);
+                message = "<好学习>验证码：" + verifyCode + "，您正在找回好学习账号密码，验证码在5分钟内有效。";
             }
-
+            if ("update".equals(type)) {
+                message = "<好学习>验证码：" + verifyCode + "，您正在修改个人信息，验证码在5分钟内有效。";
+            }
+            if (message == null) {
+                RequestResult.failure("验证码获取失败，请稍后重试");
+            }
+            data.put("message", message);
+            data.put("number", phone);
             String send = client.send(data);
             json = JSONObject.fromObject(send);
             if (json.getInt("code") != 0) {//发送短信失败
@@ -87,19 +90,18 @@ public class IndexController {
             json.put("verifyCode", verifyCode);
             json.put("createTime", System.currentTimeMillis());
             // 将验证码存入session
-            HttpSession session = request.getSession();
             if ("register".equals(type)) {
                 session.setAttribute("RegisterCode", json);
             }
             if ("forget".equals(type)) {
                 session.setAttribute("ForgetCode", json);
             }
-
+            if ("update".equals(type)) {
+                session.setAttribute("UpdateInfoCode", json);
+            }
         } catch (Exception e) {//发送短信异常
             return RequestResult.failure("验证码发送失败，请稍后重试");
         }
         return RequestResult.success();
     }
-
-
 }

@@ -13,7 +13,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="${APP_PATH}/resources/css/bootstrap.min.css" type="text/css" rel="stylesheet">
-    <link href="${APP_PATH}/resources/css/font-awesome.min.css" type="text/javascript" rel="stylesheet">
+    <link href="${APP_PATH}/resources/font/css/font-awesome.min.css" type="text/javascript" rel="stylesheet">
     <link href="${APP_PATH}/resources/css/bootsnav.css" type="text/css" rel="stylesheet">
     <link href="${APP_PATH}/resources/css/normalize.css" type="text/css" rel="stylesheet">
     <link href="${APP_PATH}/resources/css/css.css" rel="stylesheet" type="text/css">

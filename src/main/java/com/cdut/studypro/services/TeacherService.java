@@ -82,35 +82,35 @@ public interface TeacherService {
 
     List<DiscussPost> getAllDiscussPostByMapWithStudentName(Map<String, Object> map1);
 
-    boolean saveTask(Task task);
+    boolean saveTask(OnlineTask task);
 
-    List<Task> getAllTasksWithCourseAndChapterExample(TaskExample taskExample);
+    List<OnlineTask> getAllTasksWithCourseAndChapterExample(OnlineTaskExample taskExample);
 
     boolean deleteTaskById(Integer id);
 
     boolean deleteTaskByIdBatch(List<Integer> taskIds);
 
-    Task getTaskWithCourseAndChapterById(Integer id);
+    OnlineTask getTaskWithCourseAndChapterById(Integer id);
 
-    Task getTaskById(Integer id);
+    OnlineTask getTaskById(Integer id);
 
-    boolean updateTaskByPrimaryKeySelective(Task task);
+    boolean updateTaskByPrimaryKeySelective(OnlineTask task);
 
     Discuss getDiscussById(Integer id);
 
     boolean updateDiscussByPrimaryKeySelective(Discuss discuss);
 
-    List<TaskQuestion> getTaskQuestionsByTaskId(Integer id);
+    List<OnlineTaskQuestion> getTaskQuestionsByTaskId(Integer id);
 
     boolean deleteTaskQuestionByIdBatch(List<Integer> questionIds);
 
-    boolean insertTaskQuestion(TaskQuestion taskQuestion);
+    boolean insertTaskQuestion(OnlineTaskQuestion taskQuestion);
 
-    TaskQuestion getTaskQuestionsById(Integer id);
+    OnlineTaskQuestion getTaskQuestionsById(Integer id);
 
-    boolean updateTaskQuestionByPrimaryKeySelective(TaskQuestion taskQuestion);
+    boolean updateTaskQuestionByPrimaryKeySelective(OnlineTaskQuestion taskQuestion);
 
-    boolean insertTaskQuestionBatch(List<TaskQuestion> taskQuestions);
+    boolean insertTaskQuestionBatch(List<OnlineTaskQuestion> taskQuestions);
 
     Teacher getTeacherByIdWithCollege(Integer id);
 
@@ -130,7 +130,7 @@ public interface TeacherService {
 
     List<CourseFile> getCourseFileByChapterId(Integer id);
 
-    List<Task> getTaskByChapterId(Integer id);
+    List<OnlineTask> getTaskByChapterId(Integer id);
 
     List<CourseVideo> getCourseVideoByExample(CourseVideoExample example);
 
@@ -140,5 +140,5 @@ public interface TeacherService {
 
     List<College> getAllCollegesByTeacherId(Integer id);
 
-    List<Task> getTaskByChapterIdWithChapterAndCourse(Integer id);
+    List<OnlineTask> getTaskByChapterIdWithChapterAndCourse(Integer id);
 }

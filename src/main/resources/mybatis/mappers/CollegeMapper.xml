@@ -105,6 +105,21 @@
             order by ${orderByClause}
         </if>
     </select>
+    <select id="selectNameByExample" parameterType="com.cdut.studypro.beans.CollegeExample" resultType="java.lang.String">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        name
+        from college
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
         select
         <include refid="Base_Column_List"/>
@@ -223,4 +238,16 @@
     set name = #{name,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+    <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="false">
+        insert into college
+        (name,intro)
+        values
+        <foreach collection="colleges" item="college" separator=",">
+            (
+            #{college.name,jdbcType=VARCHAR},
+            #{college.intro,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
 </mapper>

@@ -67,10 +67,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="panel-footer wk-panel-footer">
-                    <button class="btn btn-info" type="button" onclick="upload()">提&nbsp;&nbsp;交</button>
-                </div>
             </form>
+        </div>
+        <div class="panel-footer wk-panel-footer">
+            <button class="btn btn-info" type="button" onclick="upload()">提&nbsp;&nbsp;交</button>
         </div>
     </div>
 </div>
@@ -108,7 +108,7 @@
             success: function (result) {
                 layer.close(loadingIndex);
                 if (result.code === 200) {
-                    layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
+                    layer.msg(result.message, {time: 3000, icon: 5, shift: 6}, function () {
                     });
                 }
                 if (result.code === 100) {

@@ -4,6 +4,7 @@
        xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd">
+
     <!--自动扫描包，除了控制器不扫描，都扫描-->
     <context:component-scan base-package="com.cdut.studypro">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
@@ -34,7 +35,7 @@
 
     </bean>
     <!-- MyBatisPlus   -->
-   <!-- <bean id="sessionFactory" class="com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean">
+    <!--<bean id="sessionFactory" class="com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         &lt;!&ndash;配置别名&ndash;&gt;
         <property name="typeAliasesPackage" value="com.cdut.studypro.beans"/>
@@ -43,6 +44,7 @@
         &lt;!&ndash;指定mybatis mapper文件的位置&ndash;&gt;
         <property name="mapperLocations" value="classpath*:mybatis/mappers/*.xml"/>
     </bean>-->
+
     <!-- 批量执行的sqlSession-->
     <!--<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
         <constructor-arg name="sqlSessionFactory" ref="sessionFactory"/>
@@ -54,6 +56,7 @@
         <!--扫描所有dao接口的实现，加入到IOC容器中-->
         <property name="basePackage" value="com.cdut.studypro.daos"/>
     </bean>
+
     <!--事务控制配置-->
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"/>

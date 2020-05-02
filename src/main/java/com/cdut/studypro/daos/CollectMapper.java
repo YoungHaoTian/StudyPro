@@ -27,4 +27,8 @@ public interface CollectMapper {
     int updateByPrimaryKeySelective(Collect record);
 
     int updateByPrimaryKey(Collect record);
+
+    List<Integer> selectCourseIdByStudentId(Integer id);
+
+    int insertBatch(@Param("collects") List<Collect> collects);
 }

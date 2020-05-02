@@ -42,7 +42,7 @@
                                 <div class="input-group">
                                     <input required="required" name="name" type="text"
                                            value="${college.name.trim()=="0"?"":(college.name.trim()==""?"":college.name.trim()) }"
-                                           class="form-control wk-normal-input" id="name" placeholder="请输入学院名称"/>
+                                           class="form-control wk-long-2col-input" id="name" placeholder="请输入学院名称"/>
                                 </div>
                             </div>
 
@@ -58,14 +58,17 @@
 
                     </div>
                 </div>
-
-                <div class="panel-footer wk-panel-footer">
-                    <button type="button" class="btn btn-info" onclick="updateCollege()">提&nbsp;&nbsp;交</button>
-                    <button type="button" class="btn btn-info" onclick="back()" style="margin-left: 30px">
-                        返&nbsp;&nbsp;回
-                    </button>
-                </div>
             </form>
+        </div>
+        <div class="panel-footer wk-panel-footer">
+            <button type="button" class="btn btn-info" onclick="updateCollege()">提&nbsp;&nbsp;交</button>
+            <button type="button" class="btn btn-info" onclick="back()" style="margin-left: 30px">
+                返&nbsp;&nbsp;回
+            </button>
+            <button type="button" class="btn btn-info" onclick="$('#collegeData')[0].reset();"
+                    style="margin-left: 30px">
+                重&nbsp;&nbsp;填
+            </button>
         </div>
     </div>
 </div>
@@ -74,7 +77,7 @@
 </html>
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
-    let names = /^[a-zA-Z0-9\u0020\u3000\u4e00-\u9fa5]+$/;
+    // let names = /^[a-zA-Z0-9\u0020\u3000\u4e00-\u9fa5]+$/;
 
     function updateCollege() {
         let name = $("#name").val();
@@ -85,15 +88,15 @@
             return;
         }
         if (name.indexOf(" ") === 0) {
-            layer.msg("学院名称不能以空格开头，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("学院名称不能以空格开头，请重新输入", {time: 2000, icon: 5, shift: 6}, function () {
             });
             return;
         }
-        if (!names.test(name)) {
+        /*if (!names.test(name)) {
             layer.msg("学院名称由数字、字母、中文组成", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
-        }
+        }*/
         if (intro.trim() === "") {
             layer.msg("学院介绍不能为空", {time: 1500, icon: 5, shift: 6}, function () {
             });
@@ -130,5 +133,6 @@
 
     function back() {
         window.location.href = "${APP_PATH}/admin/searchCollege?pageNum=" +${pageNum};
+        // window.history.back();
     }
 </script>

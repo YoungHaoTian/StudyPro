@@ -6,9 +6,10 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.PrintWriter;
 
 /**
- * @description:
+ * @description: 登录拦截器
  * @author: Mr.Young
  * @date: 2020-03-31 15:04
  * @email: no.bugs@foxmail.com
@@ -22,15 +23,33 @@ public class LoginInterceptor implements HandlerInterceptor {
         httpServletRequest.setCharacterEncoding("UTF-8");
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.setContentType("text/html");
-        HttpSession session = httpServletRequest.getSession();
-
-        Object user = session.getAttribute("user");
-        String requestURI = httpServletRequest.getRequestURI();
-        if (user != null) {
-            return true;
+        String appPath = (String) httpServletRequest.getServletContext().getAttribute("APP_PATH");
+        HttpSession session = httpServletRequest.getSession(false);
+        if (session == null) {//当session为空时说明超时了，需要用户重新登录
+            PrintWriter out = httpServletResponse.getWriter();
+            out.flush();
+            StringBuilder sb = new StringBuilder();
+            sb.append("<script>\n")
+                    .append("let r=confirm('您当前身份已过期，请重新登录');\n")
+                    .append("if(r==true){\n").append("window.location.href='").append(appPath).append("/index/login'\n")
+                    .append("}\n")
+                    .append("</script>");
+            out.println(sb.toString());
+        } else {
+            Object user = session.getAttribute("user");
+            if (user != null) {
+                return true;
+            }
+            PrintWriter out = httpServletResponse.getWriter();
+            out.flush();
+            StringBuilder sb = new StringBuilder();
+            sb.append("<script>\n")
+                    .append("let r=confirm('您还未登录，请前去登录');\n")
+                    .append("if(r==true){\n").append("window.location.href='").append(appPath).append("/index/login'\n")
+                    .append("}\n")
+                    .append("</script>");
+            out.println(sb.toString());
         }
-        String path = session.getServletContext().getContextPath();
-        httpServletResponse.sendRedirect(path + "/login");
         return false;
     }
 

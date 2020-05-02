@@ -98,7 +98,7 @@
                     <div class="row" style="text-align: left">
                         <div class="form-inline">
                             <div class="form-group">
-                                <label for="name" class="control-label wk-filed-label">姓名:</label>
+                                <label for="name" class="control-label wk-filed-label">教师姓名:</label>
                                 <div class="input-group">
                                     <input required="required" id="name" name="name" type="text"
                                            class="form-control wk-normal-input" value="${teacher.name}"
@@ -106,7 +106,7 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="number" class="control-label wk-filed-label">编号:</label>
+                                <label for="number" class="control-label wk-filed-label">教师编号:</label>
                                 <div class="input-group">
                                     <input id="number" name="number" type="text" readonly="readonly"
                                            class="form-control wk-normal-input" value="${teacher.number}"/>
@@ -123,7 +123,7 @@
 
                         <div class="form-inline">
                             <div class="form-group">
-                                <label for="telephone" class="control-label wk-filed-label">电话:</label>
+                                <label for="telephone" class="control-label wk-filed-label"> 联系电话:</label>
                                 <div class="input-group">
                                     <input required="required" id="telephone" name="telephone" type="text"
                                            class="form-control wk-normal-input" value="${teacher.telephone}"
@@ -131,7 +131,7 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="gender" class="control-label wk-filed-label">性别: </label>
+                                <label for="gender" class="control-label wk-filed-label">教师性别: </label>
                                 <div class="input-group">
                                     <input required="required" id="gender" name="gender" type="text"
                                            class="form-control wk-normal-input" value="${teacher.gender==0?'男':'女'}"
@@ -149,7 +149,7 @@
                         </div>
                         <div class="form-inline">
                             <div class="form-group">
-                                <label for="account" class="control-label wk-filed-label">账户: </label>
+                                <label for="account" class="control-label wk-filed-label">登录账户: </label>
                                 <div class="input-group">
                                     <input required="required" id="account" name="account" type="text"
                                            class="form-control wk-normal-input" value="${teacher.account}"
@@ -157,7 +157,7 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="password" class="control-label wk-filed-label">密码: </label>
+                                <label for="password" class="control-label wk-filed-label">登录密码: </label>
                                 <div class="input-group">
                                     <input required="required" id="password" name="password" type="text"
                                            class="form-control wk-normal-input" value="${teacher.password}"

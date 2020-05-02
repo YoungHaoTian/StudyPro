@@ -22,11 +22,17 @@ public interface CourseChapterMapper {
 
     List<CourseChapter> selectByExampleWithBLOBsAndCourse(CourseChapterExample example);
 
+    List<CourseChapter> selectByExampleWithBLOBsAndCourseWithoutCollege(CourseChapterExample example);
+
     List<CourseChapter> selectByExample(CourseChapterExample example);
 
     CourseChapter selectByPrimaryKey(Integer id);
 
-    CourseChapter selectByPrimaryKeyWithIdTitleAndCourse(Integer id);
+    CourseChapter selectByPrimaryKeyWithIdTitle(Integer id);
+
+    CourseChapter selectByPrimaryKeyWithIdTitleAndCourseAndCollege(Integer id);
+
+    CourseChapter selectByPrimaryKeyWithIdTitleAndCourseAndTeacher(Integer id);
 
     int updateByExampleSelective(@Param("record") CourseChapter record, @Param("example") CourseChapterExample example);
 
@@ -41,6 +47,10 @@ public interface CourseChapterMapper {
     int updateByPrimaryKey(CourseChapter record);
 
     CourseChapter selectByCourseIdWithIdAndTitle(Integer id);
+
+    CourseChapter selectByCourseIdWithIdAndTitleAndVideo(Integer id);
+
+    CourseChapter selectByCourseIdWithIdAndTitleAndFile(Integer id);
 
     List<Integer> selectChapterIdByExample(CourseChapterExample courseChapterExample);
 

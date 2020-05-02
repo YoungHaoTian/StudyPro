@@ -116,11 +116,11 @@
                                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                                 重新上传
                             </button>
-                            <a class="btn btn-danger btn-sm deleteFile" data-toggle="tooltip" data-placement="left"
+                            <button class="btn btn-danger btn-sm deleteFile" data-toggle="tooltip" data-placement="left"
                                title="删除当前文档" fileId="${file.id}">
                                 <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                                 删除
-                            </a>
+                            </button>
                         </td>
                     </tr>
                 </c:forEach>
@@ -140,11 +140,11 @@
                                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                                 重新上传
                             </button>
-                            <a class="btn btn-danger btn-sm deleteVideo" data-toggle="tooltip" data-placement="left"
+                            <button class="btn btn-danger btn-sm deleteVideo" data-toggle="tooltip" data-placement="left"
                                title="删除当前视频" videoId="${video.id}">
                                 <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                                 删除
-                            </a>
+                            </button>
                         </td>
                     </tr>
                 </c:forEach>

@@ -3,7 +3,6 @@ package com.cdut.studypro.services.impl;
 import com.cdut.studypro.beans.*;
 import com.cdut.studypro.daos.*;
 import com.cdut.studypro.services.TeacherService;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,10 +47,10 @@ public class TeacherServiceImpl implements TeacherService {
     private DiscussPostMapper discussPostMapper;
 
     @Autowired
-    private TaskMapper taskMapper;
+    private OnlineTaskMapper taskMapper;
 
     @Autowired
-    private TaskQuestionMapper taskQuestionMapper;
+    private OnlineTaskQuestionMapper taskQuestionMapper;
 
     @Override
     public List<Teacher> selectTeacherByExample(TeacherExample example) {
@@ -77,7 +76,10 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public List<Course> getAllCoursesWithChapterAndCollegeByTeacherId(Integer id) {
-        return courseMapper.selectByTeacherIdWithChapterAndCollege(id);
+        CourseExample courseExample = new CourseExample();
+        CourseExample.Criteria criteria = courseExample.createCriteria();
+        criteria.andTeacherIdEqualTo(id);
+        return courseMapper.selectByExampleWithChapterAndCollege(courseExample);
     }
 
     @Override
@@ -111,21 +113,21 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public boolean saveTask(Task task) {
+    public boolean saveTask(OnlineTask task) {
         return taskMapper.insertSelective(task) > 0;
     }
 
     @Override
-    public List<Task> getAllTasksWithCourseAndChapterExample(TaskExample taskExample) {
-        return taskMapper.selectByExampleWithCourseAndChapter(taskExample);
+    public List<OnlineTask> getAllTasksWithCourseAndChapterExample(OnlineTaskExample taskExample) {
+        return taskMapper.selectByExampleWithCourseAndCollegeAndChapter(taskExample);
     }
 
     @Override
     public boolean deleteTaskById(Integer id) {
         //删除作业时，删除作业对应的题目
-        TaskQuestionExample taskQuestionExample = new TaskQuestionExample();
-        TaskQuestionExample.Criteria criteria = taskQuestionExample.createCriteria();
-        criteria.andTaskIdEqualTo(id);
+        OnlineTaskQuestionExample taskQuestionExample = new OnlineTaskQuestionExample();
+        OnlineTaskQuestionExample.Criteria criteria = taskQuestionExample.createCriteria();
+        criteria.andOnlineTaskIdEqualTo(id);
         int i = taskQuestionMapper.deleteByExample(taskQuestionExample);
         if (i < 0) {
             throw new RuntimeException("删除题目时出现错误，请稍后再试");
@@ -140,15 +142,15 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public boolean deleteTaskByIdBatch(List<Integer> taskIds) {
         //删除作业之前先将对应的所有题目删除
-        TaskQuestionExample taskQuestionExample = new TaskQuestionExample();
-        TaskQuestionExample.Criteria questionExampleCriteria = taskQuestionExample.createCriteria();
-        questionExampleCriteria.andTaskIdIn(taskIds);
+        OnlineTaskQuestionExample taskQuestionExample = new OnlineTaskQuestionExample();
+        OnlineTaskQuestionExample.Criteria questionExampleCriteria = taskQuestionExample.createCriteria();
+        questionExampleCriteria.andOnlineTaskIdIn(taskIds);
         int i = taskQuestionMapper.deleteByExample(taskQuestionExample);
         if (i < 0) {
             throw new RuntimeException("批量删除题目时出现错误，请稍后再试");
         }
-        TaskExample taskExample = new TaskExample();
-        TaskExample.Criteria criteria = taskExample.createCriteria();
+        OnlineTaskExample taskExample = new OnlineTaskExample();
+        OnlineTaskExample.Criteria criteria = taskExample.createCriteria();
         criteria.andIdIn(taskIds);
         int j = taskMapper.deleteByExample(taskExample);
         if (j < 0) {
@@ -158,17 +160,17 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public Task getTaskWithCourseAndChapterById(Integer id) {
+    public OnlineTask getTaskWithCourseAndChapterById(Integer id) {
         return taskMapper.selectByPrimaryKeyWithCourseAndChapter(id);
     }
 
     @Override
-    public Task getTaskById(Integer id) {
+    public OnlineTask getTaskById(Integer id) {
         return taskMapper.selectByPrimaryKey(id);
     }
 
     @Override
-    public boolean updateTaskByPrimaryKeySelective(Task task) {
+    public boolean updateTaskByPrimaryKeySelective(OnlineTask task) {
         return taskMapper.updateByPrimaryKeySelective(task) > 0;
     }
 
@@ -183,35 +185,35 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<TaskQuestion> getTaskQuestionsByTaskId(Integer id) {
+    public List<OnlineTaskQuestion> getTaskQuestionsByTaskId(Integer id) {
         return taskQuestionMapper.selectByTaskId(id);
     }
 
     @Override
     public boolean deleteTaskQuestionByIdBatch(List<Integer> questionIds) {
-        TaskQuestionExample taskQuestionExample = new TaskQuestionExample();
-        TaskQuestionExample.Criteria criteria = taskQuestionExample.createCriteria();
+        OnlineTaskQuestionExample taskQuestionExample = new OnlineTaskQuestionExample();
+        OnlineTaskQuestionExample.Criteria criteria = taskQuestionExample.createCriteria();
         criteria.andIdIn(questionIds);
         return taskQuestionMapper.deleteByExample(taskQuestionExample) > 0;
     }
 
     @Override
-    public boolean insertTaskQuestion(TaskQuestion taskQuestion) {
+    public boolean insertTaskQuestion(OnlineTaskQuestion taskQuestion) {
         return taskQuestionMapper.insert(taskQuestion) > 0;
     }
 
     @Override
-    public TaskQuestion getTaskQuestionsById(Integer id) {
+    public OnlineTaskQuestion getTaskQuestionsById(Integer id) {
         return taskQuestionMapper.selectByPrimaryKey(id);
     }
 
     @Override
-    public boolean updateTaskQuestionByPrimaryKeySelective(TaskQuestion taskQuestion) {
+    public boolean updateTaskQuestionByPrimaryKeySelective(OnlineTaskQuestion taskQuestion) {
         return taskQuestionMapper.updateByPrimaryKeySelective(taskQuestion) > 0;
     }
 
     @Override
-    public boolean insertTaskQuestionBatch(List<TaskQuestion> taskQuestions) {
+    public boolean insertTaskQuestionBatch(List<OnlineTaskQuestion> taskQuestions) {
         return taskQuestionMapper.insertBatch(taskQuestions) > 0;
     }
 
@@ -274,9 +276,9 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<Task> getTaskByChapterId(Integer id) {
-        TaskExample taskExample = new TaskExample();
-        TaskExample.Criteria criteria = taskExample.createCriteria();
+    public List<OnlineTask> getTaskByChapterId(Integer id) {
+        OnlineTaskExample taskExample = new OnlineTaskExample();
+        OnlineTaskExample.Criteria criteria = taskExample.createCriteria();
         criteria.andChapterIdEqualTo(id);
         return taskMapper.selectByExample(taskExample);
     }
@@ -313,11 +315,11 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<Task> getTaskByChapterIdWithChapterAndCourse(Integer id) {
-        TaskExample taskExample=new TaskExample();
-        TaskExample.Criteria criteria = taskExample.createCriteria();
+    public List<OnlineTask> getTaskByChapterIdWithChapterAndCourse(Integer id) {
+        OnlineTaskExample taskExample = new OnlineTaskExample();
+        OnlineTaskExample.Criteria criteria = taskExample.createCriteria();
         criteria.andChapterIdEqualTo(id);
-        return taskMapper.selectByExampleWithCourseAndChapter(taskExample);
+        return taskMapper.selectByExampleWithCourseAndCollegeAndChapter(taskExample);
     }
 
     @Override

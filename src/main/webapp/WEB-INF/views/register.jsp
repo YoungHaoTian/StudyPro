@@ -13,7 +13,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="${APP_PATH}/resources/css/bootstrap.min.css" type="text/css" rel="stylesheet">
-    <link href="${APP_PATH}/resources/css/font-awesome.min.css" type="text/javascript" rel="stylesheet">
+    <link href="${APP_PATH}/resources/font/css/font-awesome.min.css" type="text/javascript" rel="stylesheet">
     <link href="${APP_PATH}/resources/css/bootsnav.css" type="text/css" rel="stylesheet">
     <link href="${APP_PATH}/resources/css/normalize.css" type="text/css" rel="stylesheet">
     <link href="${APP_PATH}/resources/css/css.css" rel="stylesheet" type="text/css">
@@ -22,7 +22,6 @@
     <script src="${APP_PATH}/resources/js/jquery.step.js"></script>
     <script src="${APP_PATH}/resources/js/bootstrap.min.js" type="text/javascript"></script>
     <script src="${APP_PATH}/resources/js/bootsnav.js" type="text/javascript"></script>
-
     <script src="${APP_PATH}/resources/js/jquery.js" type="text/javascript"></script>
     <!--[if IE]>
     <script src="${APP_PATH}/resources/js/html5.js"></script><![endif]-->
@@ -94,7 +93,6 @@
                                        placeholder="再次密码" autocomplete="off">
                             </div>
                         </div>
-                        <div class="tishis"></div>
                         <div class="form-group">
                             <a href="javascript:void(0);" type="submit" class="btn btn-danger btn-step btn-login"
                                style="float: left"
@@ -128,6 +126,7 @@
 <script type="text/javascript">
     let validCode = true;
     let phone = /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\d{8}$/;
+    let passwords = /^[a-zA-Z0-9]{6,18}$/;
 
     //发送验证码
     function Sendpwd(sender) {
@@ -161,6 +160,21 @@
                     });
                 }
                 if (result.code === 100) {
+                    let code = $(sender);
+                    if (validCode) {
+                        validCode = false;
+                        code.addClass("msgs1").attr("disabled", true);
+                        let t = setInterval(function () {
+                            time--;
+                            code.val(time + "秒");
+                            if (time === 0) {
+                                clearInterval(t);
+                                code.val("重新获取");
+                                validCode = true;
+                                code.removeClass("msgs1").attr("disabled", false);
+                            }
+                        }, 1000);
+                    }
                     layer.msg("获取成功，请注意查收", {time: 1000, icon: 6}, function () {
                     });
                 }
@@ -170,21 +184,7 @@
                 });
             }
         });
-        let code = $(sender);
-        if (validCode) {
-            validCode = false;
-            code.addClass("msgs1").attr("disabled", true);
-            let t = setInterval(function () {
-                time--;
-                code.val(time + "秒");
-                if (time === 0) {
-                    clearInterval(t);
-                    code.val("重新获取");
-                    validCode = true;
-                    code.removeClass("msgs1").attr("disabled", false);
-                }
-            }, 1000);
-        }
+
     }
 
     function lazyGo() {
@@ -260,14 +260,14 @@
                 return;
 
             }
-            if (/(^\s*)|(\s*$)/g.test(txtPwd)) {
+            if (txtPwd.indexOf(" ") !== -1) {
                 layer.msg("密码不能包含空格", {time: 1500, icon: 5, shift: 6}, function () {
                 });
                 $("#txtconfirm").focus();
                 return;
             }
-            if ($.trim(txtPwd).length < 6) {
-                layer.msg("密码长度需大于6", {time: 1500, icon: 5, shift: 6}, function () {
+            if (!passwords.test(txtPwd)) {
+                layer.msg("登录密码只能由字母和数字组成，长度6-18位，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
                 });
                 $("#txtconfirm").focus();
                 return;

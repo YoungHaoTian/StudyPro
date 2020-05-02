@@ -39,7 +39,7 @@
                             <div class="form-group">
                                 <label for="name" class="control-label wk-filed-label">课程名称:</label>
                                 <div class="input-group">
-                                    <input required="required" id="name" name="name" type="text" maxlength="20"
+                                    <input required="required" id="name" name="name" type="text" maxlength="30"
                                            class="form-control wk-normal-input"
                                            placeholder="请输入课程名称"/>
                                 </div>
@@ -67,7 +67,7 @@
                                 <select class="selectpicker" id="teacherId" name="teacherId">
                                     <option value="0">请选择授课教师</option>
                                     <c:forEach items="${teachers}" var="teacher">
-                                        <option value="${teacher.id}">${teacher.name}:${teacher.college.name}</option>
+                                        <option value="${teacher.id}">${teacher.name}:${teacher.college.name}:${teacher.number}</option>
                                     </c:forEach>
                                 </select>
                             </div>
@@ -87,10 +87,15 @@
                     </div>
                 </div>
 
-                <div class="panel-footer wk-panel-footer">
-                    <button type="button" class="btn btn-info" onclick="createCourse()">提&nbsp;&nbsp;交</button>
-                </div>
+
             </form>
+        </div>
+        <div class="panel-footer wk-panel-footer">
+            <button type="button" class="btn btn-info" onclick="createCourse()">提&nbsp;&nbsp;交</button>
+            <button type="button" class="btn btn-info" onclick="$('#courseData')[0].reset();"
+                    style="margin-left: 30px">
+                重&nbsp;&nbsp;填
+            </button>
         </div>
     </div>
 </div>
@@ -100,40 +105,41 @@
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
     let numbers = /^[a-zA-Z0-9]{6,18}$/;
-    let names = /^[a-zA-Z0-9\u0020\u3000\u4e00-\u9fa5]+$/;
 
+    // let names = /^[a-zA-Z0-9\u0020\u3000\u4e00-\u9fa5]+$/;
     function createCourse() {
         let name = $("#name").val();
         let number = $("#number").val();
         let intro = $("#intro").val();
         let collegeId = $("#collegeId").val();
+        let teacherId = $("#teacherId").val();
         if (name.trim() === "") {
             layer.msg("课程名称不能为空", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
         if (name.indexOf(" ") === 0) {
-            layer.msg("课程名称不能以空格开头，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("课程名称不能以空格开头，请重新输入", {time: 2000, icon: 5, shift: 6}, function () {
             });
             return;
         }
-        if (!names.test(name)) {
+        /*if (!names.test(name)) {
             layer.msg("课程名由数字、字母、中文组成", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
-        }
+        }*/
         if (number.trim() === "") {
             layer.msg("课程编号不能为空", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
         if (number.indexOf(" ") !== -1) {
-            layer.msg("课程编号不能包含空格，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("课程编号不能包含空格，请重新输入", {time: 2500, icon: 5, shift: 6}, function () {
             });
             return;
         }
         if (!numbers.test(number)) {
-            layer.msg("课程编号由6-18位字母和数字组成，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("课程编号由6-18位字母和数字组成，请重新输入", {time: 2500, icon: 5, shift: 6}, function () {
             });
             return;
         }
@@ -142,8 +148,13 @@
             });
             return;
         }
+        if (teacherId === "0") {
+            layer.msg("请选择授课教师", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
         if (intro.trim() === "") {
-            layer.msg("学院介绍不能为空", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("课程介绍不能为空", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
@@ -160,7 +171,7 @@
                 layer.close(loadingIndex);
                 console.log(result);
                 if (result.code === 200) {
-                    layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
+                    layer.msg(result.message, {time: 3000, icon: 5, shift: 6}, function () {
                     });
                 }
                 if (result.code === 100) {

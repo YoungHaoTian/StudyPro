@@ -80,10 +80,10 @@
                                         <c:choose>
                                             <c:when test="${teacher.id == course.teacherId}">
                                                 <option value="${teacher.id}"
-                                                        selected="selected">${teacher.name}:${teacher.college.name}</option>
+                                                        selected="selected">${teacher.name}:${teacher.college.name}:${teacher.number}</option>
                                             </c:when>
                                             <c:otherwise>
-                                                <option value="${teacher.id}">${teacher.name}:${teacher.college.name}</option>
+                                                <option value="${teacher.id}">${teacher.name}:${teacher.college.name}:${teacher.number}</option>
                                             </c:otherwise>
                                         </c:choose>
                                     </c:forEach>
@@ -103,13 +103,18 @@
                         </div>
                     </div>
                 </div>
-                <div class="panel-footer wk-panel-footer">
-                    <button type="button" class="btn btn-info" onclick="updateCourse()">提&nbsp;&nbsp;交</button>
-                    <button type="button" class="btn btn-info" onclick="back();" style="margin-left: 30px">
-                        返&nbsp;&nbsp;回
-                    </button>
-                </div>
+
             </form>
+        </div>
+        <div class="panel-footer wk-panel-footer">
+            <button type="button" class="btn btn-info" onclick="updateCourse()">提&nbsp;&nbsp;交</button>
+            <button type="button" class="btn btn-info" onclick="back();" style="margin-left: 30px">
+                返&nbsp;&nbsp;回
+            </button>
+            <button type="button" class="btn btn-info" onclick="$('#courseData')[0].reset();"
+                    style="margin-left: 30px">
+                重&nbsp;&nbsp;填
+            </button>
         </div>
     </div>
 </div>
@@ -119,7 +124,7 @@
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
     let numbers = /^[a-zA-Z0-9]{6,18}$/;
-    let names = /^[a-zA-Z0-9\u0020\u3000\u4e00-\u9fa5]+$/;
+    // let names = /^[a-zA-Z0-9\u0020\u3000\u4e00-\u9fa5]+$/;
 
     function updateCourse() {
         let name = $("#name").val();
@@ -133,27 +138,27 @@
             return;
         }
         if (name.indexOf(" ") === 0) {
-            layer.msg("课程名称不能以空格开头，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("课程名称不能以空格开头，请重新输入", {time: 2000, icon: 5, shift: 6}, function () {
             });
             return;
         }
-        if (!names.test(name)) {
+        /*if (!names.test(name)) {
             layer.msg("课程名由数字、字母、中文组成", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
-        }
+        }*/
         if (number.trim() === "") {
             layer.msg("课程编号不能为空", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
         if (number.indexOf(" ") !== -1) {
-            layer.msg("课程编号不能包含空格，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("课程编号不能包含空格，请重新输入", {time: 2500, icon: 5, shift: 6}, function () {
             });
             return;
         }
         if (!numbers.test(number)) {
-            layer.msg("课程编号由6-18位字母和数字组成，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("课程编号由6-18位字母和数字组成，请重新输入", {time: 2500, icon: 5, shift: 6}, function () {
             });
             return;
         }
@@ -168,7 +173,7 @@
             return;
         }
         if (intro.trim() === "") {
-            layer.msg("学院介绍不能为空", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("课程介绍不能为空", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
@@ -185,7 +190,7 @@
                 layer.close(loadingIndex);
                 console.log(result);
                 if (result.code === 200) {
-                    layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
+                    layer.msg(result.message, {time: 3000, icon: 5, shift: 6}, function () {
                     });
                 }
                 if (result.code === 100) {
@@ -203,5 +208,6 @@
 
     function back() {
         window.location.href = "${APP_PATH}/admin/searchCourse?&pageNum=${pageNum}";
+        // window.history.back();
     }
 </script>

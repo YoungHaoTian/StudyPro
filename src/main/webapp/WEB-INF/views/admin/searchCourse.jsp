@@ -107,7 +107,7 @@
 
 <div class="row">
     <div class="col-lg-12">
-        <div class="panel panel-default  wk-panel">
+        <div class="panel panel-default wk-panel">
             <table class="table table-striped table-hover" style="table-layout:fixed;">
                 <thead>
                 <tr class="info">
@@ -116,11 +116,11 @@
                         <label for="select_all" style="margin-bottom: 0px;font-weight: 200">全选</label>
                     </th>
                     <th>课程名称</th>
-                    <th>课程编号</th>
-                    <th>所属学院</th>
-                    <th>授课教师</th>
+                    <th style="width: 200px">课程编号</th>
+                    <th style="width: 200px">所属学院</th>
+                    <th style="width: 300px">授课教师(<span style="color: green">所属学院</span>)</th>
                     <th>课程简介</th>
-                    <th>选择操作</th>
+                    <th style="width: 200px">选择操作</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -131,44 +131,36 @@
                                 <input courseId="${course.id}" type="checkbox" class="select_item"/>
                             </label>
                         </th>
-                        <c:if test="${course.name!=null}">
-                            <td>${course.name.trim()=="0"?"未录入":(course.name.trim()==""?"未录入":course.name) }</td>
-                        </c:if>
-                        <c:if test="${course.name==null}">
-                            <td>未录入</td>
-                        </c:if>
-                        <c:if test="${course.number!=null}">
-                            <td>${course.number.trim()=="0"?"未录入":(course.number.trim()==""?"未录入":course.number) }</td>
-                        </c:if>
-                        <c:if test="${course.number==null}">
-                            <td>未录入</td>
-                        </c:if>
+                        <td>${course.name.trim()=="0"?"":course.name.trim() }</td>
+
+                        <td>${course.number.trim()=="0"?"":course.number.trim() }</td>
+
                         <c:if test="${course.college!=null}">
-                            <td>${course.college.name.trim()=="0"?"学院未设置名称":(course.college.name.trim()==""?"学院未设置名称":course.college.name) }</td>
+                            <td>${course.college.name.trim()=="0"?"":course.college.name.trim() }</td>
                         </c:if>
                         <c:if test="${course.college==null}">
-                            <td>未录入</td>
+                            <td><span style="color: red">未录入</span></td>
                         </c:if>
                         <c:if test="${course.teacher!=null}">
-                            <td>${course.teacher.name.trim()=="0"?"教师未设置姓名":(course.teacher.name.trim()==""?"教师未设置姓名":course.teacher.name.trim()) }：${course.teacher.college.name.trim()}</td>
+                            <td>${course.teacher.name.trim()=="0"?"":course.teacher.name.trim() }(<span
+                                    style="color: green">${course.teacher.college.name.trim()}</span>)
+                            </td>
                         </c:if>
                         <c:if test="${course.teacher==null}">
-                            <td>未录入</td>
+                            <td><span style="color: red">未录入</span></td>
                         </c:if>
-                        <c:if test="${course.intro!=null}">
-                            <td>${course.intro.trim()=="0"?"未录入":(course.intro.trim()==""?"未录入":course.intro) }</td>
-                        </c:if>
-                        <c:if test="${course.intro==null}">
-                            <td>未录入</td>
-                        </c:if>
+
+                        <td style="text-align: left">${course.intro.trim()=="0"?"":course.intro }</td>
+
+
                         <td>
                             <button class="btn btn-primary btn-sm edit" data-toggle="tooltip" data-placement="left"
-                                    title="编辑当前课程" edit-id="${course.id}" style="margin-right: 20px">
+                                    title="编辑当前课程" courseId="${course.id}" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                                 编辑
                             </button>
                             <a class="btn btn-danger btn-sm delete" data-toggle="tooltip" data-placement="left"
-                               title="删除当前课程" del-id="${course.id}">
+                               title="删除当前课程" courseId="${course.id}">
                                 <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                                 删除
                             </a>
@@ -235,7 +227,7 @@
         </div>
     </div>
     <!-- 页面跳转信息 -->
-    <div class="row">
+    <div class="row" style="margin-bottom: 50px">
         <div class="col-sm-2 col-md-offset-6">
             <input type="number" class="form-control" id="pageNum" placeholder="跳转到...">
         </div>
@@ -243,14 +235,14 @@
     </div>
 </c:if>
 <div class="modal fade" id="courseDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-    <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">课程删除</h5>
+                <h5 class="modal-title" style="color: red">课程删除</h5>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="text-align: center">
 
             </div>
             <div class="modal-footer">
@@ -266,9 +258,9 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">课程批量删除</h5>
+                <h5 class="modal-title" style="color: red">课程批量删除</h5>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="text-align: center">
 
             </div>
             <div class="modal-footer">
@@ -278,17 +270,15 @@
         </div>
     </div>
 </div>
-
 </body>
 </html>
-
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
     let ids = "";
     let id = "";
     //删除单个课程
     $(".delete").on("click", function () {
-        id = $(this).attr("del-id");
+        id = $(this).attr("courseId");
         console.log(id);
         //删除课程时弹出确认框
         let name = $(this).parents("tr").find("td:eq(0)").text();
@@ -321,6 +311,7 @@
                 }
                 if (result.code === 100) {
                     window.location.href = "${APP_PATH}/admin/searchCourse?pageNum=${pageInfo.pageNum }";
+                    // window.location.reload();
                 }
             },
             error: function () {
@@ -340,7 +331,7 @@
             return;
         }
         if (pageNum ==${pageInfo.pageNum}) {
-            layer.msg("当前已经是第"+pageNum+"页", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("当前已经是第" + pageNum + "页", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
@@ -373,7 +364,7 @@
         });
         console.log(ids);
         if (ids.trim() === "") {
-            layer.msg("操作失败，你未选择任何学院", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("操作失败，你未选择任何课程", {time: 1500, icon: 5, shift: 6}, function () {
             });
         } else {
             //去除删除的id多余的"-"
@@ -431,7 +422,7 @@
                 "name": name,
                 "collegeId": collegeId,
                 "teacher": teacher,
-                "number":number
+                "number": number
             },
             success: function (result) {
                 layer.close(loadingIndex);
@@ -453,7 +444,7 @@
     });
     //编辑课程信息
     $(".edit").on("click", function () {
-        let id = $(this).attr("edit-id");
-        window.location.href = "${APP_PATH}/admin/updateCourse/" + id + "?pageNum=${pageInfo.pageNum}";
+        let id = $(this).attr("courseId");
+        window.location.href = "${APP_PATH}/admin/updateCourse/" + id+"?pageNum=${pageInfo.pageNum}";
     })
 </script>

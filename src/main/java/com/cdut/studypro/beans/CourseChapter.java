@@ -29,14 +29,14 @@ public class CourseChapter {
 
     private List<CourseFile> files;
 
-    private List<Task> tasks;
+    private List<OnlineTask> onlineTasks;
 
-    public List<Task> getTasks() {
-        return tasks;
+    public List<OnlineTask> getOnlineTasks() {
+        return onlineTasks;
     }
 
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
+    public void setOnlineTasks(List<OnlineTask> onlineTasks) {
+        this.onlineTasks = onlineTasks;
     }
 
     public List<CourseVideo> getVideos() {

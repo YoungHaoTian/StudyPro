@@ -4,6 +4,7 @@ package com.cdut.studypro.services;
 import com.cdut.studypro.beans.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @description:
@@ -26,4 +27,76 @@ public interface StudentService {
     List<Course> getAllCourseWithBLOBsAndTeacherByExample(CourseExample courseExample);
 
     List<Integer> getTeacherIdByTeacherExample(TeacherExample teacherExample);
+
+    List<Integer> getJoinCourseIdByStudentId(Integer id);
+
+    boolean joinCourse(Collect collect);
+
+    boolean joinCourseBatch(List<Collect> collects);
+
+    boolean removeCourseBatch(List<Integer> courseIds, Integer id);
+
+    boolean removeCourse(Integer courseId, Integer studentId);
+
+    List<CourseChapter> getAllChapterWithBLOBsAndCourseByExample(CourseChapterExample courseChapterExample);
+
+    List<CourseVideo> getCourseVideoByExample(CourseVideoExample courseVideoExample);
+
+    List<CourseFile> getCourseFileByExample(CourseFileExample courseFileExample);
+
+    CourseFile getCourseFileById(Integer id);
+
+    CourseVideo getCourseVideoById(Integer id);
+
+    List<Course> getCourseWithChapterAndVideoByExample(CourseExample courseExample);
+
+    List<Course> getCourseByCourseIdsWithNameAndTeacher(List<Integer> courseIds);
+
+    List<Integer> getChapterIdsByCourseIds(List<Integer> ids);
+
+    List<CourseVideo> getCourseVideoByExampleWithCourseChapter(CourseVideoExample courseVideoExample);
+
+    List<Course> getCourseWithChapterAndFileByExample(CourseExample courseExample);
+
+    List<Discuss> getDiscussWithCourseByExample(DiscussExample discussExample);
+
+    List<DiscussPost> getAllDiscussPostByMapWithStudentName(Map<String, Object> map);
+
+    boolean insertDiscussPostSelective(DiscussPost discussPost);
+
+    List<Notice> getAllNotices();
+
+    Course getCourseWithChapterAndTeacherByCourseId(Integer courseId);
+
+    List<OnlineTask> getAllTasksByChapterId(Integer id);
+
+    List<OnlineTaskQuestion> getTaskQuestionsWithTitleAndItemByTaskId(Integer id);
+
+    List<OnlineTaskQuestion> getTaskQuestionsWithAnswerAndScoreByIds(List<Integer> questionIds);
+
+    List<OnlineTaskQuestion> getTaskQuestionsByTaskId(Integer id);
+
+    List<Integer> getFinishTaskIdByStudentId(Integer id);
+
+    List<Integer> getFinishTaskIdByStudentIdAndTaskIds(Integer id, List<Integer> taskIds);
+
+    List<StudentOnlineTask> getFinishTaskByStudentId(Integer id);
+
+    List<StudentOnlineTask> getFinishTaskByStudentIdAndTaskIds(Integer studentId, List<Integer> taskIds);
+
+    boolean insertStudentTaskSelective(StudentOnlineTask studentTask);
+
+    List<OnlineTask> getAllTasksWithChapterByTaskIds(List<Integer> taskIds);
+
+    List<Integer> getChapterIdsByCourseId(Integer courseId);
+
+    List<Integer> getTaskIdsByChapterIds(List<Integer> chapterIds);
+
+    List<Integer> getTaskIdsByChapterId(Integer id);
+
+    boolean isTaskFinish(Integer id);
+
+    Student getStudentByStudentIdWithCollege(Integer id);
+
+    Student getStudentByStudentId(Integer id);
 }

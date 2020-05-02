@@ -1,5 +1,6 @@
 package com.cdut.studypro.daos;
 
+import com.cdut.studypro.beans.DiscussExample;
 import com.cdut.studypro.beans.DiscussPost;
 import com.cdut.studypro.beans.DiscussPostExample;
 
@@ -44,4 +45,5 @@ public interface DiscussPostMapper {
     List<DiscussPost> selectByDiscussIdWithStudentName(Map<String, Object> map);
 
 
+    List<Integer> selectPostIdByExample(DiscussExample discussExample);
 }

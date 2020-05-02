@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="s" uri="http://www.springframework.org/tags/form" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" %>
 <!DOCTYPE html>
@@ -15,6 +16,7 @@
     <link rel="stylesheet" href="${APP_PATH}/resources1/css/wukong-ui.css">
     <link rel="stylesheet" href="${APP_PATH}/resources1/bootstrap/css/bootstrap-select.min.css">
     <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap-select.min.js"></script>
+
 </head>
 
 <body>
@@ -56,6 +58,7 @@
                             <div class="form-group">
                                 <label for="collegeId" class="control-label wk-filed-label">所属学院:</label>
                                 <select class="selectpicker" id="collegeId" name="collegeId">
+                                    <option value="0">请选择所属学院</option>
                                     <c:forEach items="${colleges}" var="college">
                                         <option value="${college.id}">${college.name}</option>
                                     </c:forEach>
@@ -108,9 +111,9 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="email" class="control-label wk-filed-label">邮箱: </label>
+                                <label for="email" class="control-label wk-filed-label">邮箱地址: </label>
                                 <div class="input-group">
-                                    <input required="required" id="email" name="email" type="text" maxlength="20"
+                                    <input required="required" id="email" name="email" type="text" maxlength="30"
                                            class="form-control wk-normal-input"
                                            placeholder="请输入邮箱" value=""/>
                                 </div>
@@ -118,15 +121,17 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="panel-footer wk-panel-footer">
-                    <button type="button" class="btn btn-info" onclick="createStudent()">提&nbsp;&nbsp;交</button>
-                </div>
             </form>
+        </div>
+        <div class="panel-footer wk-panel-footer">
+            <button type="button" class="btn btn-info" onclick="createStudent()">提&nbsp;&nbsp;交</button>
+            <button type="button" class="btn btn-info" onclick="$('#studentData')[0].reset();"
+                    style="margin-left: 30px">
+                重&nbsp;&nbsp;填
+            </button>
         </div>
     </div>
 </div>
-
 </body>
 </html>
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
@@ -135,7 +140,7 @@
     let phones = /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\d{8}$/;
     let han = /^[\u4e00-\u9fa5]{2,5}$/;
     let accounts = /^[a-zA-Z0-9_-]{12,18}$/;
-    let numbers = /^[19|20]\d{10,16}$/;
+    let numbers = /^20\d{10,16}$/;
     let idCardNos = /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
     let emails = /^(\w+\.)*\w+\@+[0-9a-zA-Z]+\.(com|com.cn|edu|hk|cn|net)$/;
     let passwords = /^[a-zA-Z0-9]{6,18}$/;
@@ -163,7 +168,14 @@
             });
             return;
         } else if (!numbers.test(number)) {
-            layer.msg("请输入正确学号", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("学生学号是以20开头的12-18位纯数字组成，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        //对学院的验证
+        let collegeId = $("#collegeId").val();
+        if (collegeId === 0) {
+            layer.msg("请选择所属学院", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
@@ -191,6 +203,12 @@
             return;
         }
 
+        let gender = $("#gender").val();
+        if (gender !== "0" && gender !== "1") {
+            layer.msg("请选择正确的性别", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
         //对账号的验证
         let account = $("#account").val();
         if ($.trim(account) === "") {
@@ -199,7 +217,7 @@
             return;
         }
         if (!accounts.test(account)) {
-            layer.msg("账户至少是12位，且由数字、字母、下划线组成", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("账户是12-18位，且由数字、字母、下划线组成", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
@@ -245,7 +263,7 @@
                 layer.close(loadingIndex);
                 console.log(result);
                 if (result.code === 200) {
-                    layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
+                    layer.msg(result.message, {time: 2500, icon: 5, shift: 6}, function () {
                     });
                 }
                 if (result.code === 100) {

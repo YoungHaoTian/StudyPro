@@ -88,8 +88,8 @@
 
 <div class="row">
     <div class="col-lg-12">
-        <div class="panel panel-default  wk-panel">
-            <table class="table table-striped table-hover">
+        <div class="panel panel-default wk-panel">
+            <table class="table table-striped table-hover" style="table-layout:fixed;">
                 <thead>
                 <tr class="info">
                     <th style="width: 80px">
@@ -98,8 +98,8 @@
                     </th>
                     <th>公告标题</th>
                     <th>公告内容</th>
-                    <th>发布时间</th>
-                    <th>选择操作</th>
+                    <th style="width: 200px">发布时间</th>
+                    <th style="width: 200px">选择操作</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -110,17 +110,17 @@
                                 <input noticeId="${notice.id}" type="checkbox" class="select_item"/>
                             </label>
                         </th>
-                        <td>${notice.title}</td>
-                        <td>${notice.content}</td>
+                        <td style="text-align: left">${notice.title}</td>
+                        <td style="text-align: left">${notice.content}</td>
                         <td><fmt:formatDate value="${notice.recordTime}" pattern="yyyy-MM-dd  HH:mm:ss"/></td>
                         <td>
                             <button class="btn btn-primary btn-sm edit" data-toggle="tooltip" data-placement="left"
-                                    title="编辑当前公告" edit-id="${notice.id}" style="margin-right: 20px">
+                                    title="编辑当前公告" noticeId="${notice.id}" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                                 编辑
                             </button>
                             <a class="btn btn-danger btn-sm delete" data-toggle="tooltip" data-placement="left"
-                               title="删除当前公告" del-id="${notice.id}">
+                               title="删除当前公告" noticeId="${notice.id}">
                                 <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                                 删除
                             </a>
@@ -187,7 +187,7 @@
         </div>
     </div>
     <!-- 页面跳转信息 -->
-    <div class="row">
+    <div class="row" style="margin-bottom: 50px">
         <div class="col-sm-2 col-md-offset-6">
             <input type="number" class="form-control" id="pageNum" placeholder="跳转到...">
         </div>
@@ -195,14 +195,14 @@
     </div>
 </c:if>
 <div class="modal fade" id="noticeDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-    <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">公告删除</h5>
+                <h5 class="modal-title" style="color: red">公告删除</h5>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="text-align: center">
 
             </div>
             <div class="modal-footer">
@@ -213,14 +213,14 @@
     </div>
 </div>
 <div class="modal fade" id="noticeBatchDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-    <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">公告批量删除</h5>
+                <h5 class="modal-title" style="color: red">公告批量删除</h5>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="text-align: center">
 
             </div>
             <div class="modal-footer">
@@ -239,12 +239,12 @@
     let id = "";
     //删除单个公告
     $(".delete").on("click", function () {
-        id = $(this).attr("del-id");
+        id = $(this).attr("noticeId");
         console.log(id);
         //删除公告时弹出确认框
         let message = "确定删除该公告的信息吗？";
-        $("#courseDeleteModal .modal-body").text(message);
-        $("#courseDeleteModal").modal({
+        $("#noticeDeleteModal .modal-body").text(message);
+        $("#noticeDeleteModal").modal({
                 backdrop: "static"
             }
         );
@@ -286,7 +286,7 @@
             return;
         }
         if (pageNum ==${pageInfo.pageNum}) {
-            layer.msg("当前已经是第"+pageNum+"页", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("当前已经是第" + pageNum + "页", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
@@ -397,7 +397,7 @@
     });
     //编辑公告信息
     $(".edit").on("click", function () {
-        let id = $(this).attr("edit-id");
-        window.location.href = "${APP_PATH}/admin/updateNotice/" + id+"?pageNum=${pageInfo.pageNum}";
+        let id = $(this).attr("noticeId");
+        window.location.href = "${APP_PATH}/admin/updateNotice/" + id + "?pageNum=${pageInfo.pageNum}";
     })
 </script>

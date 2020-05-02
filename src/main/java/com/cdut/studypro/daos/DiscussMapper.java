@@ -42,4 +42,6 @@ public interface DiscussMapper {
     List<Discuss> selectByCourseNameAndTeacherName(Map<String, String> map);
 
     List<Discuss> selectByExampleWithBLOBsAndCourse(DiscussExample example);
+
+    List<Integer> selectDiscussIdByExample(DiscussExample discussExample);
 }

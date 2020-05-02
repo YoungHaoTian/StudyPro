@@ -50,14 +50,14 @@
                                class="form-control" name="name" id="name" placeholder="学院名称"
                                value="${sessionScope.collegeQueryCriteria.get("name")}">
                     </div>
-                    <div class="form-group" style="margin-left: 50px">
+                    <div class="form-group" style="margin-left: 20px">
                         <button type="button" id="search" class="btn btn-success search" data-toggle="tooltip"
-                                data-placement="left" title="查询学院" style="margin-right: 20px">
+                                data-placement="left" title="查询学院">
                             <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                             查询
                         </button>
                     </div>
-                    <div class="form-group" style="margin-left: 50px">
+                    <div class="form-group" style="margin-left: 20px">
                         <button type="button" class="btn btn-danger batchDelete" data-toggle="tooltip"
                                 data-placement="left"
                                 title="批量删除所选学院">
@@ -81,7 +81,7 @@
                         <input type="checkbox" id="select_all"/>
                         <label for="select_all" style="margin-bottom: 0px;font-weight: 200">全选</label>
                     </th>
-                    <th style="width: 250px">学院名称</th>
+                    <th style="width: 400px">学院名称</th>
                     <th>学院介绍</th>
                     <th style="width: 250px">选择操作</th>
                 </tr>
@@ -94,26 +94,17 @@
                                 <input collId="${college.id}" type="checkbox" class="select_item"/>
                             </label>
                         </th>
-                        <c:if test="${college.name!=null}">
-                            <td>${college.name.trim()=="0"?"未录入":(college.name.trim()==""?"未录入":college.name) }</td>
-                        </c:if>
-                        <c:if test="${college.name==null}">
-                            <td>未录入</td>
-                        </c:if>
-                        <c:if test="${college.intro!=null}">
-                            <td>${college.intro.trim()=="0"?"未录入":(college.intro.trim()==""?"未录入":college.intro) }</td>
-                        </c:if>
-                        <c:if test="${college.intro==null}">
-                            <td>未录入</td>
-                        </c:if>
+                        <td>${college.name.trim()=="0"?"":college.name.trim()}</td>
+
+                        <td style="text-align: left">${college.intro.trim()=="0"?"":college.intro.trim() }</td>
                         <td>
                             <button class="btn btn-primary btn-sm edit" data-toggle="tooltip" data-placement="left"
-                                    title="编辑当前学院" edit-id="${college.id}" style="margin-right: 20px">
+                                    title="编辑当前学院" collegeId="${college.id}" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                                 编辑
                             </button>
                             <a class="btn btn-danger btn-sm delete" data-toggle="tooltip" data-placement="left"
-                               title="删除当前学院" del-id="${college.id}">
+                               title="删除当前学院" collegeId="${college.id}">
                                 <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                                 删除
                             </a>
@@ -181,7 +172,7 @@
         </div>
     </div>
     <!-- 页面跳转信息 -->
-    <div class="row">
+    <div class="row" style="margin-bottom: 50px">
         <div class="col-sm-2 col-md-offset-6">
             <input type="number" class="form-control" id="pageNum" placeholder="跳转到...">
         </div>
@@ -189,14 +180,14 @@
     </div>
 </c:if>
 <div class="modal fade" id="collegeDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-    <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">学院删除</h5>
+                <h5 class="modal-title" style="color: red">学院删除</h5>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="text-align: center">
 
             </div>
             <div class="modal-footer">
@@ -207,14 +198,14 @@
     </div>
 </div>
 <div class="modal fade" id="collegeBatchDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-    <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">学院批量删除</h5>
+                <h5 class="modal-title" style="color: red">学院批量删除</h5>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="text-align: center">
 
             </div>
             <div class="modal-footer">
@@ -230,7 +221,7 @@
     let id = "";
     //删除单个学院
     $(".delete").on("click", function () {
-        id = $(this).attr("del-id");
+        id = $(this).attr("collegeId");
         console.log(id);
         //删除学院时弹出确认框
         let name = $(this).parents("tr").find("td:eq(0)").text();
@@ -283,7 +274,7 @@
             return;
         }
         if (pageNum ==${pageInfo.pageNum}) {
-            layer.msg("当前已经是第"+pageNum+"页", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("当前已经是第" + pageNum + "页", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
@@ -393,7 +384,7 @@
 
     //编辑学院信息
     $(".edit").on("click", function () {
-        let id = $(this).attr("edit-id");
+        let id = $(this).attr("collegeId");
         window.location.href = "${APP_PATH}/admin/updateCollege/" + id + "?pageNum=${pageInfo.pageNum}";
     })
 </script>

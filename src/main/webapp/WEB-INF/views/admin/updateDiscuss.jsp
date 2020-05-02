@@ -40,14 +40,18 @@
                         <div class="form-inline">
                             <div class="form-group">
                                 <label for="courseId" class="control-label wk-filed-label">所属课程:</label>
-                                <select class="selectpicker" id="courseId" name="courseId" style="width:100px;">
+                                <select class="selectpicker btn-group bootstrap-select" id="courseId" name="courseId"
+                                        style="width:500px;">
+                                    <option value="0">请选择所属课程</option>
                                     <c:forEach items="${courses}" var="course">
                                         <c:choose>
                                             <c:when test="${course.id == discuss.courseId}">
-                                                <option value="${course.id}" selected="selected">${course.name}:${course.teacher.name}(${course.teacher.college.name})</option>
+                                                <option value="${course.id}"
+                                                        selected="selected">${course.name}(${course.college.name}):${course.teacher.name}(${course.teacher.college.name})
+                                                </option>
                                             </c:when>
                                             <c:otherwise>
-                                                <option value="${course.id}">${course.name}</option>
+                                                <option value="${course.id}">${course.name}(${course.college.name}):${course.teacher.name}(${course.teacher.college.name})</option>
                                             </c:otherwise>
                                         </c:choose>
                                     </c:forEach>
@@ -58,19 +62,21 @@
                             <div class="form-group">
                                 <label for="title" class="control-label wk-filed-label">讨论标题: </label>
                                 <div class="input-group">
-                                    <input required="required" id="title" name="title" type="text"
+                                    <%--<input required="required" id="title" name="title" type="text" maxlength="50"
                                            class="form-control wk-long-2col-input" value="${discuss.title}"
-                                           placeholder="请输入讨论标题"/>
+                                           placeholder="请输入讨论标题"/>--%>
+                                    <textarea required="required" id="title" name="title" type="text"
+                                              class="form-control wk-long-2col-input" rows="2"
+                                              placeholder="请输入讨论内容">${discuss.title}</textarea>
                                 </div>
                             </div>
                         </div>
-
                         <div class="form-inline">
                             <div class="form-group">
                                 <label for="content" class="control-label wk-filed-label">讨论内容: </label>
                                 <div class="input-group">
                                     <textarea required="required" id="content" name="content" type="text"
-                                           class="form-control wk-long-2col-input"
+                                              class="form-control wk-long-2col-input" rows="5"
                                               placeholder="请输入讨论内容">${discuss.content}</textarea>
                                 </div>
                             </div>
@@ -78,13 +84,18 @@
 
                     </div>
                 </div>
-                <div class="panel-footer wk-panel-footer">
-                    <button type="button" class="btn btn-info" onclick="editDiscuss()">提&nbsp;&nbsp;交</button>
-                    <button type="button" class="btn btn-info" onclick="back()" style="margin-left: 30px">
-                        返&nbsp;&nbsp;回
-                    </button>
-                </div>
+
             </form>
+        </div>
+        <div class="panel-footer wk-panel-footer">
+            <button type="button" class="btn btn-info" onclick="editDiscuss()">提&nbsp;&nbsp;交</button>
+            <button type="button" class="btn btn-info" onclick="back()" style="margin-left: 30px">
+                返&nbsp;&nbsp;回
+            </button>
+            <button type="button" class="btn btn-info" onclick="$('#discussData')[0].reset();"
+                    style="margin-left: 30px">
+                重&nbsp;&nbsp;填
+            </button>
         </div>
     </div>
 </div>
@@ -93,12 +104,18 @@
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
     function editDiscuss() {
-         let title = $("#title").val();
-         let content = $("#content").val();
-         if (title.trim() === "") {
+        let title = $("#title").val();
+        let content = $("#content").val();
+        let courseId = $("#courseId").val();
+        if (courseId === "0") {
+            layer.msg("请选择所属课程", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        if (title.trim() === "") {
             layer.msg("讨论标题不能为空", {time: 1500, icon: 5, shift: 6}, function () {
             });
-             return;
+            return;
         }
         if (title.indexOf(" ") === 0) {
             layer.msg("讨论标题不能以空格开头，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
@@ -108,7 +125,7 @@
         if (content.trim() === "") {
             layer.msg("讨论内容不能为空", {time: 1500, icon: 5, shift: 6}, function () {
             });
-             return;
+            return;
         }
         if (content.indexOf(" ") === 0) {
             layer.msg("讨论内容不能以空格开头，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
@@ -143,7 +160,8 @@
             }
         });
     }
+
     function back() {
-        window.location.href="${APP_PATH}/admin/searchDiscuss?&pageNum=${pageNum}";
+        window.location.href = "${APP_PATH}/admin/searchDiscuss?&pageNum=${pageNum}";
     }
 </script>

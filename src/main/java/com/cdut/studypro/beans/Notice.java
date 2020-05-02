@@ -1,15 +1,21 @@
 package com.cdut.studypro.beans;
 
+import com.cdut.studypro.validates.common.*;
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 import java.util.Objects;
 
 public class Notice {
     private Integer id;
-
+    @NotEmpty(message = "公告标题不能为空", groups = {Validate1.class})
+    @Length(max = 50, message = "公告标题请控制在50字以内", groups = {Validate2.class})
     private String title;
 
     private Date recordTime;
-
+    @NotEmpty(message = "公告内容不能为空", groups = {Validate3.class})
+    @Length(max = 300, message = "公告内容请控制在300字以内", groups = {Validate4.class})
     private String content;
 
     public Integer getId() {

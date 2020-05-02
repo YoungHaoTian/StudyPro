@@ -1,17 +1,29 @@
 package com.cdut.studypro.beans;
 
+import com.cdut.studypro.validates.common.*;
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.Objects;
 
 public class Discuss {
     private Integer id;
 
+    @NotEmpty(message = "讨论标题不能为空", groups = {Validate3.class})
+    @Length(max = 50, message = "讨论标题请控制在50字以内", groups = {Validate4.class})
     private String title;
 
     private Date recordTime;
 
+    @NotNull(message = "请选择所属课程", groups = {Validate1.class})
+    @Min(value = 1, message = "请选择所属课程", groups = {Validate2.class})
     private Integer courseId;
 
+    @NotEmpty(message = "讨论内容不能为空", groups = {Validate5.class})
+    @Length(max = 300, message = "讨论内容请控制在300字以内", groups = {Validate6.class})
     private String content;
 
     private Course course;

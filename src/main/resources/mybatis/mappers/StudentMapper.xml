@@ -19,10 +19,27 @@
         <result column="password" jdbcType="VARCHAR" property="password"/>
         <result column="email" jdbcType="VARCHAR" property="email"/>
     </resultMap>
-
+    <resultMap id="BaseResultMapWithoutPassword" type="com.cdut.studypro.beans.Student">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="number" jdbcType="VARCHAR" property="number"/>
+        <result column="college_id" jdbcType="INTEGER" property="collegeId"/>
+        <result column="telephone" jdbcType="VARCHAR" property="telephone"/>
+        <result column="id_card_no" jdbcType="VARCHAR" property="idCardNo"/>
+        <result column="gender" jdbcType="INTEGER" property="gender"/>
+        <result column="account" jdbcType="VARCHAR" property="account"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+    </resultMap>
     <!--新增带学院信息的映射-->
     <resultMap extends="BaseResultMap" id="ResultMapWithCollege" type="com.cdut.studypro.beans.Student">
-        <association property="college" select="com.cdut.studypro.daos.CollegeMapper.selectByPrimaryKeyWithIdAndName" column="college_id"/>
+        <association property="college" select="com.cdut.studypro.daos.CollegeMapper.selectByPrimaryKeyWithIdAndName"
+                     column="college_id"/>
+    </resultMap>
+    <resultMap extends="BaseResultMapWithoutPassword" id="ResultMapWithCollegeWithoutPassword"
+               type="com.cdut.studypro.beans.Student">
+        <association property="college" select="com.cdut.studypro.daos.CollegeMapper.selectByPrimaryKeyWithIdAndName"
+                     column="college_id"/>
     </resultMap>
     <sql id="Example_Where_Clause">
         <where>
@@ -104,13 +121,44 @@
             order by ${orderByClause}
         </if>
     </select>
+    <select id="selectTelephoneByExample" parameterType="com.cdut.studypro.beans.StudentExample"
+            resultType="java.lang.String">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        telephone
+        from student
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
     <!--带学院的条件查询-->
-    <select id="selectByExampleWithCollege" parameterType="com.cdut.studypro.beans.StudentExample" resultMap="ResultMapWithCollege">
+    <select id="selectByExampleWithCollege" parameterType="com.cdut.studypro.beans.StudentExample"
+            resultMap="ResultMapWithCollege">
         select
         <if test="distinct">
             distinct
         </if>
         <include refid="Base_Column_List"/>
+        from student
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByExampleWithCollegeWithoutPassword" parameterType="com.cdut.studypro.beans.StudentExample"
+            resultMap="ResultMapWithCollegeWithoutPassword">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        id, name, number, college_id, telephone, id_card_no, gender, account, email
         from student
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
@@ -336,7 +384,7 @@
 
     <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="false">
         insert into student
-        (name,number,college_id,telephone,id_card_no,account,password,email)
+        (name,number,college_id,telephone,id_card_no,gender,account,password,email)
         values
         <foreach collection="students" item="student" separator=",">
             (
@@ -345,6 +393,7 @@
             #{student.collegeId,jdbcType=INTEGER},
             #{student.telephone,jdbcType=VARCHAR},
             #{student.idCardNo,jdbcType=VARCHAR},
+            #{student.gender,jdbcType=VARCHAR},
             #{student.account,jdbcType=VARCHAR},
             #{student.password,jdbcType=VARCHAR},
             #{student.email,jdbcType=VARCHAR}

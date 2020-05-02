@@ -13,8 +13,14 @@
     <link rel="stylesheet" href="${APP_PATH}/resources1/bootstrap/css/bootstrap-select.min.css">
     <script type="text/javascript" src="${APP_PATH}/resources1/js/jquery-3.1.1.js"></script>
     <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap-select.min.js"></script>
-
     <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap.min.js"></script>
+    <style>
+        .wk-accordion-list-group .current-list-group-item {
+            border: none;
+            background: #AAA;
+            color: #00fff2;
+        }
+    </style>
 </head>
 
 <body>
@@ -121,7 +127,7 @@
                     <div class="panel panel-info wk-accordion-header">
                         <div class="panel-heading">
                             <a data-toggle="collapse" href="#CMenu" data-parent="#accordion"
-                               class="click">学院管理&nbsp;<span
+                               class="click">学院信息管理&nbsp;<span
                                     class=" glyphicon glyphicon-chevron-down"
                                     aria-hidden="true"></span></a>
                         </div>
@@ -131,6 +137,11 @@
                                 <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/createCollege">
                                     新增学院&nbsp;<span class=" glyphicon glyphicon-hand-right"
+                                                    aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="list-group-item"
+                                        href="${APP_PATH}/admin/createCollegeBatch">
+                                    批量新增学院&nbsp;<span class=" glyphicon glyphicon-hand-right"
                                                     aria-hidden="true"></span>
                                 </button>
                                 <button type="button" class="list-group-item"
@@ -155,6 +166,11 @@
                                 <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/createCourse">
                                     新增课程&nbsp;<span class=" glyphicon glyphicon-hand-right"
+                                                    aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="list-group-item"
+                                        href="${APP_PATH}/admin/createCourseBatch">
+                                    批量新增课程&nbsp;<span class=" glyphicon glyphicon-hand-right"
                                                     aria-hidden="true"></span>
                                 </button>
                                 <button type="button" class="list-group-item"
@@ -221,7 +237,7 @@
                                                       aria-hidden="true"></span>
                                 </button>
                                 <button type="button" class="list-group-item"
-                                        href="${APP_PATH}/admin/updateAdminInfo">
+                                        href="${APP_PATH}/admin/editAdminInfo">
                                     个人信息修改&nbsp;<span class=" glyphicon glyphicon-hand-right"
                                                       aria-hidden="true"></span>
                                 </button>
@@ -234,8 +250,8 @@
         </div>
     </div>
 
-    <div id="rightTable" class="col-lg-10" style="padding:0px;">
-        <iframe id="mainFrame" src="" width="100%" frameborder="0"
+    <div id="rightTable" class="col-lg-10" style="padding:0px;width: 85%">
+        <iframe id="mainFrame" src="${APP_PATH}/index/welcome" width="100%" frameborder="0"
                 onload="changeFrameHeight()">
         </iframe>
     </div>
@@ -264,7 +280,7 @@
         let flag = true;
         let span = $("#leftNav span");
         let pre = null;
-        let previous = null;
+        /*let previous = null;
         $('#wk-nav-menu .wk-main-menu-item').on("click", function () {
             if (previous == null) {
                 previous = $(this);
@@ -280,21 +296,21 @@
                     previous = $(this);
                 }
             }
-        });
+        });*/
         $(".click").click(function () {
             if (pre != null && pre.text() !== $(this).text()) {
-                if (pre.children(span).hasClass("glyphicon-hand-up")) {
-                    pre.children(span).removeClass("glyphicon-hand-up");
-                    pre.children(span).addClass("glyphicon-hand-down");
+                if (pre.children(span).hasClass("glyphicon-chevron-up")) {
+                    pre.children(span).removeClass("glyphicon-chevron-up");
+                    pre.children(span).addClass("glyphicon-chevron-down");
                 }
             }
             let children = $(this).children(span);
-            if (children.hasClass("glyphicon-hand-down")) {
-                children.removeClass("glyphicon-hand-down");
-                children.addClass("glyphicon-hand-up");
-            } else if (children.hasClass("glyphicon-hand-up")) {
-                children.removeClass("glyphicon-hand-up");
-                children.addClass("glyphicon-hand-down");
+            if (children.hasClass("glyphicon-chevron-down")) {
+                children.removeClass("glyphicon-chevron-down");
+                children.addClass("glyphicon-chevron-up");
+            } else if (children.hasClass("glyphicon-chevron-up")) {
+                children.removeClass("glyphicon-chevron-up");
+                children.addClass("glyphicon-chevron-down");
             }
             pre = $(this);
         });
@@ -312,7 +328,7 @@
                 $("#rightTable").css("margin-left", "6px");
                 flag = false;
             } else {
-                $("#rightTable").css("width", "84%");
+                $("#rightTable").css("width", "85%");
                 $("#rightTable").css("margin-left", "0px");
                 flag = true;
             }
@@ -347,6 +363,13 @@
     //为子菜单的按钮设置点击事件
     $(".list-group-item").each(function () {
         $(this).on("click", function () {
+            if ($(".wk-main-menu-item").hasClass("current")) {
+                $(".wk-main-menu-item").removeClass("current")
+            }
+            if ($(".list-group-item").hasClass("current-list-group-item")) {
+                $(".list-group-item").removeClass("current-list-group-item")
+            }
+            $(this).addClass("current-list-group-item");
             let url = $(this).attr("href");
             $("#mainFrame").attr("src", url);
         });
@@ -354,6 +377,13 @@
     //为主的按钮设置点击事件
     $(".wk-main-menu-item").each(function () {
         $(this).on("click", function () {
+            if ($(".wk-main-menu-item").hasClass("current")) {
+                $(".wk-main-menu-item").removeClass("current")
+            }
+            if ($(".list-group-item").hasClass("current-list-group-item")) {
+                $(".list-group-item").removeClass("current-list-group-item")
+            }
+            $(this).addClass("current");
             let url = $(this).attr("id");
             $("#mainFrame").attr("src", "${APP_PATH}/admin/" + url);
         });
@@ -390,7 +420,6 @@
             }
         });
     });
-
 </script>
 
 </body>

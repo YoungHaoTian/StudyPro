@@ -37,4 +37,8 @@ public interface CollegeMapper {
     int updateByPrimaryKeyWithBLOBs(College record);
 
     int updateByPrimaryKey(College record);
+
+    List<String> selectNameByExample(CollegeExample example);
+
+    boolean insertBatch(@Param("colleges") List<College> colleges);
 }

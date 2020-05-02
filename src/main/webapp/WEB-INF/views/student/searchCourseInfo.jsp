@@ -47,8 +47,7 @@
                 工具栏 Tools
             </div>
             <div style="position: absolute;top: -11px;left: 240px;">
-                <form class="navbar-form navbar-right" role="search"
-                      action="" method="post">
+                <form class="navbar-form navbar-right" role="search" action="" method="post">
                     <div class="form-group">
                         <label for="name" class="control-label wk-filed-label" style="margin-top: 20px">课程名称:</label>
                         <input type="text" class="form-control" name="name" id="name" placeholder="课程名称"
@@ -77,6 +76,14 @@
                                 title="批量加入课程">
                             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                             批量加入
+                        </button>
+                    </div>
+                    <div class="form-group" style="margin-left: 20px">
+                        <button type="button" class="btn btn-primary viewMyCourse" data-toggle="tooltip"
+                                data-placement="left"
+                                title="查看已加入课程">
+                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                            查看已加入课程
                         </button>
                     </div>
                 </form>
@@ -193,14 +200,14 @@
     </div>
 </c:if>
 <div class="modal fade" id="courseJoinModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-    <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">加入课程</h5>
+                <h5 class="modal-title" style="color: red">加入课程</h5>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="text-align: center">
 
             </div>
             <div class="modal-footer">
@@ -211,14 +218,14 @@
     </div>
 </div>
 <div class="modal fade" id="courseBatchJoinModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-    <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">批量加入课程</h5>
+                <h5 class="modal-title" style="color: red">批量加入课程</h5>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="text-align: center">
 
             </div>
             <div class="modal-footer">
@@ -339,6 +346,7 @@
                 if (result.code === 100) {
                     layer.msg("批量加入课程成功", {time: 1000, icon: 1}, function () {
                     });
+                    window.location.reload(true);
                 }
             },
             error: function () {
@@ -381,6 +389,7 @@
                 if (result.code === 100) {
                     layer.msg("加入课程成功", {time: 1000, icon: 1}, function () {
                     });
+                    window.location.reload(true);
                 }
             },
             error: function () {
@@ -388,6 +397,10 @@
                 });
             }
         })
+    });
+
+    $(".viewMyCourse").on("click", function () {
+        window.location.href = "${APP_PATH}/student/searchMyCourseInfo";
     });
 </script>
 </body>

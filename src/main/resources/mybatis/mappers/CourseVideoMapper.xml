@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cdut.studypro.daos.CourseVideoMapper">
+
+    <resultMap id="BriefResultMap" type="com.cdut.studypro.beans.CourseVideo">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="path" jdbcType="VARCHAR" property="path"/>
+    </resultMap>
     <resultMap id="BaseResultMap" type="com.cdut.studypro.beans.CourseVideo">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="path" jdbcType="VARCHAR" property="path"/>
@@ -8,7 +13,12 @@
         <result column="record_time" jdbcType="TIMESTAMP" property="recordTime"/>
     </resultMap>
     <resultMap extends="BaseResultMap" id="ResultMapWithChapter" type="com.cdut.studypro.beans.CourseVideo">
-        <association property="courseChapter" column="chapter_id" select="com.cdut.studypro.daos.CourseChapterMapper.selectByPrimaryKeyWithIdTitleAndCourse"/>
+        <association property="courseChapter" column="chapter_id"
+                     select="com.cdut.studypro.daos.CourseChapterMapper.selectByPrimaryKeyWithIdTitleAndCourse"/>
+    </resultMap>
+    <resultMap extends="BaseResultMap" id="ResultMapWithChapterAndCourseAndTeacher" type="com.cdut.studypro.beans.CourseVideo">
+        <association property="courseChapter" column="chapter_id"
+                     select="com.cdut.studypro.daos.CourseChapterMapper.selectByPrimaryKeyWithIdTitleAndCourseAndTeacher"/>
     </resultMap>
     <sql id="Example_Where_Clause">
         <where>
@@ -87,11 +97,31 @@
             order by ${orderByClause}
         </if>
     </select>
+    <select id="selectPathByExample" parameterType="com.cdut.studypro.beans.CourseVideoExample" resultType="java.lang.String">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        path
+        from course_video
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from course_video
         where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectByChapterId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from course_video
+        where chapter_id = #{id,jdbcType=INTEGER}
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from course_video
@@ -210,7 +240,25 @@
             order by ${orderByClause}
         </if>
     </select>
-    <select id="selectByExampleWithCourseChapter" parameterType="com.cdut.studypro.beans.CourseVideoExample" resultMap="ResultMapWithChapter">
+    <select id="selectByExampleWithCourseChapter" parameterType="com.cdut.studypro.beans.CourseVideoExample"
+            resultMap="ResultMapWithChapter">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from course_video
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <select id="selectByExampleWithChapterAndCourseAndTeacher"
+            parameterType="com.cdut.studypro.beans.CourseVideoExample"
+            resultMap="ResultMapWithChapterAndCourseAndTeacher">
         select
         <if test="distinct">
             distinct

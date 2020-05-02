@@ -11,12 +11,42 @@
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 
-
+    <!--配置拦截器-->
     <mvc:interceptors>
+
+        <!--登录拦截器-->
+        <!--<mvc:interceptor>
+            &lt;!&ndash;拦截路径&ndash;&gt;
+            <mvc:mapping path="/**"/>
+            <mvc:exclude-mapping path="/index/*"/>
+            <mvc:exclude-mapping path="/*/login"/>
+            <mvc:exclude-mapping path="/*/register"/>
+            <mvc:exclude-mapping path="/*/findPassword"/>
+            <mvc:exclude-mapping path="/resources/**"/>
+            <mvc:exclude-mapping path="/resources1/**"/>
+            <bean class="com.cdut.studypro.interceptors.LoginInterceptor"/>
+        </mvc:interceptor>-->
+        <!--权限拦截器-->
+        <!--<mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <mvc:exclude-mapping path="/index/*"/>
+            <mvc:exclude-mapping path="/*/login"/>
+            <mvc:exclude-mapping path="/*/register"/>
+            <mvc:exclude-mapping path="/*/findPassword"/>
+            <mvc:exclude-mapping path="/resources/**"/>
+            <mvc:exclude-mapping path="/resources1/**"/>
+            <bean class="com.cdut.studypro.interceptors.AuthInterceptor"/>
+        </mvc:interceptor>-->
+        <!--文件上传拦截器-->
         <mvc:interceptor>
-            <mvc:mapping path="/*DataImport"/>
+            <mvc:mapping path="/*/*Import"/>
+            <!--<mvc:mapping path="/teacher/saveCourseVideo"/>
+            <mvc:mapping path="/teacher/updateCourseVideo"/>-->
+            <mvc:mapping path="/teacher/saveCourseFile"/>
+            <mvc:mapping path="/teacher/updateCourseFile"/>
             <bean class="com.cdut.studypro.interceptors.FileUploadInterceptor">
-                <property name="maxSize" value="1024"/>
+                <!--单位：MB-->
+                <property name="maxSize" value="100"/>
             </bean>
         </mvc:interceptor>
     </mvc:interceptors>
@@ -34,7 +64,7 @@
         <!--临时文件的存储地址-->
         <property name="uploadTempDir" value="WEB-INF/temp"/>
         <!--设置允许单个上传文件的最大值，不要在这里配置-->
-<!--        <property name="maxUploadSizePerFile" value="1024"/>-->
+        <!--        <property name="maxUploadSizePerFile" value="1024"/>-->
         <!--延迟解析，在Controller中抛出异常-->
         <property name="resolveLazily" value="true"/>
     </bean>
@@ -43,7 +73,10 @@
     <mvc:default-servlet-handler/>
     <!--能支持springMVC更高级的一些功能，JSR303校验、快捷的ajax...映射动态请求-->
     <mvc:annotation-driven/>
-
+    <!--配置国际化资源文件-->
+    <!--<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename" value="i18n"/>
+    </bean>-->
     <!--<mvc:resources mapping="/resources/**" location="/resources/" />
     <mvc:resources mapping="/resources1/**" location="/resources1/" />
     <mvc:resources mapping="/head/**" location="/head/" />

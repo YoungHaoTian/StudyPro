@@ -91,6 +91,7 @@
             <artifactId>jstl</artifactId>
             <version>1.2</version>
         </dependency>
+
         <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -119,6 +120,7 @@
             <artifactId>pagehelper</artifactId>
             <version>5.1.9</version>
         </dependency>
+
         <!--json-->
         <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
         <dependency>
@@ -126,6 +128,7 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.10.0</version>
         </dependency>
+
         <!--MyBatisPlus插件-->
         <!-- https://mvnrepository.com/artifact/com.baomidou/mybatis-plus -->
         <!--<dependency>
@@ -133,6 +136,7 @@
             <artifactId>mybatis-plus</artifactId>
             <version>3.3.1</version>
         </dependency>-->
+
         <!--短信验证码接口-->
         <dependency>
             <groupId>com.zhenzikj</groupId>
@@ -170,11 +174,12 @@
             <version>4.1.2</version>
         </dependency>
 
-        <!--分页插件-->
+        <!--JSR 303 校验-->
+        <!-- https://mvnrepository.com/artifact/org.hibernate.validator/hibernate-validator -->
         <dependency>
-            <groupId>com.github.pagehelper</groupId>
-            <artifactId>pagehelper</artifactId>
-            <version>5.1.9</version>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>6.1.2.Final</version>
         </dependency>
 
     </dependencies>

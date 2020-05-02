@@ -40,9 +40,9 @@
                             <div class="form-group">
                                 <label for="title" class="control-label wk-filed-label">公告标题: </label>
                                 <div class="input-group">
-                                    <input required="required" id="title" name="title" type="text"
-                                           class="form-control wk-long-2col-input" value="${notice.title}"
-                                           placeholder="请输入公告标题"/>
+                                    <textarea required="required" id="title" name="title" type="text"
+                                              class="form-control wk-long-2col-input"
+                                              placeholder="请输入公告内容">${notice.title}</textarea>
                                 </div>
                             </div>
                         </div>
@@ -51,7 +51,7 @@
                                 <label for="content" class="control-label wk-filed-label">公告内容: </label>
                                 <div class="input-group">
                                     <textarea required="required" id="content" name="content"
-                                              class="form-control wk-long-2col-input"
+                                              class="form-control wk-long-2col-input" rows="5"
                                               placeholder="请输入公告内容">${notice.content}</textarea>
                                 </div>
                             </div>
@@ -59,14 +59,18 @@
                     </div>
                 </div>
 
-                <div class="panel-footer wk-panel-footer">
-                    <button type="button" class="btn btn-info" onclick="updateNotice()">提&nbsp;&nbsp;交</button>
-                    <button type="button" class="btn btn-info" onclick="back();"
-                            style="margin-left: 30px">
-                        返&nbsp;&nbsp;回
-                    </button>
-                </div>
+
             </form>
+        </div>
+        <div class="panel-footer wk-panel-footer">
+            <button type="button" class="btn btn-info" onclick="updateNotice()">提&nbsp;&nbsp;交</button>
+            <button type="button" class="btn btn-info" onclick="back();"
+                    style="margin-left: 30px">
+                返&nbsp;&nbsp;回
+            </button>
+            <button type="button" class="btn btn-info" onclick="$('#noticeData')[0].reset();" style="margin-left: 30px">
+                重&nbsp;&nbsp;填
+            </button>
         </div>
     </div>
 </div>
@@ -121,7 +125,8 @@
             }
         });
     }
+
     function back() {
-        window.location.href="${APP_PATH}/admin/searchNotice?&pageNum=${pageNum}";
+        window.location.href = "${APP_PATH}/admin/searchNotice?&pageNum=${pageNum}";
     }
 </script>

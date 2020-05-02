@@ -2,6 +2,7 @@ package com.cdut.studypro.daos;
 
 import com.cdut.studypro.beans.CourseFile;
 import com.cdut.studypro.beans.CourseFileExample;
+
 import java.util.List;
 
 import com.cdut.studypro.beans.CourseVideo;
@@ -22,6 +23,8 @@ public interface CourseFileMapper {
 
     CourseFile selectByPrimaryKey(Integer id);
 
+    CourseVideo selectByChapterId(Integer id);
+
     int updateByExampleSelective(@Param("record") CourseFile record, @Param("example") CourseFileExample example);
 
     int updateByExample(@Param("record") CourseFile record, @Param("example") CourseFileExample example);
@@ -33,4 +36,6 @@ public interface CourseFileMapper {
     List<Integer> selectFileIdByExample(CourseFileExample example);
 
     List<CourseFile> selectByExampleWithCourseChapter(CourseFileExample example);
+
+    List<String> selectPathByExample(CourseFileExample courseFileExample);
 }

@@ -14,7 +14,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="${APP_PATH}/resources/css/bootstrap.min.css" type="text/css" rel="stylesheet">
-    <link href="${APP_PATH}/resources/css/font-awesome.min.css" type="text/javascript" rel="stylesheet">
+    <link href="${APP_PATH}/resources/font/css/font-awesome.min.css" type="text/javascript" rel="stylesheet">
     <link href="${APP_PATH}/resources/css/bootsnav.css" type="text/css" rel="stylesheet">
     <link href="${APP_PATH}/resources/css/normalize.css" type="text/css" rel="stylesheet">
     <link href="${APP_PATH}/resources/css/css.css" rel="stylesheet" type="text/css">
@@ -24,7 +24,7 @@
     <script src="${APP_PATH}/resources/js/bootsnav.js" type="text/javascript"></script>
     <script src="${APP_PATH}/resources/js/jquery.js" type="text/javascript"></script>
     <!--[if IE]>
-    <script src="js/html5.js"></script><![endif]-->
+    <script src="${APP_PATH}/resources/js/html5.js"></script><![endif]-->
     <title>好学习 登录</title>
 </head>
 
@@ -37,7 +37,7 @@
             <form method="post" role="form" id="form_login" class="login_padding">
                 <div class="form-group clearfix">
                     <div class="input-group-addon">
-                        <span>登录方式</span>
+                        <span>选择登录方式</span>
                     </div>
                     <br>
                     <div>
@@ -56,34 +56,28 @@
 
 
                 <div class="form-group clearfix">
-
                     <div class="input-group">
                         <div class="input-group-addon">
                             <i class="icon_user"></i>
                         </div>
-
                         <input type="text" class="form-control" maxlength="30" name="username" id="username"
-                               placeholder="邮箱\手机号\账号"
+                               placeholder="邮箱\手机号\账号" value="201613161013"
                                autocomplete="off">
                     </div>
-
                 </div>
-
                 <div class="form-group clearfix">
-
                     <div class="input-group">
                         <div class="input-group-addon">
                             <i class="icon_password"></i>
                         </div>
-
                         <input type="password" class="form-control" name="password" id="password" placeholder="密码"
+                               value="123456789"
                                autocomplete="off">
                     </div>
-
                 </div>
                 <div class="form-group clearfix">
                     <div class="input-group-addon" style="margin-bottom: 5px">
-                        <span>登录角色</span>
+                        <span>选择登录角色</span>
                     </div>
                     <br>
                     <div>
@@ -99,24 +93,24 @@
                         </label>
                     </div>
                 </div>
-                <div class="textright"><a href="javascript:void(0); " onClick="cliForget()" class="forget">忘记密码?</a>
+                <div class="form-group clearfix">
+                    <div class="textright"><a href="javascript:void(0); " onClick="cliForget()" class="forget">忘记密码?</a>
+                    </div>
                 </div>
-                <div class="tishi"></div>
                 <div class="form-group">
-                    <a href="javascript:;" type="submit" class="btn btn-danger btn-block btn-login"
-                       onClick="cliLogin()">
+                    <button href="javascript:void(0);" type="button" class="btn btn-danger btn-block btn-login"
+                            onClick="cliLogin()">
                         <i class="fa fa-sign-in"></i>
                         登录
-                    </a>
+                    </button>
                 </div>
-                <div class=" textright"><a href="javascript:void(0);" onClick="cliRegister()" class="forget">立即注册</a>
-                </div>
+
                 <!-- Implemented in v1.1.4 -->
                 <div class="form-group">
-
+                    <div class=" textright"><a href="javascript:void(0);" onClick="cliRegister()"
+                                               class="forget">立即注册</a>
+                    </div>
                 </div>
-
-
             </form>
         </div>
 
@@ -182,7 +176,6 @@
             $("#Userpwd").focus();
             return;
         }
-        console.log("admin");
         txtPwd = $.md5(txtPwd);
         let data = {"type": type, "username": txtUser, "password": txtPwd};
         let loadingIndex = layer.msg('处理中', {icon: 16});
@@ -219,4 +212,9 @@
     function cliForget() {
         window.location.href = "${APP_PATH}/index/forget";
     }
+
+    if (window.parent !== window.self) {
+        window.parent.location.reload();
+    }
+</script>
 </script>

@@ -53,7 +53,6 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="panel-group wk-accordion-panel-group" id="accordion">
-
                     <div class="panel panel-info wk-accordion-header">
                         <div class="panel-heading">
                             <a data-toggle="collapse" href="#BMenu" data-parent="#accordion" class="click">课程管理&nbsp;<span
@@ -77,14 +76,14 @@
 
                     <div class="panel panel-info wk-accordion-header">
                         <div class="panel-heading">
-                            <a data-toggle="collapse" href="#CMenu" data-parent="#accordion" class="click">文件管理&nbsp;<span
+                            <a data-toggle="collapse" href="#CMenu" data-parent="#accordion" class="click">课程文件管理&nbsp;<span
                                     class=" glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
                         </div>
 
                         <div id="CMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
                                 <button type="button" class="list-group-item"
-                                        href="${APP_PATH}/student/searchCourseVideoInfo">观看课程视频&nbsp;<span
+                                        href="${APP_PATH}/student/searchCourseVideoInfo">在线课程视频&nbsp;<span
                                         class=" glyphicon glyphicon-hand-right"
                                         aria-hidden="true"></span>
                                 </button>
@@ -136,7 +135,7 @@
                         <div id="AMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
                                 <button type="button" class="list-group-item"
-                                        href="${APP_PATH}/student/searchTaskInfo">完成作业&nbsp;<span
+                                        href="${APP_PATH}/student/searchCourseChapterInfo">完成作业&nbsp;<span
                                         class=" glyphicon glyphicon-hand-right"
                                         aria-hidden="true"></span>
                                 </button>
@@ -157,7 +156,12 @@
                         <div id="FMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
                                 <button type="button" class="list-group-item"
-                                        href="${APP_PATH}/student/updateStudentInfo">修改个人信息&nbsp;<span
+                                        href="${APP_PATH}/student/viewStudentInfo">查看个人信息&nbsp;<span
+                                        class=" glyphicon glyphicon-hand-right"
+                                        aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="list-group-item"
+                                        href="${APP_PATH}/student/editStudentInfo">修改个人信息&nbsp;<span
                                         class=" glyphicon glyphicon-hand-right"
                                         aria-hidden="true"></span>
                                 </button>
@@ -183,7 +187,6 @@
                 <h5 class="modal-title">注销登录</h5>
             </div>
             <div class="modal-body">
-
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -282,6 +285,9 @@
     //为子菜单的按钮设置点击事件
     $(".list-group-item").each(function () {
         $(this).on("click", function () {
+            if ($(".wk-main-menu-item").hasClass("current")) {
+                $(".wk-main-menu-item").removeClass("current")
+            }
             let url = $(this).attr("href");
             $("#mainFrame").attr("src", url);
         });
@@ -303,7 +309,7 @@
         let loadingIndex = layer.msg('注销中...', {icon: 16});
         //发送ajax请求删除
         $.ajax({
-            url: "${APP_PATH}/teacher/logout",
+            url: "${APP_PATH}/student/logout",
             type: "POST",
             dataType: "json",
             success: function (result) {

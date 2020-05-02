@@ -39,10 +39,13 @@ public interface StudentMapper {
     //带学院的条件查询
     List<Student> selectByExampleWithCollege(StudentExample example);
 
+    List<Student> selectByExampleWithCollegeWithoutPassword(StudentExample example);
     //带学院的条件查询
-    Student selectByPrimaryKeyWithCollege(Integer id);
 
+    Student selectByPrimaryKeyWithCollege(Integer id);
     //带id和name的查询
+
     Student selectByPrimaryKeyWithIdAndName(Integer id);
 
+    List<String> selectTelephoneByExample(StudentExample example);
 }

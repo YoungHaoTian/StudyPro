@@ -41,7 +41,7 @@
                                 <div class="input-group">
                                     <input required="required" id="name" name="name" type="text" maxlength="5"
                                            class="form-control wk-normal-input"
-                                           value="${student.name.trim()=="0"?"":(student.name.trim()==""?"":student.name) }"
+                                           value="${student.name.trim()=="0"?"":student.name.trim()}"
                                            placeholder="请输入学生姓名"/>
                                 </div>
                             </div>
@@ -52,7 +52,7 @@
                                     <input required="required" id="number" name="number"
                                            oninput="value=value.replace(/[^\d]/g,'')" type="text" maxlength="18"
                                            class="form-control wk-normal-input"
-                                           value="${student.number.trim()=="0"?"":(student.number.trim()==""?"":student.number) }"
+                                           value="${student.number.trim()=="0"?"":student.number.trim()}"
                                            placeholder="请输入学生学号"/>
                                 </div>
                             </div>
@@ -63,7 +63,8 @@
                                     <c:forEach items="${colleges}" var="college">
                                         <c:choose>
                                             <c:when test="${college.id == student.collegeId}">
-                                                <option value="${college.id}" selected="selected">${college.name.trim()}</option>
+                                                <option value="${college.id}"
+                                                        selected="selected">${college.name.trim()}</option>
                                             </c:when>
                                             <c:otherwise>
                                                 <option value="${college.id}">${college.name.trim()}</option>
@@ -81,7 +82,7 @@
                                     <input required="required" id="telephone" name="telephone" type="text"
                                            oninput="value=value.replace(/[^\d]/g,'')" maxlength="11"
                                            class="form-control wk-normal-input"
-                                           value="${student.telephone.trim()=="0"?"":(student.telephone.trim()==""?"":student.telephone) }"
+                                           value="${student.telephone.trim()=="0"?"":student.telephone.trim() }"
                                            placeholder="请输入联系电话"/>
                                 </div>
                             </div>
@@ -90,7 +91,7 @@
                                 <div class="input-group">
                                     <input required="required" id="idCardNo" name="idCardNo" maxlength="18" type="text"
                                            class="form-control wk-normal-input"
-                                           value="${student.idCardNo.trim()=="0"?"":(student.idCardNo.trim()==""?"":student.idCardNo) }"
+                                           value="${student.idCardNo.trim()=="0"?"":student.idCardNo.trim() }"
                                            placeholder="请输入身份证号"/>
                                 </div>
                             </div>
@@ -116,7 +117,7 @@
                                 <div class="input-group">
                                     <input required="required" id="account" name="account" type="text" maxlength="18"
                                            class="form-control wk-normal-input"
-                                           value="${student.account.trim()=="0"?"":(student.account.trim()==""?"":student.account) }"
+                                           value="${student.account.trim()=="0"?"":student.account.trim() }"
                                            placeholder="请输入登录账户"/>
                                 </div>
                             </div>
@@ -125,31 +126,33 @@
                                 <div class="input-group">
                                     <input required="required" id="password" name="password" type="text" maxlength="18"
                                            class="form-control wk-normal-input"
-                                           value="${student.account.trim()=="0"?"":(student.account.trim()==""?"":student.account) }"
+                                           value="${student.account.trim()=="0"?"":student.account.trim() }"
                                            placeholder="请输入登录密码"/>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="email" class="control-label wk-filed-label">邮箱: </label>
                                 <div class="input-group">
-                                    <input required="required" id="email" name="email" type="text" maxlength="20"
+                                    <input required="required" id="email" name="email" type="text" maxlength="30"
                                            class="form-control wk-normal-input"
-                                           value="${student.email.trim()=="0"?"":(student.email.trim()==""?"":student.email) }"
+                                           value="${student.email.trim()=="0"?"":student.email.trim() }"
                                            placeholder="请输入邮箱"/>
                                 </div>
                             </div>
                         </div>
-
-
                     </div>
                 </div>
-                <div class="panel-footer wk-panel-footer">
-                    <button type="button" class="btn btn-info" onclick="updateStudent()">提&nbsp;&nbsp;交</button>
-                    <button type="button" class="btn btn-info" onclick="back()" style="margin-left: 30px">
-                        返&nbsp;&nbsp;回
-                    </button>
-                </div>
             </form>
+        </div>
+        <div class="panel-footer wk-panel-footer">
+            <button type="button" class="btn btn-info" onclick="updateStudent()">提&nbsp;&nbsp;交</button>
+            <button type="button" class="btn btn-info" onclick="back()" style="margin-left: 30px">
+                返&nbsp;&nbsp;回
+            </button>
+            <button type="button" class="btn btn-info" onclick="$('#studentData')[0].reset();"
+                    style="margin-left: 30px">
+                重&nbsp;&nbsp;填
+            </button>
         </div>
     </div>
 </div>
@@ -162,7 +165,7 @@
     let phones = /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\d{8}$/;
     let han = /^[\u4e00-\u9fa5]{2,5}$/;
     let accounts = /^[a-zA-Z0-9_-]{12,18}$/;
-    let numbers = /^[19|20]\d{10,16}$/;
+    let numbers = /^20\d{10,16}$/;
     let idCardNos = /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
     let emails = /^(\w+\.)*\w+\@+[0-9a-zA-Z]+\.(com|com.cn|edu|hk|cn|net)$/;
     let passwords = /^[a-zA-Z0-9]{6,18}$/;
@@ -174,11 +177,16 @@
             layer.msg("学生姓名不能为空", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
+        } else if (name.indexOf(" ") !== -1) {
+            layer.msg("学生姓名不能包含空格，请重新输入", {time: 2000, icon: 5, shift: 6}, function () {
+            });
+            return;
         } else if (!han.test(name)) {
             layer.msg("请输入正确的中文名字", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
+
         //对学号的验证
         let number = $("#number").val();
         if ($.trim(number) === "") {
@@ -186,10 +194,11 @@
             });
             return;
         } else if (!numbers.test(number)) {
-            layer.msg("请输入正确学号", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("学生学号是以20开头的12-18位纯数字组成，请重新输入", {time: 2500, icon: 5, shift: 6}, function () {
             });
             return;
         }
+
         //对学院的验证
         let collegeId = $("#collegeId").val();
         if (collegeId === "0") {
@@ -197,6 +206,7 @@
             });
             return;
         }
+
         //对联系电话的验证
         let telephone = $("#telephone").val();
         if ($.trim(telephone) === "") {
@@ -220,7 +230,12 @@
             });
             return;
         }
-
+        let gender = $("#gender").val();
+        if (gender !== "0" && gender !== "1") {
+            layer.msg("请选择正确的性别", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
         //对账号的验证
         let account = $("#account").val();
         if ($.trim(account) === "") {
@@ -229,7 +244,7 @@
             return;
         }
         if (!accounts.test(account)) {
-            layer.msg("账户至少是12位，且由数字、字母、下划线组成", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("账户是12-18位，且由数字、字母、下划线组成", {time: 2500, icon: 5, shift: 6}, function () {
             });
             return;
         }
@@ -241,11 +256,11 @@
             });
             return;
         } else if (password.indexOf(" ") !== -1) {
-            layer.msg("登录密码不能包含空格，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("登录密码不能包含空格，请重新输入", {time: 2000, icon: 5, shift: 6}, function () {
             });
             return;
         } else if (!passwords.test(password)) {
-            layer.msg("登录密码只能由字母和数字组成，长度6-18位，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("登录密码只能由字母和数字组成，长度6-18位，请重新输入", {time: 2500, icon: 5, shift: 6}, function () {
             });
             return;
         }
@@ -275,7 +290,7 @@
                 layer.close(loadingIndex);
                 console.log(result);
                 if (result.code === 200) {
-                    layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
+                    layer.msg(result.message, {time: 3000, icon: 5, shift: 6}, function () {
                     });
                 }
                 if (result.code === 100) {
@@ -293,5 +308,6 @@
 
     function back() {
         window.location.href = "${APP_PATH}/admin/searchStudent?pageNum=" +${pageNum};
+        // window.history.back();
     }
 </script>

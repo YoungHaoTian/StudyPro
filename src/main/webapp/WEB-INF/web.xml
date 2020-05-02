@@ -14,8 +14,9 @@
     </context-param>
     <!--设置session的失效时间，如果session还在有效期之内就不会重新生成。（分钟）-->
     <session-config>
-        <session-timeout>10</session-timeout>
+        <session-timeout>120</session-timeout>
     </session-config>
+
     <!--1、启动Spring的容器-->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>

@@ -53,7 +53,8 @@
 
                     <div class="panel panel-info wk-accordion-header">
                         <div class="panel-heading">
-                            <a data-toggle="collapse" href="#BMenu" data-parent="#accordion" class="click">课程文件管理&nbsp;<span
+                            <a data-toggle="collapse" href="#BMenu" data-parent="#accordion"
+                               class="click">课程文件管理&nbsp;<span
                                     class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
                         </div>
                         <div id="BMenu" class="panel-collapse collapse">
@@ -84,7 +85,8 @@
 
                     <div class="panel panel-info wk-accordion-header">
                         <div class="panel-heading">
-                            <a data-toggle="collapse" href="#CMenu" data-parent="#accordion" class="click">讨论管理&nbsp;<span
+                            <a data-toggle="collapse" href="#CMenu" data-parent="#accordion"
+                               class="click">讨论管理&nbsp;<span
                                     class=" glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
                         </div>
 
@@ -104,7 +106,8 @@
 
                     <div class="panel panel-info wk-accordion-header">
                         <div class="panel-heading">
-                            <a data-toggle="collapse" href="#DMenu" data-parent="#accordion" class="click">课程章节管理&nbsp;<span
+                            <a data-toggle="collapse" href="#DMenu" data-parent="#accordion"
+                               class="click">课程章节管理&nbsp;<span
                                     class=" glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
                         </div>
                         <div id="DMenu" class="panel-collapse collapse">
@@ -119,7 +122,8 @@
 
                     <div class="panel panel-info wk-accordion-header">
                         <div class="panel-heading">
-                            <a data-toggle="collapse" href="#EMenu" data-parent="#accordion" class="click">作业管理&nbsp;<span
+                            <a data-toggle="collapse" href="#EMenu" data-parent="#accordion"
+                               class="click">作业管理&nbsp;<span
                                     class=" glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
                         </div>
                         <div id="EMenu" class="panel-collapse collapse">
@@ -137,12 +141,13 @@
 
                     <div class="panel panel-info wk-accordion-header">
                         <div class="panel-heading">
-                            <a data-toggle="collapse" href="#FMenu" data-parent="#accordion" class="click">个人信息管理&nbsp;<span
+                            <a data-toggle="collapse" href="#FMenu" data-parent="#accordion"
+                               class="click">个人信息管理&nbsp;<span
                                     class=" glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
                         </div>
                         <div id="FMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
-                                 <button type="button" class="list-group-item"
+                                <button type="button" class="list-group-item"
                                         href="${APP_PATH}/teacher/viewTeacherInfo">
                                     个人信息查看&nbsp;<span class=" glyphicon glyphicon-hand-right"
                                                       aria-hidden="true"></span>
@@ -272,6 +277,9 @@
     //为子菜单的按钮设置点击事件
     $(".list-group-item").each(function () {
         $(this).on("click", function () {
+            if ($(".wk-main-menu-item").hasClass("current")) {
+                $(".wk-main-menu-item").removeClass("current")
+            }
             let url = $(this).attr("href");
             $("#mainFrame").attr("src", url);
         });

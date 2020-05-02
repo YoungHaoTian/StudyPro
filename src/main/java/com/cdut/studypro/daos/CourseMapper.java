@@ -28,6 +28,10 @@ public interface CourseMapper {
 
     Course selectByPrimaryKeyWithIdNameAndCollege(Integer id);
 
+    Course selectByPrimaryKeyWithIdNameAndTeacher(Integer id);
+
+    Course selectByPrimaryKeyWithIdName(Integer id);
+
     int updateByExampleSelective(@Param("record") Course record, @Param("example") CourseExample example);
 
     int updateByExampleWithBLOBs(@Param("record") Course record, @Param("example") CourseExample example);
@@ -41,7 +45,7 @@ public interface CourseMapper {
     int updateByPrimaryKey(Course record);
 
     //根据teacher_id查找课程
-    List<Course> selectByTeacherIdWithIdAndName(Integer id);
+    List<Course> selectByTeacherIdWithIdAndNameWithCollege(Integer id);
 
     //带学院信息和教师信息的条件查询
     List<Course> selectByExampleWithBLOBsAndCollegeAndTeacher(CourseExample example);
@@ -66,7 +70,17 @@ public interface CourseMapper {
     List<Integer> selectCollegeIdByExample(CourseExample example);
 
     //根据teacher的id值查找该teacher所教授的所有课程，包含章节信息
-    List<Course> selectByTeacherIdWithChapterAndCollege(Integer id);
+    List<Course> selectByExampleWithChapterAndCollege(CourseExample courseExample);
 
+    List<Course> selectByExampleWithIdAndNameAndTeacher(CourseExample courseExample);
 
+    List<Course> selectByExampleWithChapterAndVideo(CourseExample courseExample);
+
+    List<Course> selectByExampleWithChapterAndFile(CourseExample courseExample);
+
+    List<Course> selectByExampleWithChapterAndTeacher(CourseExample courseExample);
+
+    List<String> selectNumberByExample(CourseExample courseExample);
+
+    boolean insertBatch(@Param("courses") List<Course> courses);
 }

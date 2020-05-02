@@ -40,8 +40,8 @@
                             <div class="form-group">
                                 <label for="name" class="control-label wk-filed-label">学院名称: </label>
                                 <div class="input-group">
-                                    <input required="required" id="name" name="name" type="text" maxlength="20"
-                                           class="form-control wk-normal-input" placeholder="请输入学院名称"/>
+                                    <input required="required" id="name" name="name" type="text" maxlength="30"
+                                           class="form-control wk-long-2col-input" placeholder="请输入学院名称"/>
                                 </div>
                             </div>
 
@@ -56,11 +56,14 @@
 
                     </div>
                 </div>
-
-                <div class="panel-footer wk-panel-footer">
-                    <button type="button" class="btn btn-info" onclick="createCollege()">提&nbsp;&nbsp;交</button>
-                </div>
             </form>
+        </div>
+        <div class="panel-footer wk-panel-footer">
+            <button type="button" class="btn btn-info" onclick="createCollege()">提&nbsp;&nbsp;交</button>
+            <button type="button" class="btn btn-info" onclick="$('#collegeData')[0].reset();"
+                    style="margin-left: 30px">
+                重&nbsp;&nbsp;填
+            </button>
         </div>
     </div>
 </div>
@@ -69,7 +72,7 @@
 </html>
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
-    let names = /^[a-zA-Z0-9\u0020\u3000\u4e00-\u9fa5]+$/;
+    // let names = /^[a-zA-Z0-9\u0020\u3000\u4e00-\u9fa5]+$/;
 
     function createCollege() {
         let name = $("#name").val();
@@ -80,15 +83,15 @@
             return;
         }
         if (name.indexOf(" ") === 0) {
-            layer.msg("学院名称不能以空格开头，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("学院名称不能以空格开头，请重新输入", {time: 2000, icon: 5, shift: 6}, function () {
             });
             return;
         }
-        if (!names.test(name)) {
-            layer.msg("学院名称由数字、字母、中文组成", {time: 1500, icon: 5, shift: 6}, function () {
-            });
-            return;
-        }
+        /* if (!names.test(name)) {
+             layer.msg("学院名称由数字、字母、中文组成", {time: 1500, icon: 5, shift: 6}, function () {
+             });
+             return;
+         }*/
         if (intro.trim() === "") {
             layer.msg("学院介绍不能为空", {time: 1500, icon: 5, shift: 6}, function () {
             });
@@ -107,7 +110,7 @@
                 layer.close(loadingIndex);
                 console.log(result);
                 if (result.code === 200) {
-                    layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
+                    layer.msg(result.message, {time: 2000, icon: 5, shift: 6}, function () {
                     });
                 }
                 if (result.code === 100) {

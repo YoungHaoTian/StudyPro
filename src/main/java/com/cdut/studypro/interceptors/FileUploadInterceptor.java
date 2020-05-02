@@ -1,5 +1,6 @@
 package com.cdut.studypro.interceptors;
 
+import com.cdut.studypro.exceptions.MaxUploadSizeExceedException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.servlet.ServletRequestContext;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
@@ -24,13 +25,13 @@ public class FileUploadInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
-         if (httpServletRequest != null && ServletFileUpload.isMultipartContent(httpServletRequest)) {
+    public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) {
+        if (httpServletRequest != null && ServletFileUpload.isMultipartContent(httpServletRequest)) {
             ServletRequestContext servletRequestContext = new ServletRequestContext(httpServletRequest);
             long requestSize = servletRequestContext.contentLength();
-            if (requestSize > maxSize) {
+            if (requestSize > maxSize * 1024 * 1024) {
                 // 抛出异常
-                throw new MaxUploadSizeExceededException(maxSize);
+                throw new MaxUploadSizeExceedException(maxSize);
             }
         }
         return true;

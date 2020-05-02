@@ -72,7 +72,7 @@
                                class="form-control" id="teacher" name="teacher" placeholder="请输入发布教师"
                                value="${sessionScope.discussQueryCriteria.get("teacher")}">
                     </div>
-                    <div class="form-group" style="margin-left: 50px">
+                    <div class="form-group" style="margin-left: 20px">
                         <button type="button" id="search" class="btn btn-success search" data-toggle="tooltip"
                                 data-placement="left" title="查询讨论" style="margin-right: 20px">
                             <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
@@ -106,10 +106,10 @@
                     </th>
                     <th>讨论标题</th>
                     <th>讨论内容</th>
-                    <th style="width:300px">所属课程</th>
-                    <th style="width:200px">发布教师</th>
+                    <th style="width:300px">所属课程(所属学院)</th>
+                    <th style="width:200px">发布教师(所属学院)</th>
                     <th style="width:200px">发布日期</th>
-                    <th style="width:200px">选择操作</th>
+                    <th style="width:150px">选择操作</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -120,30 +120,29 @@
                                 <input discussId="${discuss.id}" type="checkbox" class="select_item"/>
                             </label>
                         </th>
-                        <td>${discuss.title}</td>
-                        <td>${discuss.content}</td>
+                        <td style="text-align: left">${discuss.title}</td>
+                        <td style="text-align: left">${discuss.content}</td>
                         <c:if test="${discuss.course!=null}">
-                            <td>${discuss.course.name.trim()=="0"?"课程未设置名称":(discuss.course.name.trim()==""?"课程未设置名称":discuss.course.name.trim()) }:${discuss.course.college.name}</td>
+                            <td>${discuss.course.name.trim()=="0"?"":discuss.course.name.trim() }(<span
+                                    style="color: green">${discuss.course.college.name.trim()}</span>)
+                            </td>
                         </c:if>
                         <c:if test="${discuss.course==null}">
-                            <td>未录入</td>
+                            <td><span style="color:red;">未录入</span></td>
                         </c:if>
                         <c:if test="${discuss.course.teacher!=null}">
-                            <td style="width: 200px">${discuss.course.teacher.name.trim()=="0"?"教师未设置姓名":(discuss.course.teacher.name.trim()==""?"教师未设置姓名":discuss.course.teacher.name.trim()) }:${discuss.course.teacher.college.name}</td>
+                            <td style="width: 200px">${discuss.course.teacher.name.trim()=="0"?"":discuss.course.teacher.name.trim()}(<span
+                                    style="color: green">${discuss.course.teacher.college.name.trim()}</span>)
+                            </td>
                         </c:if>
                         <c:if test="${discuss.course.teacher==null}">
-                            <td>未录入</td>
+                            <td><span style="color:red;">未录入</span></td>
                         </c:if>
-                        <c:if test="${discuss.recordTime!=null}">
-                            <td><fmt:formatDate value="${discuss.recordTime}" pattern="yyyy-MM-dd  HH:mm:ss"/></td>
-                        </c:if>
-                        <c:if test="${discuss.recordTime==null}">
-                            <td>未录入</td>
-                        </c:if>
+
+                        <td><fmt:formatDate value="${discuss.recordTime}" pattern="yyyy-MM-dd  HH:mm:ss"/></td>
                         <td>
                             <button type="button" class="btn btn-info edit" data-toggle="tooltip"
-                                    edit-id="${discuss.id}" data-placement="left" title="回复该讨论"
-                                    style="margin-right: 20px">
+                                    discussId="${discuss.id}" data-placement="left" title="编辑该讨论">
                                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                                 编辑
                             </button>
@@ -220,14 +219,14 @@
     </div>
 </c:if>
 <div class="modal fade" id="discussBatchDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-    <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">批量删除讨论</h5>
+                <h5 class="modal-title" style="color: red">批量删除讨论</h5>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="text-align: center">
 
             </div>
             <div class="modal-footer">
@@ -355,9 +354,9 @@
         });
     });
 
-    $(".edit").on("click",function () {
-       let id=$(this).attr("edit-id");
-       console.log(id);
-       window.location.href="${APP_PATH}/admin/updateDiscuss/"+id+ "?pageNum=${pageInfo.pageNum}";
+    $(".edit").on("click", function () {
+        let id = $(this).attr("discussId");
+        console.log(id);
+        window.location.href = "${APP_PATH}/admin/updateDiscuss/" + id + "?pageNum=${pageInfo.pageNum}";
     });
 </script>

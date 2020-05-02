@@ -11,16 +11,6 @@ $(document).ready(function () {
     });
 });
 
-
-function Tip(msg) {
-    $(".tishi").show().html("<div class='prompt'><i class='tishi_icon'></i>" + msg + "</div>");
-}
-
-function Tips(msg) {
-
-    $(".tishis").show().html("<div class='prompt'><i class='tishi_icon'></i>" + msg + "</div>");
-}
-
 jQuery(function () {
     "use strict";
     $(".navList .navLi").hover(function () {

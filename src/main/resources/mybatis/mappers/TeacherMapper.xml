@@ -8,7 +8,15 @@
     <resultMap id="MiddleResultMap" type="com.cdut.studypro.beans.Teacher">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
-        <result column="college_id" jdbcType="INTEGER" property="collegeId"/>
+        <!--<result column="college_id" jdbcType="INTEGER" property="collegeId"/>-->
+        <association property="college" select="com.cdut.studypro.daos.CollegeMapper.selectByPrimaryKeyWithIdAndName"
+                     column="college_id"/>
+    </resultMap>
+    <resultMap id="ResultMapIdNameNumberAndCollege" type="com.cdut.studypro.beans.Teacher">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="number" jdbcType="VARCHAR" property="number"/>
+        <!--<result column="college_id" jdbcType="INTEGER" property="collegeId"/>-->
         <association property="college" select="com.cdut.studypro.daos.CollegeMapper.selectByPrimaryKeyWithIdAndName"
                      column="college_id"/>
     </resultMap>
@@ -30,12 +38,18 @@
                      column="college_id"/>
     </resultMap>
 
+    <!--带课程-->
+    <resultMap extends="BaseResultMap" id="ResultMapWithCourse" type="com.cdut.studypro.beans.Teacher">
+        <collection property="courses" ofType="com.cdut.studypro.beans.Course"
+                    select="com.cdut.studypro.daos.CourseMapper.selectByTeacherIdWithIdAndNameWithCollege"
+                    column="id"/>
+    </resultMap>
     <!--带学院、课程信息的映射-->
     <resultMap extends="BaseResultMap" id="ResultMapWithCollegeAndCourse" type="com.cdut.studypro.beans.Teacher">
         <association property="college" select="com.cdut.studypro.daos.CollegeMapper.selectByPrimaryKeyWithIdAndName"
                      column="college_id"/>
         <collection property="courses" ofType="com.cdut.studypro.beans.Course"
-                    select="com.cdut.studypro.daos.CourseMapper.selectByTeacherIdWithIdAndName"
+                    select="com.cdut.studypro.daos.CourseMapper.selectByTeacherIdWithIdAndNameWithCollege"
                     column="id"/>
     </resultMap>
     <sql id="Example_Where_Clause">
@@ -115,6 +129,22 @@
             order by ${orderByClause}
         </if>
     </select>
+    <select id="selectTelephoneByExample" parameterType="com.cdut.studypro.beans.TeacherExample"
+            resultType="java.lang.String">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        telephone
+        from teacher
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
     <select id="selectIdsByExample" parameterType="com.cdut.studypro.beans.TeacherExample"
             resultType="java.lang.Integer">
         select
@@ -132,6 +162,18 @@
     </select>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithCollegeAndCourse">
+        select
+        <include refid="Base_Column_List"/>
+        from teacher
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectByPrimaryKeyWithCourse" parameterType="java.lang.Integer" resultMap="ResultMapWithCourse">
+        select
+        <include refid="Base_Column_List"/>
+        from teacher
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectByPrimaryKeyWithCollege" parameterType="java.lang.Integer" resultMap="ResultMapWithCollege">
         select
         <include refid="Base_Column_List"/>
         from teacher
@@ -155,6 +197,21 @@
             distinct
         </if>
         id,name,college_id
+        from teacher
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByExampleWithIdNameNumberAndCollege" parameterType="java.lang.Integer"
+            resultMap="ResultMapIdNameNumberAndCollege">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        id,name,number,college_id
         from teacher
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
@@ -393,10 +450,5 @@
     <select id="getIdByTelephone" parameterType="string" resultType="java.lang.Integer">
         select id from teacher where telephone = #{phone,jdbcType=VARCHAR}
     </select>
-    <select id="selectByPrimaryKeyWithCollege" parameterType="java.lang.Integer" resultMap="ResultMapWithCollege">
-        select
-        <include refid="Base_Column_List"/>
-        from teacher
-        where id = #{id,jdbcType=INTEGER}
-    </select>
+
 </mapper>

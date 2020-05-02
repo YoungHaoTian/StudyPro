@@ -68,14 +68,14 @@
                             </c:forEach>
                         </select>
                     </div>
-                    <div class="form-group" style="margin-left: 50px">
+                    <div class="form-group" style="margin-left: 20px">
                         <button type="button" id="search" class="btn btn-success search" data-toggle="tooltip"
-                                data-placement="left" title="查询学生" style="margin-right: 20px">
+                                data-placement="left" title="查询学生">
                             <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                             查询
                         </button>
                     </div>
-                    <div class="form-group" style="margin-left: 50px">
+                    <div class="form-group" style="margin-left: 20px">
                         <button type="button" class="btn btn-danger batchDelete" data-toggle="tooltip"
                                 data-placement="left"
                                 title="批量删除学生">
@@ -106,7 +106,7 @@
                     <th>所属学院</th>
                     <th>联系电话</th>
                     <th>身份证号</th>
-                    <th>性别</th>
+                    <th>学生性别</th>
                     <th>登录账户</th>
                     <th>邮箱</th>
                     <th>选择操作</th>
@@ -122,65 +122,39 @@
                     </c:if>--%>
                     <th>
                         <label>
-                            <input stuId="${student.id}" type="checkbox" class="select_item"/>
+                            <input studentId="${student.id}" type="checkbox" class="select_item"/>
                         </label>
                     </th>
-                    <c:if test="${student.name!=null}">
-                        <td>${student.name.trim()=="0"?"未录入":(student.name.trim()==""?"未录入":student.name) }</td>
-                    </c:if>
-                    <c:if test="${student.name==null}">
-                        <td>未录入</td>
-                    </c:if>
-                    <c:if test="${student.number!=null}">
-                        <td>${student.number.trim()=="0"?"未录入":(student.number.trim()==""?"未录入":student.number) }</td>
-                    </c:if>
-                    <c:if test="${student.number==null}">
-                        <td>未录入</td>
-                    </c:if>
+
+                    <td>${student.name.trim()=="0"?"":student.name.trim() }</td>
+
+                    <td>${student.number.trim()=="0"?"":student.number.trim()}</td>
+
                     <c:if test="${student.college!=null}">
-                        <td>${student.college.name.trim()=="0"?"学院未设置名称":(student.college.name.trim()==""?"学院未设置名称":student.college.name) }</td>
+                        <td>${student.college.name.trim()=="0"?"":student.college.name.trim() }</td>
                     </c:if>
                     <c:if test="${student.college==null}">
-                        <td>未录入</td>
+                        <td><span style="color: red">未录入</span></td>
                     </c:if>
-                    <c:if test="${student.telephone!=null}">
-                        <td>${student.telephone.trim()=="0"?"未录入":(student.telephone.trim()==""?"未录入":student.telephone) }</td>
-                    </c:if>
-                    <c:if test="${student.telephone==null}">
-                        <td>未录入</td>
-                    </c:if>
-                    <c:if test="${student.idCardNo!=null}">
-                        <td>${student.idCardNo.trim()=="0"?"未录入":(student.idCardNo.trim()==""?"未录入":student.idCardNo) }</td>
-                    </c:if>
-                    <c:if test="${student.idCardNo==null}">
-                        <td>未录入</td>
-                    </c:if>
-                    <c:if test="${student.gender!=null}">
-                        <td>${student.gender==0?"男":"女" }</td>
-                    </c:if>
-                    <c:if test="${student.gender==null}">
-                        <td>未录入</td>
-                    </c:if>
-                    <c:if test="${student.account!=null}">
-                        <td>${student.account.trim()=="0"?"未录入":(student.account.trim()==""?"未录入":student.account) }</td>
-                    </c:if>
-                    <c:if test="${student.account==null}">
-                        <td>未录入</td>
-                    </c:if>
-                    <c:if test="${student.email!=null}">
-                        <td>${student.email.trim()=="0"?"未录入":(student.email.trim()==""?"未录入":student.email) }</td>
-                    </c:if>
-                    <c:if test="${student.email==null}">
-                        <td>未录入</td>
-                    </c:if>
+
+                    <td>${student.telephone.trim()=="0"?"":student.telephone.trim()}</td>
+
+                    <td>${student.idCardNo.trim()=="0"?"":student.idCardNo.trim() }</td>
+
+                    <td>${student.gender==0?"男":"女" }</td>
+
+                    <td>${student.account.trim()=="0"?"":student.account.trim()}</td>
+
+                    <td>${student.email.trim()=="0"?"":student.email.trim() }</td>
+
                     <td>
                         <button class="btn btn-primary btn-sm edit" data-toggle="tooltip" data-placement="left"
-                                title="编辑当前学生" edit-id="${student.id}" style="margin-right: 20px">
+                                title="编辑当前学生" studentId="${student.id}" style="margin-right: 20px">
                             <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                             编辑
                         </button>
                         <a class="btn btn-danger btn-sm delete" data-toggle="tooltip" data-placement="left"
-                           title="删除当前学生" del-id="${student.id}">
+                           title="删除当前学生" studentId="${student.id}">
                             <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                             删除
                         </a>
@@ -227,7 +201,8 @@
                             <li class="active"><a href="javascript:void(0)">${page_Num }</a></li>
                         </c:if>
                         <c:if test="${page_Num != pageInfo.pageNum }">
-                            <li><a href="${APP_PATH }/admin/searchStudent?pageNum=${page_Num }">${page_Num }</a></li>
+                            <li><a href="${APP_PATH }/admin/searchStudent?pageNum=${page_Num }">${page_Num }</a>
+                            </li>
                         </c:if>
                     </c:forEach>
 
@@ -248,7 +223,7 @@
         </div>
     </div>
     <!-- 页面跳转信息 -->
-    <div class="row">
+    <div class="row" style="margin-bottom: 50px">
         <div class="col-sm-2 col-md-offset-6">
             <input type="number" class="form-control" id="pageNum" placeholder="跳转到...">
         </div>
@@ -256,14 +231,14 @@
     </div>
 </c:if>
 <div class="modal fade" id="studentDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-    <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">学生删除</h5>
+                <h5 class="modal-title" style="color: red">学生删除</h5>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="text-align: center">
 
             </div>
             <div class="modal-footer">
@@ -274,14 +249,14 @@
     </div>
 </div>
 <div class="modal fade" id="studentBatchDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-    <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">学生批量删除</h5>
+                <h5 class="modal-title" style="color: red">学生批量删除</h5>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="text-align: center">
 
             </div>
             <div class="modal-footer">
@@ -297,13 +272,13 @@
     let id = "";
     //删除单个学生
     $(".delete").on("click", function () {
-        id = $(this).attr("del-id");
+        id = $(this).attr("studentId");
         console.log(id);
         //删除学生时弹出确认框
         let name = $(this).parents("tr").find("td:eq(0)").text();
         console.log(name);
         let message = "确定删除学生 【" + name + "】 的信息吗？";
-        if (name === "未录入") {
+        if (name === "") {
             message = "确定删除该学生的信息吗？";
         }
         $("#studentDeleteModal .modal-body").text(message);
@@ -384,7 +359,7 @@
 
         $.each($(".select_item:checked"), function () {
             //组装学生id字符串
-            ids += $(this).attr("stuId") + "-";
+            ids += $(this).attr("studentId") + "-";
         });
         console.log(ids);
         if (ids.trim() === "") {
@@ -475,7 +450,7 @@
 
     //编辑学生信息
     $(".edit").on("click", function () {
-        let id = $(this).attr("edit-id");
+        let id = $(this).attr("studentId");
         window.location.href = "${APP_PATH}/admin/updateStudent/" + id + "?pageNum=${pageInfo.pageNum}";
     })
 </script>

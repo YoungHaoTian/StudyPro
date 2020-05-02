@@ -180,7 +180,7 @@ a:focus, a:hover {
 .wk-accordion-list-group .list-group-item:focus {
     border: none;
     background: #AAA;
-    color: #FFF
+    color: #00fff2;
 }
 
 .wk-breadcrumb {

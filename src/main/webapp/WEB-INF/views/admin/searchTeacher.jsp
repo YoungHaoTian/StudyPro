@@ -46,14 +46,22 @@
             <div style="position: absolute;top: -11px;left: 240px;">
                 <div class="navbar-form navbar-right" role="search">
                     <div class="form-group">
-                        <label for="name" class="control-label wk-filed-label" style="margin-top: 20px">教师姓名:</label>
-                        <input type="text"  maxlength="5"
+                        <label for="name" class="control-label wk-filed-label"
+                               style="margin-top: 20px;margin-left: 0px">教师姓名:</label>
+                        <input type="text" maxlength="5"
                                class="form-control" id="name" name="name" placeholder="教师姓名"
                                value="${sessionScope.teacherQueryCriteria.get("name")}">
                     </div>
                     <div class="form-group">
+                        <label for="number" class="control-label wk-filed-label"
+                               style="margin-top: 20px;margin-left: 0px">教师编号:</label>
+                        <input type="text" maxlength="18"
+                               class="form-control" id="number" name="number" placeholder="教师编号"
+                               value="${sessionScope.teacherQueryCriteria.get("number")}">
+                    </div>
+                    <div class="form-group">
                         <label for="collegeId" class="control-label wk-filed-label"
-                               style="margin-top: 20px">所属学院:</label>
+                               style="margin-top: 20px;margin-left: 0px">所属学院:</label>
                         <select class="selectpicker" id="collegeId" name="collegeId">
                             <option value="0">请选择所属学院</option>
                             <c:forEach items="${colleges}" var="college">
@@ -70,7 +78,7 @@
                     </div>
                     <div class="form-group">
                         <label for="course" class="control-label wk-filed-label"
-                               style="margin-top: 20px">教授课程:</label>
+                               style="margin-top: 20px;margin-left: 0px">教授课程:</label>
                         <input type="text" maxlength="18"
                                class="form-control" id="course" name="course" placeholder="请输入教授课程"
                                value="${sessionScope.teacherQueryCriteria.get("course")}">
@@ -111,7 +119,7 @@
                     <th style="width: 80px">教师姓名</th>
                     <th style="width: 100px">教师编号</th>
                     <th>所属学院</th>
-                    <th>教授课程</th>
+                    <th>教授课程(课程所属学院)</th>
                     <th style="width: 100px">联系电话</th>
                     <th style="width: 200px">身份证号</th>
                     <th style="width: 50px">性别</th>
@@ -131,81 +139,59 @@
                     <tr>
                         <th>
                             <label>
-                                <input teaId="${teacher.id}" type="checkbox" class="select_item"/>
+                                <input teacherId="${teacher.id}" type="checkbox" class="select_item"/>
                             </label>
                         </th>
-                        <c:if test="${teacher.name!=null}">
-                            <td>${teacher.name.trim()=="0"?"未录入":(teacher.name.trim()==""?"未录入":teacher.name) }</td>
-                        </c:if>
-                        <c:if test="${teacher.name==null}">
-                            <td>未录入</td>
-                        </c:if>
-                        <c:if test="${teacher.number!=null}">
-                            <td>${teacher.number.trim()=="0"?"未录入":(teacher.number.trim()==""?"未录入":teacher.number) }</td>
-                        </c:if>
-                        <c:if test="${teacher.number==null}">
-                            <td>未录入</td>
-                        </c:if>
+                        <td>${teacher.name.trim()=="0"?"":teacher.name.trim() }</td>
+
+                        <td>${teacher.number.trim()=="0"?"":teacher.number.trim() }</td>
+
                         <c:if test="${teacher.college!=null}">
-                            <td>${teacher.college.name.trim()=="0"?"学院未设置名称":(teacher.college.name.trim()==""?"学院未设置名称":teacher.college.name) }</td>
+                            <td>${teacher.college.name.trim()=="0"?"":teacher.college.name.trim() }</td>
                         </c:if>
                         <c:if test="${teacher.college==null}">
-                            <td>未录入</td>
+                            <td><span style="color: red">未录入</span></td>
                         </c:if>
                         <c:if test="${teacher.courses!=null}">
-                            <td>
-                                <c:forEach items="${teacher.courses}" var="course" varStatus="statu">
-                                    <span style="color: red; "> ${statu.index+1}：</span>${course.name}
-                                    <c:if test="${!statu.last}">
-                                        <br>
-                                    </c:if>
-                                </c:forEach>
+                            <c:if test="${teacher.courses.size()==0}">
+                                <td><span style="color: red">暂无所授课程</span></td>
+                            </c:if>
+                            <c:if test="${teacher.courses.size()!=0}">
+                                <td style="text-align: left">
+                                    <c:forEach items="${teacher.courses}" var="course" varStatus="statu">
+                                        <span style="color: red; "> ${statu.index+1}：</span>${course.name.trim()}(<span style="color: green">${course.college.name.trim()}</span>)
+                                        <c:if test="${!statu.last}">
+                                            <br>
+                                        </c:if>
+                                    </c:forEach>
 
-                            </td>
+                                </td>
+                            </c:if>
                         </c:if>
                         <c:if test="${teacher.courses==null}">
-                            <td>未录入</td>
+                            <td><span style="color: red">暂无所授课程</span></td>
                         </c:if>
-                        <c:if test="${teacher.telephone!=null}">
-                            <td>${teacher.telephone.trim()=="0"?"未录入":(teacher.telephone.trim()==""?"未录入":teacher.telephone) }</td>
-                        </c:if>
-                        <c:if test="${teacher.telephone==null}">
-                            <td>未录入</td>
-                        </c:if>
-                        <c:if test="${teacher.idCardNo!=null}">
-                            <td>${teacher.idCardNo.trim()=="0"?"未录入":(teacher.idCardNo.trim()==""?"未录入":teacher.idCardNo) }</td>
-                        </c:if>
-                        <c:if test="${teacher.idCardNo==null}">
-                            <td>未录入</td>
-                        </c:if>
-                        <c:if test="${teacher.gender!=null}">
-                            <td>${teacher.gender==0?"男":"女" }</td>
-                        </c:if>
-                        <c:if test="${teacher.gender==null}">
-                            <td>未录入</td>
-                        </c:if>
-                        <c:if test="${teacher.account!=null}">
-                            <td>${teacher.account.trim()=="0"?"未录入":(teacher.account.trim()==""?"未录入":teacher.account) }</td>
-                        </c:if>
-                        <c:if test="${teacher.account==null}">
-                            <td>未录入</td>
-                        </c:if>
-                        <c:if test="${teacher.email!=null}">
-                            <td>${teacher.email.trim()=="0"?"未录入":(teacher.email.trim()==""?"未录入":teacher.email) }</td>
-                        </c:if>
-                        <c:if test="${teacher.email==null}">
-                            <td>未录入</td>
-                        </c:if>
+
+                        <td>${teacher.telephone.trim()=="0"?"":teacher.telephone.trim() }</td>
+
+                        <td>${teacher.idCardNo.trim()=="0"?"":teacher.idCardNo.trim() }</td>
+
+                        <td>${teacher.gender==0?"男":"女" }</td>
+
+                        <td>${teacher.account.trim()=="0"?"":teacher.account.trim() }</td>
+
+                        <td>${teacher.email.trim()=="0"?"":teacher.email.trim() }</td>
+
                         <td>
                             <button class="btn btn-primary btn-sm edit" type="button"
                                     data-toggle="tooltip" data-placement="left"
-                                    title="编辑当前教师" edit-id="${teacher.id}" style="margin-right: 20px">
+                                    title="编辑当前教师" teacherId="${teacher.id}" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                                 编辑
                             </button>
                             <button class="btn btn-danger btn-sm delete" type="button" data-toggle="tooltip"
-                               data-placement="left"
-                               title="删除当前教师" del-id="${teacher.id}">
+                                    data-placement="left"
+                                    title="删除当前教师" teacherId="${teacher.id}">
                                 <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                                 删除
                             </button>
@@ -285,9 +271,9 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">老师删除</h5>
+                <h5 class="modal-title" style="color: red">老师删除</h5>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="text-align: center">
 
             </div>
             <div class="modal-footer">
@@ -298,14 +284,14 @@
     </div>
 </div>
 <div class="modal fade" id="teacherBatchDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-    <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">老师批量删除</h5>
+                <h5 class="modal-title" style="color: red">老师批量删除</h5>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="text-align: center">
 
             </div>
             <div class="modal-footer">
@@ -330,7 +316,7 @@
             return;
         }
         if (pageNum ==${pageInfo.pageNum}) {
-            layer.msg("当前已经是第"+pageNum+"页", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("当前已经是第" + pageNum + "页", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
@@ -339,13 +325,14 @@
 
     //编辑教师信息
     $(".edit").on("click", function () {
-        let id = $(this).attr("edit-id");
+        let id = $(this).attr("teacherId");
+        // console.log(id);
         window.location.href = "${APP_PATH}/admin/updateTeacher/" + id + "?pageNum=${pageInfo.pageNum}";
     });
 
     //删除单个教师
     $(".delete").on("click", function () {
-        id = $(this).attr("del-id");
+        id = $(this).attr("teacherId");
         console.log(id);
         //删除教师时弹出确认框
         let name = $(this).parents("tr").find("td:eq(0)").text();
@@ -412,7 +399,7 @@
     $(".batchDelete").on("click", function () {
         $.each($(".select_item:checked"), function () {
             //组装教师id字符串
-            ids += $(this).attr("teaId") + "-";
+            ids += $(this).attr("teacherId") + "-";
         });
         console.log(ids);
         if (ids.trim() === "") {
@@ -462,6 +449,7 @@
     //查询按钮
     $("#search").on("click", function () {
         let name = $("#name").val().trim()
+        let number = $("#number").val().trim()
         let collegeId = $("#collegeId").val();
         let course = $("#course").val();
         let loadingIndex = layer.msg('处理中', {icon: 16});
@@ -472,6 +460,7 @@
             dataType: "json",
             data: {
                 "name": name,
+                "number": number,
                 "collegeId": collegeId,
                 "course": course
             },
@@ -494,11 +483,6 @@
         });
     });
 
-    //编辑教师信息
-    $(".edit").on("click", function () {
-        let id = $(this).attr("edit-id");
-        window.location.href = "${APP_PATH}/admin/updateTeacher/" + id + "?pageNum=${pageInfo.pageNum}";
-    })
 </script>
 </body>
 </html>

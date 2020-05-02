@@ -164,193 +164,123 @@ public class CollectExample {
             return (Criteria) this;
         }
 
-        public Criteria andStuIdIsNull() {
-            addCriterion("stu_id is null");
+        public Criteria andStudentIdIsNull() {
+            addCriterion("student_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andStuIdIsNotNull() {
-            addCriterion("stu_id is not null");
+        public Criteria andStudentIdIsNotNull() {
+            addCriterion("student_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andStuIdEqualTo(Integer value) {
-            addCriterion("stu_id =", value, "stuId");
+        public Criteria andStudentIdEqualTo(Integer value) {
+            addCriterion("student_id =", value, "studentId");
             return (Criteria) this;
         }
 
-        public Criteria andStuIdNotEqualTo(Integer value) {
-            addCriterion("stu_id <>", value, "stuId");
+        public Criteria andStudentIdNotEqualTo(Integer value) {
+            addCriterion("student_id <>", value, "studentId");
             return (Criteria) this;
         }
 
-        public Criteria andStuIdGreaterThan(Integer value) {
-            addCriterion("stu_id >", value, "stuId");
+        public Criteria andStudentIdGreaterThan(Integer value) {
+            addCriterion("student_id >", value, "studentId");
             return (Criteria) this;
         }
 
-        public Criteria andStuIdGreaterThanOrEqualTo(Integer value) {
-            addCriterion("stu_id >=", value, "stuId");
+        public Criteria andStudentIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("student_id >=", value, "studentId");
             return (Criteria) this;
         }
 
-        public Criteria andStuIdLessThan(Integer value) {
-            addCriterion("stu_id <", value, "stuId");
+        public Criteria andStudentIdLessThan(Integer value) {
+            addCriterion("student_id <", value, "studentId");
             return (Criteria) this;
         }
 
-        public Criteria andStuIdLessThanOrEqualTo(Integer value) {
-            addCriterion("stu_id <=", value, "stuId");
+        public Criteria andStudentIdLessThanOrEqualTo(Integer value) {
+            addCriterion("student_id <=", value, "studentId");
             return (Criteria) this;
         }
 
-        public Criteria andStuIdIn(List<Integer> values) {
-            addCriterion("stu_id in", values, "stuId");
+        public Criteria andStudentIdIn(List<Integer> values) {
+            addCriterion("student_id in", values, "studentId");
             return (Criteria) this;
         }
 
-        public Criteria andStuIdNotIn(List<Integer> values) {
-            addCriterion("stu_id not in", values, "stuId");
+        public Criteria andStudentIdNotIn(List<Integer> values) {
+            addCriterion("student_id not in", values, "studentId");
             return (Criteria) this;
         }
 
-        public Criteria andStuIdBetween(Integer value1, Integer value2) {
-            addCriterion("stu_id between", value1, value2, "stuId");
+        public Criteria andStudentIdBetween(Integer value1, Integer value2) {
+            addCriterion("student_id between", value1, value2, "studentId");
             return (Criteria) this;
         }
 
-        public Criteria andStuIdNotBetween(Integer value1, Integer value2) {
-            addCriterion("stu_id not between", value1, value2, "stuId");
+        public Criteria andStudentIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("student_id not between", value1, value2, "studentId");
             return (Criteria) this;
         }
 
-        public Criteria andCIdIsNull() {
-            addCriterion("c_id is null");
+        public Criteria andCourseIdIsNull() {
+            addCriterion("course_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andCIdIsNotNull() {
-            addCriterion("c_id is not null");
+        public Criteria andCourseIdIsNotNull() {
+            addCriterion("course_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andCIdEqualTo(Integer value) {
-            addCriterion("c_id =", value, "cId");
+        public Criteria andCourseIdEqualTo(Integer value) {
+            addCriterion("course_id =", value, "courseId");
             return (Criteria) this;
         }
 
-        public Criteria andCIdNotEqualTo(Integer value) {
-            addCriterion("c_id <>", value, "cId");
+        public Criteria andCourseIdNotEqualTo(Integer value) {
+            addCriterion("course_id <>", value, "courseId");
             return (Criteria) this;
         }
 
-        public Criteria andCIdGreaterThan(Integer value) {
-            addCriterion("c_id >", value, "cId");
+        public Criteria andCourseIdGreaterThan(Integer value) {
+            addCriterion("course_id >", value, "courseId");
             return (Criteria) this;
         }
 
-        public Criteria andCIdGreaterThanOrEqualTo(Integer value) {
-            addCriterion("c_id >=", value, "cId");
+        public Criteria andCourseIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("course_id >=", value, "courseId");
             return (Criteria) this;
         }
 
-        public Criteria andCIdLessThan(Integer value) {
-            addCriterion("c_id <", value, "cId");
+        public Criteria andCourseIdLessThan(Integer value) {
+            addCriterion("course_id <", value, "courseId");
             return (Criteria) this;
         }
 
-        public Criteria andCIdLessThanOrEqualTo(Integer value) {
-            addCriterion("c_id <=", value, "cId");
+        public Criteria andCourseIdLessThanOrEqualTo(Integer value) {
+            addCriterion("course_id <=", value, "courseId");
             return (Criteria) this;
         }
 
-        public Criteria andCIdIn(List<Integer> values) {
-            addCriterion("c_id in", values, "cId");
+        public Criteria andCourseIdIn(List<Integer> values) {
+            addCriterion("course_id in", values, "courseId");
             return (Criteria) this;
         }
 
-        public Criteria andCIdNotIn(List<Integer> values) {
-            addCriterion("c_id not in", values, "cId");
+        public Criteria andCourseIdNotIn(List<Integer> values) {
+            addCriterion("course_id not in", values, "courseId");
             return (Criteria) this;
         }
 
-        public Criteria andCIdBetween(Integer value1, Integer value2) {
-            addCriterion("c_id between", value1, value2, "cId");
+        public Criteria andCourseIdBetween(Integer value1, Integer value2) {
+            addCriterion("course_id between", value1, value2, "courseId");
             return (Criteria) this;
         }
 
-        public Criteria andCIdNotBetween(Integer value1, Integer value2) {
-            addCriterion("c_id not between", value1, value2, "cId");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusIsNull() {
-            addCriterion("status is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusIsNotNull() {
-            addCriterion("status is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusEqualTo(String value) {
-            addCriterion("status =", value, "status");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusNotEqualTo(String value) {
-            addCriterion("status <>", value, "status");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusGreaterThan(String value) {
-            addCriterion("status >", value, "status");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusGreaterThanOrEqualTo(String value) {
-            addCriterion("status >=", value, "status");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusLessThan(String value) {
-            addCriterion("status <", value, "status");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusLessThanOrEqualTo(String value) {
-            addCriterion("status <=", value, "status");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusLike(String value) {
-            addCriterion("status like", value, "status");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusNotLike(String value) {
-            addCriterion("status not like", value, "status");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusIn(List<String> values) {
-            addCriterion("status in", values, "status");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusNotIn(List<String> values) {
-            addCriterion("status not in", values, "status");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusBetween(String value1, String value2) {
-            addCriterion("status between", value1, value2, "status");
-            return (Criteria) this;
-        }
-
-        public Criteria andStatusNotBetween(String value1, String value2) {
-            addCriterion("status not between", value1, value2, "status");
+        public Criteria andCourseIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("course_id not between", value1, value2, "courseId");
             return (Criteria) this;
         }
     }

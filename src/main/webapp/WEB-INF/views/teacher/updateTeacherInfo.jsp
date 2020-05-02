@@ -38,7 +38,7 @@
                     <div class="row" style="text-align: left">
                         <div class="form-inline">
                             <div class="form-group">
-                                <label for="name" class="control-label wk-filed-label">姓名:</label>
+                                <label for="name" class="control-label wk-filed-label">教师姓名:</label>
                                 <div class="input-group">
                                     <input required="required" id="name" name="name" type="text" maxlength="5"
                                            class="form-control wk-normal-input" value="${teacher.name}"
@@ -46,16 +46,16 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="number" class="control-label wk-filed-label">编号:</label>
+                                <label for="number" class="control-label wk-filed-label">教师编号:</label>
                                 <div class="input-group">
-                                    <input id="number" name="number" type="text" readonly="readonly"
+                                    <input id="number" type="text" readonly="readonly"
                                            class="form-control wk-normal-input" value="${teacher.number}"/>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="college" class="control-label wk-filed-label">所属学院:</label>
                                 <div class="input-group">
-                                    <input id="college" name="college" type="text" readonly="readonly"
+                                    <input id="college" type="text" readonly="readonly"
                                            class="form-control wk-normal-input" value="${teacher.college.name}"/>
                                 </div>
                             </div>
@@ -63,7 +63,7 @@
 
                         <div class="form-inline">
                             <div class="form-group">
-                                <label for="telephone" class="control-label wk-filed-label">电话:</label>
+                                <label for="telephone" class="control-label wk-filed-label">联系电话:</label>
                                 <div class="input-group">
                                     <input required="required" id="telephone" name="telephone" type="text"
                                            maxlength="11" oninput="value=value.replace(/[^\d]/g,'')"
@@ -72,7 +72,7 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="gender" class="control-label wk-filed-label">性别: </label>
+                                <label for="gender" class="control-label wk-filed-label">教师性别: </label>
                                 <select class="selectpicker" id="gender" name="gender">
                                     <c:choose>
                                         <c:when test="${teacher.gender == 0}">
@@ -98,7 +98,7 @@
                         </div>
                         <div class="form-inline">
                             <div class="form-group">
-                                <label for="account" class="control-label wk-filed-label">账户: </label>
+                                <label for="account" class="control-label wk-filed-label">登录账户: </label>
                                 <div class="input-group">
                                     <input required="required" id="account" name="account" type="text" maxlength="18"
                                            class="form-control wk-normal-input" value="${teacher.account}"
@@ -106,7 +106,7 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="password" class="control-label wk-filed-label">密码: </label>
+                                <label for="password" class="control-label wk-filed-label">登录密码: </label>
                                 <div class="input-group">
                                     <input required="required" id="password" name="password" type="text" maxlength="18"
                                            class="form-control wk-normal-input" value="${teacher.password}"
@@ -115,7 +115,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="email" class="control-label wk-filed-label">邮箱: </label>
+                                <label for="email" class="control-label wk-filed-label">邮箱地址: </label>
                                 <div class="input-group">
                                     <input required="required" id="email" name="email" type="text" maxlength="30"
                                            class="form-control wk-normal-input" value="${teacher.email}"
@@ -123,10 +123,28 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <label for="code" class="control-label wk-filed-label">验证码: </label>
+                                <div class="input-group">
+                                    <input required="required" id="code" name="code" type="text" maxlength="6"
+                                           oninput="value=value.replace(/[^\d]/g,'')"
+                                           class="form-control wk-normal-input" placeholder="请输入验证码"/>
+                                </div>
+                                <div class="input-group">
+                                    <input type="button" class="btn btn-success btn_mfyzm" onclick="getCode()"
+                                           style="font-family: 宋体;width:100px;" value="获取验证码">
+                                </div>
+                                <div class="input-group">
+                                    <span style="color: red">注：接收验证码的手机号码是修改之前的手机号码</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="panel-footer wk-panel-footer">
                     <button type="button" class="btn btn-info" onclick="updateTeacherInfo()">提&nbsp;&nbsp;交</button>
+                    <button type="reset" class="btn btn-info" style="margin-left: 20px">重&nbsp;&nbsp;填</button>
                 </div>
             </form>
         </div>
@@ -136,6 +154,7 @@
 </html>
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
+    let validCode = true;
     //表单验证
     let phones = /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\d{8}$/;
     let han = /^[\u4e00-\u9fa5]{2,5}$/;
@@ -208,7 +227,6 @@
             });
             return;
         }
-
         //对邮箱进行验证
         let email = $("#email").val();
         if ($.trim(email) === "") {
@@ -220,21 +238,20 @@
             });
             return;
         }
+        let code = $("#code").val();
+        if ($.trim(code) === "") {
+            layer.msg("验证码不能为空", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
         let loadingIndex = layer.msg('处理中', {icon: 16});
+        let data = $("#teacherData").serialize();
+        data = decodeURIComponent(data);
         $.ajax({
-            url: "${APP_PATH}/teacher/updateTeacherInfo/${teacher.id}",
+            url: "${APP_PATH}/teacher/updateTeacherInfo",
             type: "POST",
-            // contentType: "application/json",//不使用contentType: “application/json”则data可以是对象,使用contentType: “application/json”则data只能是json字符串
             dataType: "json",
-            data: {
-                "name":name.trim(),
-                "telephone":telephone.trim(),
-                "gender":$("#gender").val(),
-                "idCardNo":idCardNo.trim(),
-                "account":account.trim(),
-                "password":password.trim(),
-                "email":email.trim()
-            },
+            data: data,
             success: function (result) {
                 layer.close(loadingIndex);
                 console.log(result);
@@ -244,7 +261,7 @@
                 }
                 if (result.code === 100) {
                     console.log("success");
-                    layer.msg("修改成功", {time: 1500, icon: 6}, function () {
+                    layer.msg("修改个人信息成功", {time: 1500, icon: 6}, function () {
                     });
                 }
             },
@@ -253,5 +270,50 @@
                 });
             }
         });
+    }
+
+    function getCode() {
+        //60s倒计时，使用之前的手机号来收取验证码
+        let time = 60;
+        let data = {"phone": ${teacher.telephone}, "type": "update"};
+        let loadingIndex = layer.msg('处理中', {icon: 16});
+        $.ajax({
+            url: "${APP_PATH}/index/code",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function (result) {
+                layer.close(loadingIndex);
+                console.log(result);
+                if (result.code === 200) {
+                    layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
+                    });
+                }
+                if (result.code === 100) {
+                    let code = $(".btn_mfyzm");
+                    if (validCode) {
+                        validCode = false;
+                        code.attr("disabled", true);
+                        let t = setInterval(function () {
+                            time--;
+                            code.val(time + "秒");
+                            if (time === 0) {
+                                clearInterval(t);
+                                code.val("重新获取");
+                                validCode = true;
+                                code.attr("disabled", false);
+                            }
+                        }, 1000);
+                    }
+                    layer.msg("获取成功，请注意查收", {time: 1000, icon: 6}, function () {
+                    });
+                }
+            },
+            error: function () {
+                layer.msg("网络异常，请稍后再试", {time: 1500, icon: 5, shift: 6}, function () {
+                });
+            }
+        });
+
     }
 </script>

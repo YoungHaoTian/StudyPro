@@ -2,6 +2,7 @@ package com.cdut.studypro.services;
 
 import com.cdut.studypro.beans.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +20,7 @@ public interface AdminService {
 
     List<College> getAllColleges();
 
-    List<Student> getAllStudentsWithCollegeByExample(StudentExample example);
+    List<Student> getAllStudentsWithCollegeByExampleWithoutPassword(StudentExample example);
 
     boolean isStudentExistsByExample(StudentExample example);
 
@@ -51,7 +52,7 @@ public interface AdminService {
 
     boolean deleteTeacherByIdBatch(List<Integer> ids);
 
-    Teacher getTeacherByPrimaryKey(Integer id);
+    Teacher getTeacherByPrimaryKeyWithCourse(Integer id);
 
     boolean updateTeacherByPrimaryKeySelective(Teacher teacher);
 
@@ -71,7 +72,7 @@ public interface AdminService {
 
     boolean updateCollegeByPrimaryKeySelective(College college);
 
-    List<Teacher> getAllTeachersWithIdNameAndCollege();
+    List<Teacher> getAllTeachersWithIdNameNumberAndCollege(boolean order);
 
     boolean isCourseExistsByExample(CourseExample example);
 
@@ -79,9 +80,9 @@ public interface AdminService {
 
     List<Course> getAllCoursesWithBLOBsCollegeAndTeacherByExample(CourseExample example);
 
-    boolean deleteCourseById(Integer id);
+    boolean deleteCourseById(Integer id, HttpServletRequest request);
 
-    boolean deleteCourseByIdBatch(List<Integer> ids);
+    boolean deleteCourseByIdBatch(List<Integer> ids, HttpServletRequest request);
 
     Course getCourseByPrimaryKey(Integer id);
 
@@ -120,4 +121,18 @@ public interface AdminService {
     boolean updateAdminByPrimaryKeySelective(Admin admin);
 
     boolean deleteDiscussPostByDiscussIds(List<Integer> discussIds);
+
+    List<String> getAllStudentTelephone();
+
+    List<String> getAllTeacherTelephone();
+
+    Teacher getTeacherByPrimaryKeyWithoutCourses(Integer id);
+
+    List<String> getAllCollegeName();
+
+    boolean insertCollegeBatch(List<College> colleges);
+
+    List<String> getAllCourseNumber();
+
+    boolean insertCourseBatch(List<Course> courses);
 }
