@@ -117,7 +117,7 @@
                             </button>
                             <button type="button" class="btn btn-info addChapter"
                                     data-toggle="tooltip" courseId="${course.id}"
-                                    data-placement="left" title="查看该课程" style="margin-right: 20px">
+                                    data-placement="left" title="为该课程添加章节" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                                 添加章节
                             </button>
@@ -217,7 +217,7 @@
     $(".viewChapter").on("click", function () {
         let courseId = $(this).attr("courseId");
         console.log(courseId);
-        window.location.href = "${APP_PATH}/teacher/searchChapter?courseId=" + courseId+"&pageNum=${pageInfo.pageNum}";
+        window.location.href = "${APP_PATH}/teacher/searchChapter?courseId=" + courseId + "&pageNum=${pageInfo.pageNum}";
     });
     $(".addChapter").on("click", function () {
         let courseId = $(this).attr("courseId");
@@ -247,7 +247,9 @@
                 if (result.code === 100) {
                     layer.msg("查询成功", {time: 1000, icon: 1}, function () {
                     });
-                    window.location.href = "${APP_PATH}/teacher/searchCourse";
+                    window.setTimeout(function () {
+                        window.location.href = "${APP_PATH}/teacher/searchCourse";
+                    }, 1000);
                 }
             },
             error: function () {

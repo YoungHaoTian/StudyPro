@@ -42,11 +42,11 @@
                             <div class="form-group">
                                 <label for="courseId" class="control-label wk-filed-label">所属课程: </label>
                                 <select id="courseId" class="selectpicker" name="courseId">
-                                <option value="0">请选择所属课程</option>
-                                <c:forEach items="${courses}" var="course">
-                                    <option value="${course.id}">${course.name}(${course.college.name})</option>
-                                </c:forEach>
-                            </select>
+                                    <option value="0">请选择所属课程</option>
+                                    <c:forEach items="${courses}" var="course">
+                                        <option value="${course.id}">${course.name}(${course.college.name})</option>
+                                    </c:forEach>
+                                </select>
                             </div>
                         </div>
                         <div class="form-inline">
@@ -54,7 +54,8 @@
                                 <label for="title" class="control-label wk-filed-label">讨论标题: </label>
                                 <div class="input-group">
                                     <textarea required="required" name="title" type="text"
-                                              class="form-control wk-long-2col-input" id="title" placeholder="请输入公告标题"></textarea>
+                                              class="form-control wk-long-2col-input" id="title"
+                                              placeholder="请输入公告标题"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -64,7 +65,7 @@
                                 <label for="content" class="control-label wk-filed-label">讨论内容: </label>
                                 <div class="input-group">
                                     <textarea required="required" id="content" name="content" type="text"
-                                              class="form-control wk-long-2col-input"
+                                              class="form-control wk-long-2col-input" rows="5"
                                               placeholder="请输入公告内容"></textarea>
                                 </div>
                             </div>
@@ -72,10 +73,12 @@
 
                     </div>
                 </div>
-                <div class="panel-footer wk-panel-footer">
-                    <button type="button" class="btn btn-info" onclick="createDiscuss();">提&nbsp;&nbsp;交</button>
-                </div>
+
             </form>
+        </div>
+        <div class="panel-footer wk-panel-footer">
+            <button type="button" class="btn btn-info" onclick="createDiscuss();">提&nbsp;&nbsp;交</button>
+            <button type="button" class="btn btn-info" onclick="$('#discussData')[0].reset()" style="margin-left: 30px">重&nbsp;&nbsp;填</button>
         </div>
     </div>
 </div>
@@ -120,7 +123,7 @@
                 layer.close(loadingIndex);
                 console.log(result);
                 if (result.code === 200) {
-                    layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
+                    layer.msg(result.message, {time: 3000, icon: 5, shift: 6}, function () {
                     });
                 }
                 if (result.code === 100) {

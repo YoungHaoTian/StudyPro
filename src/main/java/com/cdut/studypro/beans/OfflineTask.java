@@ -1,6 +1,12 @@
 package com.cdut.studypro.beans;
 
+import com.cdut.studypro.validates.common.Validate1;
+import com.cdut.studypro.validates.common.Validate2;
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.NotEmpty;
 import java.util.Date;
+import java.util.Objects;
 
 public class OfflineTask {
     private Integer id;
@@ -10,8 +16,19 @@ public class OfflineTask {
     private Integer teacherId;
 
     private Date recordTime;
-
+    @NotEmpty(message = "作业标题不能为空", groups = {Validate1.class})
+    @Length(max = 300, message = "作业标题请控制在300字以内", groups = {Validate2.class})
     private String title;
+
+    private CourseChapter courseChapter;
+
+    public CourseChapter getCourseChapter() {
+        return courseChapter;
+    }
+
+    public void setCourseChapter(CourseChapter courseChapter) {
+        this.courseChapter = courseChapter;
+    }
 
     public Integer getId() {
         return id;
@@ -55,16 +72,28 @@ public class OfflineTask {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
-        sb.append(", chapterId=").append(chapterId);
-        sb.append(", teacherId=").append(teacherId);
-        sb.append(", recordTime=").append(recordTime);
-        sb.append(", title=").append(title);
-        sb.append("]");
-        return sb.toString();
+        return "OfflineTask{" +
+                "id=" + id +
+                ", chapterId=" + chapterId +
+                ", teacherId=" + teacherId +
+                ", recordTime=" + recordTime +
+                ", title='" + title + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OfflineTask that = (OfflineTask) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(chapterId, that.chapterId) &&
+                Objects.equals(teacherId, that.teacherId) &&
+                Objects.equals(title, that.title);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, chapterId, teacherId, title);
     }
 }

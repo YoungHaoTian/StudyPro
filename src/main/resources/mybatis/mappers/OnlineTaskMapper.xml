@@ -19,15 +19,18 @@
         <result column="title" jdbcType="VARCHAR" property="title"/>
         <result column="record_time" jdbcType="TIMESTAMP" property="recordTime"/>
     </resultMap>
-    <resultMap extends="BaseResultMap" id="ResultMapWithCourseAndCollegeAndChapter" type="com.cdut.studypro.beans.OnlineTask">
+    <resultMap extends="BaseResultMap" id="ResultMapWithCourseAndCollegeAndChapter"
+               type="com.cdut.studypro.beans.OnlineTask">
         <association property="courseChapter" column="chapter_id"
                      select="com.cdut.studypro.daos.CourseChapterMapper.selectByPrimaryKeyWithIdTitleAndCourseAndCollege"/>
     </resultMap>
-    <resultMap extends="BaseResultMap" id="ResultMapWithCourseAndTeacherAndChapter" type="com.cdut.studypro.beans.OnlineTask">
+    <resultMap extends="BaseResultMap" id="ResultMapWithCourseAndTeacherAndChapter"
+               type="com.cdut.studypro.beans.OnlineTask">
         <association property="courseChapter" column="chapter_id"
                      select="com.cdut.studypro.daos.CourseChapterMapper.selectByPrimaryKeyWithIdTitleAndCourseAndTeacher"/>
     </resultMap>
-    <resultMap extends="BaseResultMapWithoutTeacher" id="ResultMapWithChapter" type="com.cdut.studypro.beans.OnlineTask">
+    <resultMap extends="BaseResultMapWithoutTeacher" id="ResultMapWithChapter"
+               type="com.cdut.studypro.beans.OnlineTask">
         <association property="courseChapter" column="chapter_id"
                      select="com.cdut.studypro.daos.CourseChapterMapper.selectByPrimaryKeyWithIdTitle"/>
     </resultMap>
@@ -281,7 +284,7 @@
         </if>
     </select>
 
-    <select id="selectByPrimaryKeyWithCourseAndChapter" parameterType="com.cdut.studypro.beans.OnlineTaskExample"
+    <select id="selectByPrimaryKeyWithCourseAndChapter" parameterType="java.lang.Integer"
             resultMap="ResultMapWithCourseAndCollegeAndChapter">
         select
         <include refid="Base_Column_List"/>

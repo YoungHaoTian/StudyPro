@@ -70,31 +70,35 @@
                         <input type="checkbox" id="select_all"/>
                         <label for="select_all" style="margin-bottom: 0px;font-weight: 200">全选</label>
                     </th>
+                    <th style="width:80px">
+                        序号
+                    </th>
                     <th>题目</th>
                     <th>选项A</th>
                     <th>选项B</th>
                     <th>选项C</th>
                     <th>选项D</th>
-                    <th>答案</th>
-                    <th>分值</th>
-                    <th>选择操作</th>
+                    <th style="width: 50px;"><span style="color:green;">答案</span></th>
+                    <th style="width: 50px;"><span style="color:red;">分值</span></th>
+                    <th style="width:150px;">选择操作</th>
                 </tr>
                 </thead>
                 <tbody>
-                <c:forEach items="${pageInfo.list}" var="question">
+                <c:forEach items="${questions}" var="question" varStatus="statu">
                     <tr>
                         <th>
                             <label>
                                 <input questionId="${question.id}" type="checkbox" class="select_item"/>
                             </label>
                         </th>
+                        <td>${statu.index+1}</td>
                         <td>${question.title}</td>
                         <td>${question.itemA}</td>
                         <td>${question.itemB}</td>
                         <td>${question.itemC}</td>
                         <td>${question.itemD}</td>
-                        <td>${question.answer}</td>
-                        <td>${question.score}</td>
+                        <td><span style="color:green;">${question.answer}</span></td>
+                        <td><span style="color:red;">${question.score}</span></td>
                         <td>
                             <button type="button" class="btn btn-info edit"
                                     data-toggle="tooltip" questionId="${question.id}"
@@ -107,121 +111,21 @@
                 </c:forEach>
                 </tbody>
             </table>
-            <div class="panel-footer wk-panel-footer" style="margin-top:50px">
-                <button type="button" class="btn btn-info" onclick="back();">
-                    返&nbsp;&nbsp;回
-                </button>
-            </div>
+        </div>
+        <div class="panel-footer wk-panel-footer" style="margin-bottom: 50px">
+            <button type="button" class="btn btn-info" onclick="back();">
+                返&nbsp;&nbsp;回
+            </button>
         </div>
     </div>
 </div>
-<c:if test="${!empty pageInfo.list}">
-    <!--显示分页信息-->
-    <div class="row">
-        <!--分页文字信息  -->
-        <div class="col-md-6 col-md-offset-2">当前
-            <kbd>${pageInfo.pageNum }</kbd>
-            页，总<kbd>${pageInfo.pages }</kbd>
-            页，总<kbd>${pageInfo.total }</kbd>
-            条记录
-        </div>
-    </div>
-    <!-- 分页条信息 -->
-    <div class="row">
-        <div class="col-md-6 col-md-offset-6">
-            <nav aria-label="Page navigation">
-                <ul class="pagination">
-                    <c:if test="${pageInfo.hasPreviousPage }">
-                        <li>
-                            <c:if test="${page==null}">
-                                <a href="${APP_PATH}/teacher/searchTaskQuestion/${taskId}?pageNum=1&pageNumber=${pageNumber}">首页</a>
-                            </c:if>
-                            <c:if test="${page!=null}">
-                                <a href="${APP_PATH}/teacher/searchTaskQuestion/${taskId}?pageNum=1&page=${page}&courseId=${courseId}&chapterId=${chapterId}">首页</a>
-                            </c:if>
-                        </li>
-                        <li>
-                            <c:if test="${page==null}">
-                                <a href="${APP_PATH}/teacher/searchTaskQuestion/${taskId}?pageNum=${pageInfo.pageNum-1}&pageNumber=${pageNumber}"
-                                   aria-label="Previous"><span aria-hidden="true">&laquo;</span>
-                                </a>
-                            </c:if>
-                            <c:if test="${page!=null}">
-                                <a href="${APP_PATH}/teacher/searchTaskQuestion/${taskId}?pageNum=${pageInfo.pageNum-1}&page=${page}&courseId=${courseId}&chapterId=${chapterId}"
-                                   aria-label="Previous"><span aria-hidden="true">&laquo;</span>
-                                </a>
-                            </c:if>
-                        </li>
-                    </c:if>
-                    <c:if test="${!pageInfo.hasPreviousPage}">
-                        <li><a href="javascript:void(0)" style="pointer-events: none">首页</a></li>
-                        <li><a href="javascript:void(0)" style="pointer-events: none"
-                               aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
-                        </a></li>
-                    </c:if>
-
-                    <c:forEach items="${pageInfo.navigatepageNums }" var="page_Num">
-                        <c:if test="${page_Num == pageInfo.pageNum }">
-                            <li class="active"><a href="javascript:void(0)">${page_Num }</a></li>
-                        </c:if>
-                        <c:if test="${page_Num != pageInfo.pageNum }">
-                            <li>
-                                <c:if test="${page==null}">
-                                    <a href="${APP_PATH }/teacher/searchTaskQuestion/${taskId}?pageNum=${page_Num }&pageNumber=${pageNumber}">${page_Num }</a>
-                                </c:if>
-                                <c:if test="${page!=null}">
-                                    <a href="${APP_PATH }/teacher/searchTaskQuestion/${taskId}?pageNum=${page_Num }&page=${page}&courseId=${courseId}&chapterId=${chapterId}">${page_Num }</a>
-                                </c:if>
-                            </li>
-                        </c:if>
-                    </c:forEach>
-                    <c:if test="${pageInfo.hasNextPage }">
-                        <li>
-                            <c:if test="${page==null}">
-                                <a href="${APP_PATH }/teacher/searchTaskQuestion/${taskId}?pageNum=${pageInfo.pageNum+1 }&pageNumber=${pageNumber}"
-                                   aria-label="Next"> <span aria-hidden="true">&raquo;</span>
-                                </a>
-                            </c:if>
-                            <c:if test="${page!=null}">
-                                <a href="${APP_PATH }/teacher/searchTaskQuestion/${taskId}?pageNum=${pageInfo.pageNum+1 }&page=${page}&courseId=${courseId}&chapterId=${chapterId}"
-                                   aria-label="Next"> <span aria-hidden="true">&raquo;</span>
-                                </a>
-                            </c:if>
-                        </li>
-                        <li>
-                            <c:if test="${page==null}">
-                                <a href="${APP_PATH }/teacher/searchTaskQuestion/${taskId}?pageNum=${pageInfo.pages}&pageNumber=${pageNumber}">末页</a>
-                            </c:if>
-                            <c:if test="${page!=null}">
-                                <a href="${APP_PATH }/teacher/searchTaskQuestion/${taskId}?pageNum=${pageInfo.pages}&page=${page}&courseId=${courseId}&chapterId=${chapterId}">末页</a>
-                            </c:if>
-                        </li>
-                    </c:if>
-                    <c:if test="${!pageInfo.hasNextPage}">
-                        <li><a href="javascript:void(0)" style="pointer-events: none"
-                               aria-label="Next"> <span aria-hidden="true">&raquo;</span>
-                        </a></li>
-                        <li><a href="javascript:void(0)" style="pointer-events: none">末页</a></li>
-                    </c:if>
-                </ul>
-            </nav>
-        </div>
-    </div>
-    <!-- 页面跳转信息 -->
-    <div class="row" style="margin-bottom: 50px">
-        <div class="col-sm-2 col-md-offset-6">
-            <input type="number" class="form-control" id="pageNum" placeholder="跳转到...">
-        </div>
-        <button type="button" class="btn btn-success toPage" style="margin-left: 20px">确定跳转</button>
-    </div>
-</c:if>
 <div class="modal fade" id="questionBatchDeleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title" style="color: red">作题目批量删除</h5>
+                <h5 class="modal-title" style="color: red">题目批量删除</h5>
             </div>
             <div class="modal-body" style="text-align: center">
 
@@ -238,28 +142,6 @@
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
     let ids = "";
-    //页面跳转
-    $(".toPage").on("click", function () {
-        //获取到将要跳转的页面值
-        let pageNum = $("#pageNum").val();
-        let total =${pageInfo.pages };
-        if (pageNum.trim() === "" || total < pageNum || pageNum <= 0) {
-            layer.msg("错误的跳转页码，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
-            });
-            return;
-        }
-        if (pageNum ==${pageInfo.pageNum}) {
-            layer.msg("当前已经是第" + pageNum + "页", {time: 1500, icon: 5, shift: 6}, function () {
-            });
-            return;
-        }
-        if (${page!=null}) {
-            window.location.href = "${APP_PATH }/teacher/searchTaskQuestion/${taskId}?pageNum=" + pageNum + "&page=${page}&courseId=${courseId}&chapterId=${chapterId}";
-        } else {
-            window.location.href = "${APP_PATH}/teacher/searchTaskQuestion/${taskId}?pageNum=" + pageNum + "&pageNumber=${pageNumber}";
-        }
-    });
-
     //批量删除题目
     //全选按钮
     $("#select_all").on("click", (function () {
@@ -276,11 +158,16 @@
     //单选按钮
     $(".select_item").on("click", function () {
         let flag = $(".select_item:checked").length == $(".select_item").length;
+        if (flag) {
+            $("#select_all").parent("th").children("label").text("取消");
+        } else {
+            $("#select_all").parent("th").children("label").text("全选");
+        }
         $("#select_all").prop("checked", flag);
     });
     //点击批量删除按钮
     $(".batchDelete").on("click", function () {
-        ids="";
+        ids = "";
         $.each($(".select_item:checked"), function () {
             //组装课程id字符串
             ids += $(this).attr("questionId") + "-";
@@ -318,8 +205,10 @@
                 if (result.code === 100) {
                     layer.msg("批量删除成功", {time: 1000, icon: 1}, function () {
                     });
+                    window.setTimeout(function () {
+                        window.location.reload();
+                    }, 1000);
                     <%--window.location.href = "${APP_PATH}/teacher/searchTaskQuestion/${taskId}?pageNum=${pageInfo.pageNum}&pageNumber=${pageNumber}";--%>
-                    window.location.reload(true);
                 }
             },
             error: function () {
@@ -340,9 +229,9 @@
     $(".edit").on("click", function () {
         let questionId = $(this).attr("questionId");
         if (${page!=null}) {
-            window.location.href = "${APP_PATH }/teacher/editTaskQuestion/" + questionId + "?pageNum=${pageInfo.pageNum}&page=${page}&courseId=${courseId}&chapterId=${chapterId}";
+            window.location.href = "${APP_PATH }/teacher/editOnlineTaskQuestion/" + questionId + "?page=${page}&courseId=${courseId}&chapterId=${chapterId}";
         } else {
-            window.location.href = "${APP_PATH}/teacher/editTaskQuestion/" + questionId + "?pageNum=${pageInfo.pageNum}&pageNumber=${pageNumber}";
+            window.location.href = "${APP_PATH}/teacher/editOnlineTaskQuestion/" + questionId + "?pageNumber=${pageNumber}";
         }
     });
 </script>

@@ -344,6 +344,11 @@ public class OfflineTaskExample {
             addCriterion("record_time not between", value1, value2, "recordTime");
             return (Criteria) this;
         }
+
+        public OfflineTaskExample.Criteria andTitleLike(String value) {
+            addCriterion("title like", value, "title");
+            return (OfflineTaskExample.Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

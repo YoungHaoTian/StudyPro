@@ -6,6 +6,9 @@
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
     </resultMap>
+    <resultMap id="ResultMapIdNameAndNumber" extends="BriefResultMap" type="com.cdut.studypro.beans.Student">
+        <result column="number" jdbcType="INTEGER" property="number"/>
+    </resultMap>
 
     <resultMap id="BaseResultMap" type="com.cdut.studypro.beans.Student">
         <id column="id" jdbcType="INTEGER" property="id"/>
@@ -121,6 +124,21 @@
             order by ${orderByClause}
         </if>
     </select>
+    <select id="selectByExampleWithIdNameAndNumber" parameterType="com.cdut.studypro.beans.StudentExample"
+            resultMap="ResultMapIdNameAndNumber">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        id,name,number
+        from student
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
     <select id="selectTelephoneByExample" parameterType="com.cdut.studypro.beans.StudentExample"
             resultType="java.lang.String">
         select
@@ -174,6 +192,13 @@
         where id = #{id,jdbcType=INTEGER}
     </select>
 
+    <select id="selectByPrimaryKeyWithIdNameAndNumber" parameterType="java.lang.Integer"
+            resultMap="ResultMapIdNameAndNumber">
+        select
+        id,name,number
+        from student
+        where id = #{id,jdbcType=INTEGER}
+    </select>
     <select id="selectByPrimaryKeyWithIdAndName" parameterType="java.lang.Integer" resultMap="BriefResultMap">
         select
         id,name

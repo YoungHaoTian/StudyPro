@@ -1,24 +1,39 @@
 package com.cdut.studypro.beans;
 
+import com.cdut.studypro.validates.common.*;
+import org.apache.ibatis.annotations.Param;
+import org.hibernate.validator.constraints.Range;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.Objects;
 
 public class OnlineTaskQuestion {
     private Integer id;
 
+    @NotEmpty(message = "题目不能为空", groups = {Validate1.class})
     private String title;
 
+    @NotEmpty(message = "选项A不能为空", groups = {Validate2.class})
     private String itemA;
 
+    @NotEmpty(message = "选项B不能为空", groups = {Validate3.class})
     private String itemB;
 
+    @NotEmpty(message = "选项C不能为空", groups = {Validate4.class})
     private String itemC;
 
+    @NotEmpty(message = "选项D不能为空", groups = {Validate5.class})
     private String itemD;
 
+    @NotEmpty(message = "请录入答案", groups = {Validate6.class})
+    @Pattern(regexp = "[A-D]",message = "请录入合法的答案",groups = {Validate7.class})
     private String answer;
 
     private Integer onlineTaskId;
-
+    @NotNull(message = "请录入分值", groups = {Validate8.class})
+    @Range(min = 1, max = 10, message = "分值范围是1-10", groups = {Validate9.class})
     private Integer score;
 
     public Integer getId() {

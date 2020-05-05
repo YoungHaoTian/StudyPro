@@ -251,6 +251,11 @@
             });
             return;
         }
+        if (pageNum ==${pageInfo.pageNum}) {
+            layer.msg("当前已经是第" + pageNum + "页", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
         window.location.href = "${APP_PATH}/admin/searchDiscuss?pageNum=" + pageNum;
     });
     //查询按钮
@@ -278,7 +283,10 @@
                 if (result.code === 100) {
                     layer.msg("查询成功", {time: 1000, icon: 1}, function () {
                     });
-                    window.location.href = "${APP_PATH}/admin/searchDiscuss";
+                    window.setTimeout(function () {
+                        window.location.href = "${APP_PATH}/admin/searchDiscuss";
+                    }, 1000);
+
                 }
             },
             error: function () {
@@ -344,7 +352,10 @@
                 if (result.code === 100) {
                     layer.msg("批量删除成功", {time: 1000, icon: 1}, function () {
                     });
-                    window.location.href = "${APP_PATH}/admin/searchDiscuss?&pageNum= ${pageInfo.pageNum}";
+                    window.setTimeout(function () {
+                        window.location.reload();
+                    }, 1000);
+                    <%--window.location.href = "${APP_PATH}/admin/searchDiscuss?&pageNum= ${pageInfo.pageNum}";--%>
                 }
             },
             error: function () {

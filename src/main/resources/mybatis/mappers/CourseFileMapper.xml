@@ -9,7 +9,7 @@
     </resultMap>
     <resultMap extends="BaseResultMap" id="ResultMapWithChapter" type="com.cdut.studypro.beans.CourseFile">
         <association property="courseChapter" column="chapter_id"
-                     select="com.cdut.studypro.daos.CourseChapterMapper.selectByPrimaryKeyWithIdTitleAndCourse"/>
+                     select="com.cdut.studypro.daos.CourseChapterMapper.selectByPrimaryKeyWithIdTitleAndCourseAndCollege"/>
     </resultMap>
     <sql id="Example_Where_Clause">
         <where>
@@ -74,6 +74,21 @@
     <sql id="Base_Column_List">
     id, path, chapter_id, record_time
   </sql>
+    <select id="selectByExample" parameterType="com.cdut.studypro.beans.CourseFileExample"
+            resultMap="BaseResultMap">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from course_file
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
     <select id="selectPathByExample" parameterType="com.cdut.studypro.beans.CourseFileExample" resultType="java.lang.String">
         select
         <if test="distinct">
@@ -88,8 +103,6 @@
             order by ${orderByClause}
         </if>
     </select>
-
-
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>

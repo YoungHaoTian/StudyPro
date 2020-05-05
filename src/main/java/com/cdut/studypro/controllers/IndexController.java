@@ -52,6 +52,11 @@ public class IndexController {
         return "welcome";
     }
 
+    /*@RequestMapping("/error")
+    public String error() {
+        return "error";
+    }*/
+
     @ResponseBody
     @RequestMapping(value = "/code", method = RequestMethod.POST)
     public RequestResult code(@RequestBody Map<String, String> map, HttpSession session) {

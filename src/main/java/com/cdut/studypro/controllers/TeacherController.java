@@ -1,15 +1,19 @@
 package com.cdut.studypro.controllers;
 
 import com.cdut.studypro.beans.*;
+import com.cdut.studypro.exceptions.DownloadException;
 import com.cdut.studypro.exceptions.MaxUploadSizeExceedException;
 import com.cdut.studypro.services.TeacherService;
+import com.cdut.studypro.utils.FileUtil;
 import com.cdut.studypro.utils.MD5Util;
 import com.cdut.studypro.utils.POIUtil;
 import com.cdut.studypro.utils.RequestResult;
+import com.cdut.studypro.validates.*;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -25,12 +29,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
@@ -54,21 +61,35 @@ public class TeacherController {
     @Autowired
     private TeacherService teacherService;
 
-    //异常处理
+    //运行时异常处理
     @ExceptionHandler(RuntimeException.class)
     public String handRuntimeException(RuntimeException e, HttpServletRequest request) {
         request.setAttribute("exception", e);
         return "error";
     }
 
-    //异常处理
+    //操作文件时异常处理
+    @ExceptionHandler(IOException.class)
+    public String handIOException(IOException e, HttpServletRequest request) {
+        request.setAttribute("exception", e);
+        return "error";
+    }
+
+    //下载时异常处理
+    @ExceptionHandler(DownloadException.class)
+    public String handDownloadException(DownloadException e, HttpServletRequest request) {
+        request.setAttribute("exception", e);
+        return "error";
+    }
+
+    //文件上传超过最大容量异常处理
     @ResponseBody
     @ExceptionHandler(MaxUploadSizeExceedException.class)
     public RequestResult handMaxUploadSizeExceedException(MaxUploadSizeExceedException e) {
         return RequestResult.failure(e.getMessage());
     }
 
-    //异常处理
+    //类型转换异常处理
     @ExceptionHandler(ParseException.class)
     public String handParseException(ParseException e, HttpServletRequest request) {
         request.setAttribute("exception", e);
@@ -78,23 +99,24 @@ public class TeacherController {
     @ResponseBody
     @PostMapping(value = "/login")
     public RequestResult login(@RequestBody Map<String, String> map, HttpSession session) {
-        System.out.println(map);
         TeacherExample teacherExample = new TeacherExample();
         TeacherExample.Criteria criteria = teacherExample.createCriteria();
-        String message = "";
+        String message = null;
         if ("phone".equals(map.get("type"))) {
             criteria.andTelephoneEqualTo(map.get("username"));
-            message = "手机号不存在，请稍后重试";
+            message = "手机号不存在，请重新输入";
         } else if ("email".equals(map.get("type"))) {
             criteria.andEmailEqualTo(map.get("username"));
-            message = "邮箱不存在，请稍后重试";
+            message = "邮箱不存在，请重新输入";
         } else if ("account".equals(map.get("type"))) {
             criteria.andAccountEqualTo(map.get("username"));
-            message = "帐号不存在，请稍后重试";
+            message = "帐号不存在，请重新输入";
         }
-//        criteria.andPasswordEqualTo(map.get("password"));
+        if (message == null) {
+            return RequestResult.failure("登录失败，请稍后重试");
+        }
         List<Teacher> teachers = teacherService.selectTeacherByExample(teacherExample);
-        if (teachers != null && teachers.size() != 0) {
+        if (teachers != null && teachers.size() > 0) {
             if (teachers.size() != 1) {
                 return RequestResult.failure("登录异常，请选择其他方式登录");
             }
@@ -114,13 +136,12 @@ public class TeacherController {
 
     @ResponseBody
     @PostMapping(value = "/findPassword")
-    public RequestResult findPassword(@RequestBody Map<String, String> map, HttpServletRequest request) {
+    public RequestResult findPassword(@RequestBody Map<String, String> map, HttpSession session) {
         String code = map.get("code");
         String phone = map.get("phone");
         String password = map.get("password");
-
         //1、先验证验证码是否正确
-        JSONObject json = (JSONObject) request.getSession().getAttribute("ForgetCode");
+        JSONObject json = (JSONObject) session.getAttribute("ForgetCode");
         if (json == null) {
             return RequestResult.failure("密码找回失败，还未获取验证码");
         }
@@ -129,15 +150,13 @@ public class TeacherController {
         }
         if ((System.currentTimeMillis() - json.getLong("createTime")) > 1000 * 60 * 5) {
             //删除session中的验证码
-            request.getSession().removeAttribute("ForgetCode");
+            session.removeAttribute("ForgetCode");
             return RequestResult.failure("验证码已过期，请重新获取");
         }
         //2、查询该手机号是否存在
         Integer id = teacherService.getIdByTelephone(phone);
         //不存在
         if (id == null) {
-            //删除session中的验证码
-            request.getSession().removeAttribute("ForgetCode");
             return RequestResult.failure("该手机号不存在，请稍后再试");
         }
         //存在，修老师密码
@@ -146,12 +165,10 @@ public class TeacherController {
         teacher.setPassword(password);
         boolean b = teacherService.updateTeacherByPrimaryKeySelective(teacher);
         if (!b) {
-            //删除session中的验证码
-            request.getSession().removeAttribute("ForgetCode");
             return RequestResult.failure("密码找回失败，请稍后再试");
         }
         //删除session中的验证码
-        request.getSession().removeAttribute("ForgetCode");
+        session.removeAttribute("ForgetCode");
         return RequestResult.success();
     }
 
@@ -162,9 +179,8 @@ public class TeacherController {
 
     @RequestMapping("/createCourseVideo")
     public String createCourseVideo(Map<String, Object> map, HttpSession session) {
-        /*Teacher teacher = (Teacher) session.getAttribute("user");
-        map.put("courses", teacherService.getAllCoursesWithChapter(teacher.getId()));*/
-        map.put("courses", teacherService.getAllCoursesWithChapterAndCollegeByTeacherId(15));
+        Teacher teacher = (Teacher) session.getAttribute("user");
+        map.put("courses", teacherService.getAllCoursesWithChapterAndCollegeByTeacherId(teacher.getId()));
         return "teacher/createCourseVideo";
     }
 
@@ -172,20 +188,19 @@ public class TeacherController {
     @PostMapping("/saveCourseVideo")
     public RequestResult saveCourseVideo(@RequestParam(value = "file") MultipartFile file, @RequestParam("chapterId") Integer chapterId, @RequestParam("courseId") Integer courseId, HttpServletRequest request) {
         long size = file.getSize();
-        System.out.println(size);
+        if (courseId == 0 || chapterId == 0) {
+            return RequestResult.failure("你还没有选择视频所属课程及章节");
+        }
         if (size > VIDEO_MAX_SIZE * 1024 * 1024) {
             throw new MaxUploadSizeExceedException("视频上传最大大小为：", VIDEO_MAX_SIZE);
         }
-//        Teacher teacher = (Teacher)request.getSession().getAttribute("user");
         String path = request.getServletContext().getRealPath("/video/");
         //System.out.println(request.getServletPath());//请求路径
         //System.out.println(request.getContextPath());//项目路径
         //视频存放路径：/video/课程id/章节id/上传时间_fileName
         String fileDir = courseId + "\\" + chapterId + "\\";
         path += fileDir;
-        System.out.println(path);
         File file1 = new File(path);
-        System.out.println(file1.exists());
         Date date = new Date();
         String fileName = date.getTime() + "_" + file.getOriginalFilename();
         if (!file1.exists()) {//文件夹不存在，先创建出对应的文件夹
@@ -200,7 +215,6 @@ public class TeacherController {
             e.printStackTrace();
             return RequestResult.failure("视频上传失败，请稍后再试");
         }
-
         CourseVideo courseVideo = new CourseVideo();
         courseVideo.setChapterId(chapterId);
         courseVideo.setPath(fileDir + fileName);
@@ -214,13 +228,11 @@ public class TeacherController {
 
     @RequestMapping("/searchCourseVideo")
     public String searchCourseVideo(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum, Map<String, Object> map) {
-        /*Teacher teacher = (Teacher) session.getAttribute("user");
-        map.put("videos",teacherService.searchCourseVideo(teacher.getId()));*/
-
+        Teacher teacher = (Teacher) session.getAttribute("user");
         CourseVideoExample courseVideoExample = (CourseVideoExample) session.getAttribute("courseVideoExample");
         if (courseVideoExample == null) {
             courseVideoExample = new CourseVideoExample();
-            List<Integer> ids = teacherService.getCourseIdsByTeacherId(15);
+            List<Integer> ids = teacherService.getCourseIdsByTeacherId(teacher.getId());
             if (ids.size() == 0) {
                 ids.add(0);
             }
@@ -236,7 +248,7 @@ public class TeacherController {
             criteria.andIdIn(ids);
             courseVideoExample.setOrderByClause("record_time desc");
         }
-        PageHelper.startPage(pageNum, 10);
+        PageHelper.startPage(pageNum, 20);
         List<CourseVideo> videos = teacherService.searchCourseVideoByExampleWithCourseChapter(courseVideoExample);
         for (CourseVideo video : videos) {
             String path = video.getPath();
@@ -245,8 +257,7 @@ public class TeacherController {
         }
         PageInfo<CourseVideo> page = new PageInfo(videos, 10);
         map.put("pageInfo", page);
-        map.put("colleges", teacherService.getAllColleges());
-//        map.put("videos",videos);
+        map.put("colleges", teacherService.getAllCollegesByTeacherId(teacher.getId()));
         return "teacher/searchCourseVideo";
     }
 
@@ -290,6 +301,10 @@ public class TeacherController {
         if (videos == null || videos.size() == 0 || videos.size() != videoIds.size()) {
             return RequestResult.failure("批量删除失败，请稍后再试");
         }
+        videoIds.clear();
+        for (CourseVideo video : videos) {
+            videoIds.add(video.getId());
+        }
         boolean success = teacherService.deleteCourseVideoByIdBatch(videoIds);
         if (!success) {
             return RequestResult.failure("批量删除失败，请稍后再试");
@@ -322,7 +337,7 @@ public class TeacherController {
             if (!"".equals(name.trim())) {
                 CourseExample courseExample = new CourseExample();
                 CourseExample.Criteria courseExampleCriteria = courseExample.createCriteria();
-                courseExampleCriteria.andNameLike("%" + name.trim() + "%").andTeacherIdEqualTo(15);
+                courseExampleCriteria.andNameLike("%" + name.trim() + "%").andTeacherIdEqualTo(teacher.getId());
                 List<Integer> ids = teacherService.getCourseIdsByExample(courseExample);
                 if (ids.size() == 0) {
                     ids.add(0);
@@ -340,7 +355,7 @@ public class TeacherController {
             if (collegeId != 0) {
                 CourseExample courseExample = new CourseExample();
                 CourseExample.Criteria courseExampleCriteria = courseExample.createCriteria();
-                courseExampleCriteria.andCollegeIdEqualTo(collegeId).andTeacherIdEqualTo(15);
+                courseExampleCriteria.andCollegeIdEqualTo(collegeId).andTeacherIdEqualTo(teacher.getId());
                 List<Integer> ids = teacherService.getCourseIdsByExample(courseExample);
                 if (ids.size() == 0) {
                     ids.add(0);
@@ -374,25 +389,6 @@ public class TeacherController {
         return RequestResult.success();
     }
 
-    @RequestMapping("/editCourseVideo/{id}")
-    public String editCourseVideo(@PathVariable("id") Integer id,
-                                  Map<String, Object> map,
-                                  @RequestParam("pageNum") Integer pageNum,
-                                  @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
-                                  @RequestParam(value = "chapterId", required = false) Integer chapterId,
-                                  @RequestParam(value = "minTime", defaultValue = "") String minTime,
-                                  @RequestParam(value = "maxTime", defaultValue = "") String maxTime,
-                                  @RequestParam(value = "courseId", required = false) Integer courseId) {
-        map.put("courseVideoId", id);
-        map.put("pageNum", pageNum);
-        map.put("pageNumber", pageNumber);
-        map.put("chapterId", chapterId);
-        map.put("minTime", minTime);
-        map.put("maxTime", maxTime);
-        map.put("courseId", courseId);
-        return "teacher/editCourseVideo";
-    }
-
     @ResponseBody
     @PostMapping("/updateCourseVideo")
     public RequestResult updateCourseVideo(@RequestParam(value = "file") MultipartFile file, @RequestParam("courseVideoId") Integer courseVideoId, HttpServletRequest request) {
@@ -408,11 +404,13 @@ public class TeacherController {
             return RequestResult.failure("视频更新失败，请稍后再试");
         }
         String basePath = request.getServletContext().getRealPath("/video/");
+        File baseFile = new File(basePath);
+        if (!baseFile.exists()) {
+            return RequestResult.failure("视频更新失败，请稍后再试");
+        }
         String dirPath = video.getPath().substring(0, video.getPath().lastIndexOf("\\") + 1);
-        String fileName = video.getPath().substring(video.getPath().lastIndexOf("\\") + 1);
-        System.out.println(basePath + dirPath + fileName);
         //删除原来的文件
-        File oldFile = new File(basePath + video.getPath());
+        File oldFile = new File(baseFile, video.getPath());
         if (oldFile.exists()) {
             boolean delete = oldFile.delete();
             if (!delete) {
@@ -420,11 +418,10 @@ public class TeacherController {
             }
         }
         Date date = new Date();
-        fileName = date.getTime() + "_" + file.getOriginalFilename();
-        System.out.println(basePath + dirPath + fileName);
+        String fileName = date.getTime() + "_" + file.getOriginalFilename();
         //写入新的文件
         try {
-            file.transferTo(new File(basePath + dirPath + fileName));
+            file.transferTo(new File(baseFile, dirPath + fileName));
         } catch (IOException e) {
             e.printStackTrace();
             return RequestResult.failure("视频更新失败，请稍后再试");
@@ -432,6 +429,7 @@ public class TeacherController {
         //修改文件信息
         video.setPath(dirPath + fileName);
         video.setRecordTime(date);
+        video.setRecordTime(null);
         video.setChapterId(null);
         boolean success = teacherService.updateCourseVideoByPrimaryKeySelective(video);
         if (!success) {
@@ -450,19 +448,17 @@ public class TeacherController {
 
     @RequestMapping("/createCourseFile")
     public String createCourseFile(Map<String, Object> map, HttpSession session) {
-        /*Teacher teacher = (Teacher) session.getAttribute("user");
-        map.put("courses", teacherService.getAllCoursesWithChapter(teacher.getId()));*/
-        map.put("courses", teacherService.getAllCoursesWithChapterAndCollegeByTeacherId(15));
+        Teacher teacher = (Teacher) session.getAttribute("user");
+        map.put("courses", teacherService.getAllCoursesWithChapterAndCollegeByTeacherId(teacher.getId()));
         return "teacher/createCourseFile";
     }
 
     @ResponseBody
     @PostMapping("/saveCourseFile")
     public RequestResult saveCourseFile(@RequestParam(value = "file") MultipartFile file, @RequestParam("chapterId") Integer chapterId, @RequestParam("courseId") Integer courseId, HttpServletRequest request) {
-        System.out.println(file.getOriginalFilename());
-        System.out.println(chapterId);
-//        Teacher teacher = (Teacher)request.getSession().getAttribute("user");
-
+        if (courseId == 0 || chapterId == 0) {
+            return RequestResult.failure("你还没有选择文档所属课程及章节");
+        }
         String path = request.getServletContext().getRealPath("/file/");
         //文档存放路径：//课程id/章节id/上传时间_fileName
         String fileDir = courseId + "\\" + chapterId + "\\";
@@ -482,7 +478,6 @@ public class TeacherController {
             e.printStackTrace();
             return RequestResult.failure("文档上传失败，请稍后再试");
         }
-
         CourseFile courseFile = new CourseFile();
         courseFile.setChapterId(chapterId);
         courseFile.setPath(fileDir + fileName);
@@ -496,12 +491,11 @@ public class TeacherController {
 
     @RequestMapping("/searchCourseFile")
     public String searchCourseFile(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum, Map<String, Object> map) {
-        /*Teacher teacher = (Teacher) session.getAttribute("user");
-        map.put("videos",teacherService.searchCourseVideo(teacher.getId()));*/
+        Teacher teacher = (Teacher) session.getAttribute("user");
         CourseFileExample courseFileExample = (CourseFileExample) session.getAttribute("courseFileExample");
         if (courseFileExample == null) {
             courseFileExample = new CourseFileExample();
-            List<Integer> ids = teacherService.getCourseIdsByTeacherId(15);
+            List<Integer> ids = teacherService.getCourseIdsByTeacherId(teacher.getId());
             if (ids.size() == 0) {
                 ids.add(0);
             }
@@ -517,7 +511,7 @@ public class TeacherController {
             criteria.andIdIn(ids);
             courseFileExample.setOrderByClause("record_time desc");
         }
-        PageHelper.startPage(pageNum, 10);
+        PageHelper.startPage(pageNum, 20);
         List<CourseFile> files = teacherService.searchCourseFileByExampleWithCourseChapter(courseFileExample);
         for (CourseFile file : files) {
             String path = file.getPath();
@@ -526,7 +520,7 @@ public class TeacherController {
         }
         PageInfo<CourseFile> page = new PageInfo(files, 10);
         map.put("pageInfo", page);
-        map.put("colleges", teacherService.getAllColleges());
+        map.put("colleges", teacherService.getAllCollegesByTeacherId(teacher.getId()));
         return "teacher/searchCourseFile";
     }
 
@@ -569,6 +563,10 @@ public class TeacherController {
         if (files == null || files.size() == 0 || files.size() != fileIds.size()) {
             return RequestResult.failure("批量删除失败，请稍后再试");
         }
+        fileIds.clear();
+        for (CourseFile file : files) {
+            fileIds.add(file.getId());
+        }
         boolean success = teacherService.deleteCourseFileByIdBatch(fileIds);
         if (!success) {
             return RequestResult.failure("批量删除失败，请稍后再试");
@@ -600,7 +598,7 @@ public class TeacherController {
             if (!"".equals(name.trim())) {
                 CourseExample courseExample = new CourseExample();
                 CourseExample.Criteria courseExampleCriteria = courseExample.createCriteria();
-                courseExampleCriteria.andNameLike("%" + name.trim() + "%").andTeacherIdEqualTo(15);
+                courseExampleCriteria.andNameLike("%" + name.trim() + "%").andTeacherIdEqualTo(teacher.getId());
                 List<Integer> ids = teacherService.getCourseIdsByExample(courseExample);
                 if (ids.size() == 0) {
                     ids.add(0);
@@ -618,7 +616,7 @@ public class TeacherController {
             if (collegeId != 0) {
                 CourseExample courseExample = new CourseExample();
                 CourseExample.Criteria courseExampleCriteria = courseExample.createCriteria();
-                courseExampleCriteria.andCollegeIdEqualTo(collegeId).andTeacherIdEqualTo(15);
+                courseExampleCriteria.andCollegeIdEqualTo(collegeId).andTeacherIdEqualTo(teacher.getId());
                 List<Integer> ids = teacherService.getCourseIdsByExample(courseExample);
                 if (ids.size() == 0) {
                     ids.add(0);
@@ -652,25 +650,6 @@ public class TeacherController {
         return RequestResult.success();
     }
 
-    @RequestMapping("/editCourseFile/{id}")
-    public String editCourseFile(@PathVariable("id") Integer id,
-                                 Map<String, Object> map,
-                                 @RequestParam("pageNum") Integer pageNum,
-                                 @RequestParam(value = "chapterId", required = false) Integer chapterId,
-                                 @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
-                                 @RequestParam(value = "minTime", defaultValue = "") String minTime,
-                                 @RequestParam(value = "maxTime", defaultValue = "") String maxTime,
-                                 @RequestParam(value = "courseId", required = false) Integer courseId) {
-        map.put("courseFileId", id);
-        map.put("pageNum", pageNum);
-        map.put("pageNumber", pageNumber);
-        map.put("chapterId", chapterId);
-        map.put("minTime", minTime);
-        map.put("maxTime", maxTime);
-        map.put("courseId", courseId);
-        return "teacher/editCourseFile";
-    }
-
     @ResponseBody
     @PostMapping("/updateCourseFile")
     public RequestResult updateCourseFile(@RequestParam(value = "file") MultipartFile file, @RequestParam("courseFileId") Integer courseFileId, HttpServletRequest request) {
@@ -682,23 +661,24 @@ public class TeacherController {
             return RequestResult.failure("文档更新失败，请稍后再试");
         }
         String basePath = request.getServletContext().getRealPath("/file/");
-        String dirPath = courseFile.getPath().substring(0, courseFile.getPath().lastIndexOf("\\") + 1);
-        String fileName = courseFile.getPath().substring(courseFile.getPath().lastIndexOf("\\") + 1);
-        System.out.println(basePath + dirPath + fileName);
-        //删除原来的文件
-        File oldFile = new File(basePath + courseFile.getPath());
-        if (!oldFile.exists()) {
+        File baseFile = new File(basePath);
+        if (!baseFile.exists()) {
             return RequestResult.failure("文档更新失败，请稍后再试");
         }
-        boolean delete = oldFile.delete();
-        if (!delete) {
-            return RequestResult.failure("文档更新失败，请稍后再试");
+        String dirPath = courseFile.getPath().substring(0, courseFile.getPath().lastIndexOf("\\") + 1);
+        //删除原来的文件
+        File oldFile = new File(baseFile, courseFile.getPath());
+        if (oldFile.exists()) {
+            boolean delete = oldFile.delete();
+            if (!delete) {
+                return RequestResult.failure("文档更新失败，请稍后再试");
+            }
         }
         Date date = new Date();
-        fileName = date.getTime() + "_" + file.getOriginalFilename();
-        System.out.println(basePath + dirPath + fileName);
+        String fileName = date.getTime() + "_" + file.getOriginalFilename();
+        //写入新的文件
         try {
-            file.transferTo(new File(basePath + dirPath + fileName));
+            file.transferTo(new File(baseFile, dirPath + fileName));
         } catch (IOException e) {
             e.printStackTrace();
             return RequestResult.failure("文档更新失败，请稍后再试");
@@ -713,38 +693,42 @@ public class TeacherController {
         return RequestResult.success();
     }
 
-    @ExceptionHandler(IOException.class)
-    public String IOExceptionHandler(IOException e, Map<String, Object> map) {
-        map.put("exception", e);
-        return "error";
-    }
 
     @RequestMapping("/downloadCourseFile/{id}")
-    public ResponseEntity<byte[]> downloadCourseFile(@PathVariable("id") Integer id, HttpServletRequest request) throws IOException {
+    public ResponseEntity<byte[]> downloadCourseFile(@PathVariable("id") Integer id, HttpServletRequest request) {
         String path = request.getServletContext().getRealPath("/file/");
         CourseFile courseFile = teacherService.getCourseFileById(id);
         String fileName = courseFile.getPath().substring(courseFile.getPath().indexOf("_") + 1);
         File file = new File(path + courseFile.getPath());
         // 设置响应头通知浏览器下载
         HttpHeaders headers = new HttpHeaders();
-        // 转码，避免文件名显示不出中文
-        fileName = URLEncoder.encode(fileName, "UTF-8");
-        headers.setContentDispositionFormData("attachment", fileName);
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.OK);
+        try {
+            // 转码，避免文件名显示不出中文
+            fileName = URLEncoder.encode(fileName, "UTF-8");
+            headers.setContentDispositionFormData("attachment", fileName);
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.OK);
+        } catch (IOException e) {
+            throw new DownloadException("下载异常，请稍后再试");
+        }
     }
 
     @RequestMapping("/createDiscuss")
     public String createDiscuss(Map<String, Object> map, HttpSession session) {
-		/*Teacher teacher = (Teacher) session.getAttribute("user");
-        map.put("courses", teacherService.getAllCoursesWithCollegeByTeacherId(teacher.getId()));*/
-        map.put("courses", teacherService.getAllCoursesWithCollegeByTeacherId(15));
+        Teacher teacher = (Teacher) session.getAttribute("user");
+        map.put("courses", teacherService.getAllCoursesWithCollegeByTeacherId(teacher.getId()));
         return "teacher/createDiscuss";
     }
 
     @ResponseBody
     @PostMapping("/saveDiscuss")
-    public RequestResult saveDiscuss(Discuss discuss) {
+    public RequestResult saveDiscuss(@Validated({DiscussSequence.class}) Discuss discuss, BindingResult result) {
+        if (result.getErrorCount() > 0) {
+            return RequestResult.failure(result.getFieldErrors().get(0).getDefaultMessage());
+        }
+        if (discuss.getCourseId() == 0) {
+            return RequestResult.failure("请选择所属课程");
+        }
         discuss.setRecordTime(new Date());
         boolean success = teacherService.saveDiscuss(discuss);
         if (!success) {
@@ -760,14 +744,14 @@ public class TeacherController {
         if (discussExample == null) {
             discussExample = new DiscussExample();
             DiscussExample.Criteria criteria = discussExample.createCriteria();
-            List<Integer> ids = teacherService.getCourseIdsByTeacherId(15);
+            List<Integer> ids = teacherService.getCourseIdsByTeacherId(teacher.getId());
             if (ids.size() == 0) {
                 ids.add(0);
             }
             criteria.andCourseIdIn(ids);
             discussExample.setOrderByClause("record_time desc");
         }
-        PageHelper.startPage(pageNum, 10);
+        PageHelper.startPage(pageNum, 15);
         List<Discuss> discusses = teacherService.getAllDiscussWithBLOBsAndCourseByExample(discussExample);
         PageInfo<Discuss> page = new PageInfo(discusses, 10);
         map.put("pageInfo", page);
@@ -778,8 +762,8 @@ public class TeacherController {
     @ResponseBody
     @PostMapping("/searchDiscussByTerm")
     public RequestResult searchDiscussByTerm(@RequestParam("courseId") Integer courseId, @RequestParam("minTime") String minTime, @RequestParam("maxTime") String maxTime, @RequestParam("title") String title, HttpSession session) {
-
         try {
+            Teacher teacher = (Teacher) session.getAttribute("user");
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
             //将查询条件存放进session中，以回显查询条件
             Map<String, Object> map = new HashMap<>();
@@ -797,7 +781,7 @@ public class TeacherController {
                 map.put("courseId", courseId);
                 criteria.andCourseIdEqualTo(courseId);
             }
-            List<Integer> ids = teacherService.getCourseIdsByTeacherId(15);
+            List<Integer> ids = teacherService.getCourseIdsByTeacherId(teacher.getId());
             if (ids.size() == 0) {
                 ids.add(0);
             }
@@ -832,12 +816,10 @@ public class TeacherController {
         for (String s : ids) {
             discussIds.add(Integer.parseInt(s));
         }
-        //删除讨论的同时删除对应的讨论内容
         boolean b = teacherService.deleteDiscussByIdBatch(discussIds);
         if (!b) {
             return RequestResult.failure("批量删除失败，请稍后再试");
         }
-        boolean s = teacherService.deleteDiscussPostByDiscussIds(discussIds);
         return RequestResult.success();
     }
 
@@ -846,21 +828,20 @@ public class TeacherController {
         Teacher teacher = (Teacher) session.getAttribute("user");
         map.put("discuss", teacherService.getDiscussById(id));
         map.put("pageNumber", pageNumber);
-        map.put("courses", teacherService.getAllCoursesWithCollegeByTeacherId(15));
+        map.put("courses", teacherService.getAllCoursesWithCollegeByTeacherId(teacher.getId()));
         return "teacher/updateDiscuss";
     }
 
     @ResponseBody
     @PostMapping("/updateDiscuss/{id}")
-    public RequestResult updateDiscuss(@PathVariable("id") Integer id, Discuss discuss) {
-        if (id == null || discuss == null) {
-            return RequestResult.failure("讨论更新失败，请稍后再试");
+    public RequestResult updateDiscuss(@PathVariable("id") Integer id, @Validated({DiscussSequence.class}) Discuss discuss, BindingResult result) {
+        if (result.getErrorCount() > 0) {
+            return RequestResult.failure(result.getFieldErrors().get(0).getDefaultMessage());
         }
         Discuss discuss1 = teacherService.getDiscussById(id);
         if (discuss1 == null) {
             return RequestResult.failure("讨论更新失败，请稍后再试");
         }
-        discuss.setId(id);
         if (discuss1.equals(discuss)) {
             return RequestResult.failure("未修改任何数据");
         }
@@ -882,20 +863,12 @@ public class TeacherController {
 
     @RequestMapping("/searchDiscussReply/{id}")
     public String searchDiscussReply(@PathVariable("id") Integer id, Map<String, Object> map, @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum, @RequestParam("pageNumber") Integer pageNumber, HttpSession session) {
-
         Map<String, Object> map1 = (Map<String, Object>) session.getAttribute("discussPostQueryCriteria");
         if (map1 == null) {
             map1 = new HashMap<>();
-            map1.put("id", id);
-
-        }/* else {
-            map.put("name", map1.get("name"));
-            map.put("minTime", map1.get("minTime"));
-            map.put("maxTime", map1.get("maxTime"));
-            map.put("content", map1.get("content"));
-            session.removeAttribute("discussPostQueryCriteria");
-        }*/
-        PageHelper.startPage(pageNum, 10);
+        }
+        map1.put("id", id);
+        PageHelper.startPage(pageNum, 30);
         List<DiscussPost> discussPosts = teacherService.getAllDiscussPostByMapWithStudentName(map1);
         PageInfo<DiscussPost> page = new PageInfo(discussPosts, 10);
         map.put("pageInfo", page);
@@ -931,7 +904,6 @@ public class TeacherController {
             if (!"".equals(content.trim())) {
                 map.put("content", content);
             }
-            map.put("id", id);
             session.setAttribute("discussPostQueryCriteria", map);
         } catch (Exception e) {
             return RequestResult.failure("查询失败，请稍后再试");
@@ -967,7 +939,7 @@ public class TeacherController {
         if (content == null) {
             return RequestResult.failure("新增回复失败，请稍后再试");
         }
-        if ("".equals(content)) {
+        if ("".equals(content.trim())) {
             return RequestResult.failure("回复内容为空，请重新输入");
         }
         DiscussPost discussPost = new DiscussPost();
@@ -982,32 +954,46 @@ public class TeacherController {
         return RequestResult.success();
     }
 
-    @RequestMapping("/createDiscussReply/{id}")
-    public String createReply(@PathVariable("id") Integer id, @RequestParam("pageNumber") Integer pageNumber, @RequestParam("pageNum") Integer pageNum, Map<String, Object> map) {
-        map.put("id", id);
-        map.put("pageNumber", pageNumber);
-        map.put("pageNum", pageNum);
-        return "teacher/createDiscussReply";
-    }
-
-
     @RequestMapping("/createTask")
-    public String createTask(Map<String, Object> map) {
-        map.put("courses", teacherService.getAllCoursesWithChapterAndCollegeByTeacherId(15));
+    public String createTask(Map<String, Object> map, @RequestParam("type") String type, HttpSession session) {
+        Teacher teacher = (Teacher) session.getAttribute("user");
+        map.put("courses", teacherService.getAllCoursesWithChapterAndCollegeByTeacherId(teacher.getId()));
+        map.put("type", type);
         return "teacher/createTask";
     }
 
     @ResponseBody
-    @PostMapping("/saveTask")
-    public RequestResult saveTask(OnlineTask task, HttpSession session) {
+    @PostMapping("/saveOnlineTask")
+    public RequestResult saveOnlineTask(@Validated({OnlineTaskSequence.class}) OnlineTask task, BindingResult result, HttpSession session) {
+        if (result.getErrorCount() > 0) {
+            return RequestResult.failure(result.getFieldErrors().get(0).getDefaultMessage());
+        }
         Teacher teacher = (Teacher) session.getAttribute("user");
         if (task == null) {
             return RequestResult.failure("添加作业失败，请稍后再试");
         }
         task.setRecordTime(new Date());
-//        task.setTeacherId(teacher.getId());
-        task.setTeacherId(15);
-        boolean success = teacherService.saveTask(task);
+        task.setTeacherId(teacher.getId());
+        boolean success = teacherService.saveOnlineTask(task);
+        if (!success) {
+            return RequestResult.failure("添加作业失败，请稍后再试");
+        }
+        return RequestResult.success();
+    }
+
+    @ResponseBody
+    @PostMapping("/saveOfflineTask")
+    public RequestResult saveOfflineTask(@Validated({OfflineTaskSequence.class}) OfflineTask task, BindingResult result, HttpSession session) {
+        if (result.getErrorCount() > 0) {
+            return RequestResult.failure(result.getFieldErrors().get(0).getDefaultMessage());
+        }
+        Teacher teacher = (Teacher) session.getAttribute("user");
+        if (task == null) {
+            return RequestResult.failure("添加作业失败，请稍后再试");
+        }
+        task.setRecordTime(new Date());
+        task.setTeacherId(teacher.getId());
+        boolean success = teacherService.saveOfflineTask(task);
         if (!success) {
             return RequestResult.failure("添加作业失败，请稍后再试");
         }
@@ -1015,52 +1001,75 @@ public class TeacherController {
     }
 
     @RequestMapping("/searchTask")
-    public String searchTask(Map<String, Object> map, HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
-        OnlineTaskExample taskExample = (OnlineTaskExample) session.getAttribute("taskExample");
+    public String searchTask(Map<String, Object> map, HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum, @RequestParam(value = "taskType", defaultValue = "") String taskType) {
         Teacher teacher = (Teacher) session.getAttribute("user");
-        if (taskExample == null) {
-            taskExample = new OnlineTaskExample();
-            OnlineTaskExample.Criteria criteria = taskExample.createCriteria();
-//            criteria.andTeacherIdEqualTo(teacher.getId());
-            criteria.andTeacherIdEqualTo(15);
-            taskExample.setOrderByClause("record_time desc");
+        String type = null;
+        if ("".equals(taskType)) {
+            type = (String) session.getAttribute("taskType");
+        } else {
+            type = taskType;
+            session.setAttribute("taskType", type);
         }
-        PageHelper.startPage(pageNum, 10);
-        List<OnlineTask> tasks = teacherService.getAllTasksWithCourseAndChapterExample(taskExample);
-        PageInfo<OnlineTask> page = new PageInfo(tasks, 10);
-        map.put("pageInfo", page);
+        if (type == null || type.equals("online")) {
+            OnlineTaskExample onlineTaskExample = (OnlineTaskExample) session.getAttribute("onlineTaskExample");
+            if (onlineTaskExample == null) {
+                onlineTaskExample = new OnlineTaskExample();
+                OnlineTaskExample.Criteria criteria = onlineTaskExample.createCriteria();
+                criteria.andTeacherIdEqualTo(teacher.getId());
+                onlineTaskExample.setOrderByClause("record_time desc");
+            }
+            PageHelper.startPage(pageNum, 15);
+            List<OnlineTask> onlineTasks = teacherService.getAllOnlineTasksWithCourseAndChapterExample(onlineTaskExample);
+            PageInfo<OnlineTask> page = new PageInfo(onlineTasks, 10);
+            map.put("pageInfo", page);
+            if (type == null) {
+                session.setAttribute("taskType", "online");
+            }
+        } else if (type.equals("offline")) {
+            OfflineTaskExample offlineTaskExample = (OfflineTaskExample) session.getAttribute("offlineTaskExample");
+            if (offlineTaskExample == null) {
+                offlineTaskExample = new OfflineTaskExample();
+                OfflineTaskExample.Criteria criteria = offlineTaskExample.createCriteria();
+                criteria.andTeacherIdEqualTo(teacher.getId());
+                offlineTaskExample.setOrderByClause("record_time desc");
+            }
+            PageHelper.startPage(pageNum, 15);
+            List<OfflineTask> offlineTasks = teacherService.getAllOfflineTasksWithCourseAndChapterExample(offlineTaskExample);
+            PageInfo<OfflineTask> page = new PageInfo(offlineTasks, 10);
+            map.put("pageInfo", page);
+        } else {
+            throw new RuntimeException("查看任务出现异常，请稍后再试");
+        }
         map.put("courses", teacherService.getAllCoursesWithCollegeByTeacherId(15));
         return "teacher/searchTask";
     }
 
     @ResponseBody
-    @PostMapping("/deleteTask")
-    public RequestResult deleteTask(@RequestParam("id") Integer id) {
+    @PostMapping("/deleteOnlineTask")
+    public RequestResult deleteOnlineTask(@RequestParam("id") Integer id) {
         if (id == null) {
             return RequestResult.failure("作业删除失败，请稍后再试");
         }
-        boolean success = teacherService.deleteTaskById(id);
+        boolean success = teacherService.deleteOnlineTaskById(id);
         if (!success) {
             return RequestResult.failure("作业删除失败，请稍后再试");
         }
         return RequestResult.success();
     }
 
-
     @ResponseBody
-    @PostMapping("/deleteTaskBatch")
-    public RequestResult deleteTaskBatch(@RequestParam("ids") String id) {
+    @PostMapping("/deleteOfflineTask")
+    public RequestResult deleteOfflineTask(@RequestParam("id") Integer id,
+                                           HttpServletRequest request,
+                                           @RequestParam("courseId") Integer courseId,
+                                           @RequestParam("chapterId") Integer chapterId) {
         if (id == null) {
-            return RequestResult.failure("批量删除失败，请稍后再试");
+            return RequestResult.failure("作业删除失败，请稍后再试");
         }
-        String[] ids = id.split("-");
-        List<Integer> taskIds = new ArrayList<>();
-        for (String s : ids) {
-            taskIds.add(Integer.parseInt(s));
-        }
-        boolean success = teacherService.deleteTaskByIdBatch(taskIds);
+        String path = request.getServletContext().getRealPath("/offlineTask/") + courseId + "\\" + chapterId + "\\" + id;
+        boolean success = teacherService.deleteOfflineTaskById(id, path);
         if (!success) {
-            return RequestResult.failure("批量删除失败，请稍后再试");
+            return RequestResult.failure("作业删除失败，请稍后再试");
         }
         return RequestResult.success();
     }
@@ -1069,6 +1078,8 @@ public class TeacherController {
     @PostMapping("/searchTaskByTerm")
     public RequestResult searchTaskByTerm(HttpSession session, @RequestParam("courseId") Integer courseId, @RequestParam("title") String title, @RequestParam("minTime") String minTime, @RequestParam("maxTime") String maxTime) {
         try {
+            Teacher teacher = (Teacher) session.getAttribute("user");
+            String type = (String) session.getAttribute("taskType");
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
             //将查询条件存放进session中，以回显查询条件
             Map<String, Object> map = new HashMap<>();
@@ -1076,37 +1087,73 @@ public class TeacherController {
             map.put("title", null);
             map.put("minTime", null);
             map.put("maxTime", null);
-            OnlineTaskExample taskExample = new OnlineTaskExample();
-            OnlineTaskExample.Criteria criteria = taskExample.createCriteria();
-            if (!"".equals(title.trim())) {
-                map.put("title", title.trim());
-                criteria.andTitleLike("%" + title.trim() + "%");
-            }
-            if (courseId != 0) {
-                map.put("courseId", courseId);
-                CourseChapterExample courseChapterExample = new CourseChapterExample();
-                CourseChapterExample.Criteria criteria1 = courseChapterExample.createCriteria();
-                criteria1.andCourseIdEqualTo(courseId);
-                List<Integer> ids = teacherService.getChapterIdsByExample(courseChapterExample);
-                if (ids.size() == 0) {
-                    ids.add(0);
+            OnlineTaskExample onlineTaskExample = new OnlineTaskExample();
+            OnlineTaskExample.Criteria onlineTaskExampleCriteria = onlineTaskExample.createCriteria();
+            OfflineTaskExample offlineTaskExample = new OfflineTaskExample();
+            OfflineTaskExample.Criteria offlineTaskExampleCriteria = offlineTaskExample.createCriteria();
+            if (type == null || type.equals("online")) {
+                if (!"".equals(title.trim())) {
+                    map.put("title", title.trim());
+                    onlineTaskExampleCriteria.andTitleLike("%" + title.trim() + "%");
                 }
-                criteria.andChapterIdIn(ids);
+                if (courseId != 0) {
+                    map.put("courseId", courseId);
+                    CourseChapterExample courseChapterExample = new CourseChapterExample();
+                    CourseChapterExample.Criteria criteria1 = courseChapterExample.createCriteria();
+                    criteria1.andCourseIdEqualTo(courseId);
+                    List<Integer> ids = teacherService.getChapterIdsByExample(courseChapterExample);
+                    if (ids.size() == 0) {
+                        ids.add(0);
+                    }
+                    onlineTaskExampleCriteria.andChapterIdIn(ids);
+                }
+                if (!"".equals(minTime.trim())) {
+                    Date min = simpleDateFormat.parse(minTime);
+                    onlineTaskExampleCriteria.andRecordTimeGreaterThanOrEqualTo(min);
+                    map.put("minTime", minTime);
+                }
+                if (!"".equals(maxTime.trim())) {
+                    Date max = simpleDateFormat.parse(maxTime);
+                    onlineTaskExampleCriteria.andRecordTimeLessThanOrEqualTo(max);
+                    map.put("maxTime", maxTime);
+                }
+                onlineTaskExampleCriteria.andTeacherIdEqualTo(teacher.getId());
+                onlineTaskExample.setOrderByClause("record_time desc");
+                session.setAttribute("onlineTaskExample", onlineTaskExample);
+                session.setAttribute("onlineTaskQueryCriteria", map);
+            } else if (type.equals("offline")) {
+                if (!"".equals(title.trim())) {
+                    map.put("title", title.trim());
+                    offlineTaskExampleCriteria.andTitleLike("%" + title.trim() + "%");
+                }
+                if (courseId != 0) {
+                    map.put("courseId", courseId);
+                    CourseChapterExample courseChapterExample = new CourseChapterExample();
+                    CourseChapterExample.Criteria criteria1 = courseChapterExample.createCriteria();
+                    criteria1.andCourseIdEqualTo(courseId);
+                    List<Integer> ids = teacherService.getChapterIdsByExample(courseChapterExample);
+                    if (ids.size() == 0) {
+                        ids.add(0);
+                    }
+                    offlineTaskExampleCriteria.andChapterIdIn(ids);
+                }
+                if (!"".equals(minTime.trim())) {
+                    Date min = simpleDateFormat.parse(minTime);
+                    offlineTaskExampleCriteria.andRecordTimeGreaterThanOrEqualTo(min);
+                    map.put("minTime", minTime);
+                }
+                if (!"".equals(maxTime.trim())) {
+                    Date max = simpleDateFormat.parse(maxTime);
+                    offlineTaskExampleCriteria.andRecordTimeLessThanOrEqualTo(max);
+                    map.put("maxTime", maxTime);
+                }
+                offlineTaskExampleCriteria.andTeacherIdEqualTo(teacher.getId());
+                offlineTaskExample.setOrderByClause("record_time desc");
+                session.setAttribute("offlineTaskExample", offlineTaskExample);
+                session.setAttribute("offlineTaskQueryCriteria", map);
+            } else {
+                return RequestResult.failure("查询失败，请稍后再试");
             }
-            if (!"".equals(minTime.trim())) {
-                Date min = simpleDateFormat.parse(minTime);
-                criteria.andRecordTimeGreaterThanOrEqualTo(min);
-                map.put("minTime", minTime);
-            }
-            if (!"".equals(maxTime.trim())) {
-                Date max = simpleDateFormat.parse(maxTime);
-                criteria.andRecordTimeLessThanOrEqualTo(max);
-                map.put("maxTime", maxTime);
-            }
-            criteria.andTeacherIdEqualTo(15);
-            taskExample.setOrderByClause("record_time desc");
-            session.setAttribute("taskQueryCriteria", map);
-            session.setAttribute("taskExample", taskExample);
         } catch (Exception e) {
             return RequestResult.failure("查询失败，请稍后再试");
         }
@@ -1114,36 +1161,42 @@ public class TeacherController {
     }
 
     @RequestMapping("/editTask/{id}")
-    public String updateTask(@PathVariable("id") Integer id,
-                             Map<String, Object> map,
-                             HttpSession session,
-                             @RequestParam("pageNum") Integer pageNum,
-                             @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
-                             @RequestParam(value = "courseId", required = false) Integer courseId,
-                             @RequestParam(value = "chapterId", required = false) Integer chapterId) {
+    public String updateOnlineTask(@PathVariable("id") Integer id,
+                                   Map<String, Object> map,
+                                   HttpSession session,
+                                   @RequestParam(value = "type", defaultValue = "") String type,
+                                   @RequestParam("pageNum") Integer pageNum,
+                                   @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
+                                   @RequestParam(value = "courseId", required = false) Integer courseId,
+                                   @RequestParam(value = "chapterId", required = false) Integer chapterId) {
         Teacher teacher = (Teacher) session.getAttribute("user");
-        map.put("task", teacherService.getTaskWithCourseAndChapterById(id));
-        map.put("courses", teacherService.getAllCoursesWithChapterAndCollegeByTeacherId(15));
+        if ("online".equals(type)) {
+            map.put("task", teacherService.getOnlineTaskWithCourseAndChapterById(id));
+        } else {
+            map.put("task", teacherService.getOfflineTaskWithCourseAndChapterById(id));
+        }
+        map.put("courses", teacherService.getAllCoursesWithChapterAndCollegeByTeacherId(teacher.getId()));
         map.put("pageNum", pageNum);
         map.put("pageNumber", pageNumber);
         map.put("courseId", courseId);
         map.put("chapterId", chapterId);
         map.put("taskId", id);
+        map.put("type", type);
         return "teacher/updateTask";
     }
 
     @ResponseBody
-    @PostMapping("/updateTask/{id}")
-    public RequestResult updateTask(@PathVariable("id") Integer id, OnlineTask task, HttpSession session) {
-        System.out.println(id);
-        System.out.println(task);
+    @PostMapping("/updateOnlineTask/{id}")
+    public RequestResult updateOnlineTask(@PathVariable("id") Integer id, @Validated({OnlineTaskSequence.class}) OnlineTask task, BindingResult result, HttpSession session) {
+        if (result.getErrorCount() > 0) {
+            return RequestResult.failure(result.getFieldErrors().get(0).getDefaultMessage());
+        }
         Teacher teacher = (Teacher) session.getAttribute("user");
         if (id == null || task == null) {
             return RequestResult.failure("修改作业失败，请稍后再试");
         }
-        task.setId(id);
-        task.setTeacherId(15);
-        OnlineTask task1 = teacherService.getTaskById(id);
+        task.setTeacherId(teacher.getId());
+        OnlineTask task1 = teacherService.getOnlineTaskById(id);
         if (task1.equals(task)) {
             return RequestResult.failure("未修改任何数据");
         }
@@ -1154,31 +1207,58 @@ public class TeacherController {
             task.setTitle(null);
         }
         task.setTeacherId(null);
-        boolean success = teacherService.updateTaskByPrimaryKeySelective(task);
+        boolean success = teacherService.updateOnlineTaskByPrimaryKeySelective(task);
         if (!success) {
             return RequestResult.failure("修改作业失败，请稍后再试");
         }
         return RequestResult.success();
     }
 
-    @RequestMapping("/searchTaskQuestion/{id}")
+    @ResponseBody
+    @PostMapping("/updateOfflineTask/{id}")
+    public RequestResult updateOfflineTask(@PathVariable("id") Integer id, @Validated({OfflineTaskSequence.class}) OfflineTask task, BindingResult result, HttpSession session) {
+        if (result.getErrorCount() > 0) {
+            return RequestResult.failure(result.getFieldErrors().get(0).getDefaultMessage());
+        }
+        Teacher teacher = (Teacher) session.getAttribute("user");
+        if (id == null || task == null) {
+            return RequestResult.failure("修改作业失败，请稍后再试");
+        }
+        task.setTeacherId(teacher.getId());
+        OfflineTask task1 = teacherService.getOfflineTaskById(id);
+        if (task1.equals(task)) {
+            return RequestResult.failure("未修改任何数据");
+        }
+        if (task1.getChapterId().equals(task.getChapterId())) {
+            task.setChapterId(null);
+        }
+        if (task1.getTitle().equals(task.getTitle())) {
+            task.setTitle(null);
+        }
+        task.setTeacherId(null);
+        boolean success = teacherService.updateOfflineTaskByPrimaryKeySelective(task);
+        if (!success) {
+            return RequestResult.failure("修改作业失败，请稍后再试");
+        }
+        return RequestResult.success();
+    }
+
+    @RequestMapping("/searchOnlineTaskQuestion/{id}")
     public String searchQuestion(@PathVariable("id") Integer id,
                                  @RequestParam(value = "pageNumber", defaultValue = "0") Integer pageNumber,
-                                 @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                  Map<String, Object> map,
                                  @RequestParam(value = "page", required = false) Integer p,
                                  @RequestParam(value = "courseId", required = false) Integer courseId,
                                  @RequestParam(value = "chapterId", required = false) Integer chapterId) {
-        PageHelper.startPage(pageNum, 10);
-        List<OnlineTaskQuestion> questions = teacherService.getTaskQuestionsByTaskId(id);
-        PageInfo<OnlineTaskQuestion> page = new PageInfo(questions, 10);
-        map.put("pageInfo", page);
+
+        List<OnlineTaskQuestion> questions = teacherService.getOnlineTaskQuestionsByTaskId(id);
+        map.put("questions", questions);
         map.put("pageNumber", pageNumber);
         map.put("taskId", id);
         map.put("courseId", courseId);
         map.put("page", p);
         map.put("chapterId", chapterId);
-        return "teacher/searchTaskQuestion";
+        return "teacher/searchOnlineTaskQuestion";
     }
 
     @ResponseBody
@@ -1192,58 +1272,63 @@ public class TeacherController {
         for (String s : ids) {
             questionIds.add(Integer.parseInt(s));
         }
-        boolean b = teacherService.deleteTaskQuestionByIdBatch(questionIds);
+        boolean b = teacherService.deleteOnlineTaskQuestionByIdBatch(questionIds);
         if (!b) {
             return RequestResult.failure("批量删除失败，请稍后再试");
         }
         return RequestResult.success();
     }
 
-    @RequestMapping("/createTaskQuestion/{id}")
-    public String createTaskQuestion(@PathVariable("id") Integer id, Map<String, Object> map) {
-
+    @RequestMapping("/createOnlineTaskQuestion/{id}")
+    public String createOnlineTaskQuestion(@PathVariable("id") Integer id, Map<String, Object> map) {
         map.put("taskId", id);
-        return "teacher/createTaskQuestion";
+        return "teacher/createOnlineTaskQuestion";
     }
 
     @ResponseBody
-    @PostMapping("/saveTaskQuestion")
-    public RequestResult saveTaskQuestion(OnlineTaskQuestion taskQuestion) {
+    @PostMapping("/saveOnlineTaskQuestion")
+    public RequestResult saveOnlineTaskQuestion(@Validated({OnlineTaskQuestionSequence.class}) OnlineTaskQuestion taskQuestion, BindingResult result) {
+        if (result.getErrorCount() > 0) {
+            return RequestResult.failure(result.getFieldErrors().get(0).getDefaultMessage());
+        }
         if (taskQuestion == null) {
             return RequestResult.failure("题目添加失败，请稍后再试");
         }
-        boolean success = teacherService.insertTaskQuestion(taskQuestion);
+        boolean success = teacherService.insertOnlineTaskQuestion(taskQuestion);
         if (!success) {
             return RequestResult.failure("题目添加失败，请稍后再试");
         }
         return RequestResult.success();
     }
 
-    @RequestMapping("/editTaskQuestion/{id}")
-    public String editTaskQuestion(@PathVariable("id") Integer id,
-                                   Map<String, Object> map,
-                                   @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
-                                   @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
-                                   @RequestParam(value = "page", required = false) Integer page,
-                                   @RequestParam(value = "courseId", required = false) Integer courseId,
-                                   @RequestParam(value = "chapterId", required = false) Integer chapterId) {
+    @RequestMapping("/editOnlineTaskQuestion/{id}")
+    public String editOnlineTaskQuestion(@PathVariable("id") Integer id,
+                                         Map<String, Object> map,
+                                         @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
+                                         @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                         @RequestParam(value = "page", required = false) Integer page,
+                                         @RequestParam(value = "courseId", required = false) Integer courseId,
+                                         @RequestParam(value = "chapterId", required = false) Integer chapterId) {
 
         map.put("pageNum", pageNum);
         map.put("pageNumber", pageNumber);
         map.put("page", page);
         map.put("courseId", courseId);
         map.put("chapterId", chapterId);
-        map.put("taskQuestion", teacherService.getTaskQuestionsById(id));
-        return "teacher/updateTaskQuestion";
+        map.put("taskQuestion", teacherService.getOnlineTaskQuestionsById(id));
+        return "teacher/updateOnlineTaskQuestion";
     }
 
     @ResponseBody
-    @PostMapping("/updateTaskQuestion")
-    public RequestResult updateTaskQuestion(OnlineTaskQuestion taskQuestion) {
+    @PostMapping("/updateOnlineTaskQuestion")
+    public RequestResult updateOnlineTaskQuestion(@Validated({OnlineTaskQuestionSequence.class}) OnlineTaskQuestion taskQuestion, BindingResult result) {
+        if (result.getErrorCount() > 0) {
+            return RequestResult.failure(result.getFieldErrors().get(0).getDefaultMessage());
+        }
         if (taskQuestion == null) {
             return RequestResult.failure("题目修改失败，请稍后再试");
         }
-        OnlineTaskQuestion question = teacherService.getTaskQuestionsById(taskQuestion.getId());
+        OnlineTaskQuestion question = teacherService.getOnlineTaskQuestionsById(taskQuestion.getId());
         if (question == null) {
             return RequestResult.failure("题目修改失败，请稍后再试");
         }
@@ -1272,17 +1357,11 @@ public class TeacherController {
             taskQuestion.setScore(null);
         }
         taskQuestion.setOnlineTaskId(null);
-        boolean success = teacherService.updateTaskQuestionByPrimaryKeySelective(taskQuestion);
+        boolean success = teacherService.updateOnlineTaskQuestionByPrimaryKeySelective(taskQuestion);
         if (!success) {
             return RequestResult.failure("题目修改失败，请稍后再试");
         }
         return RequestResult.success();
-    }
-
-    @RequestMapping("createTaskQuestionBatch/{id}")
-    public String createTaskQuestionBatch(@PathVariable("id") Integer id, Map<String, Object> map) {
-        map.put("taskId", id);
-        return "teacher/createTaskQuestionBatch";
     }
 
     //下载作业模板
@@ -1291,13 +1370,16 @@ public class TeacherController {
         String path = request.getServletContext().getRealPath("/excels/");
         String fileName = "Task_Template.xlsx";
         File file = new File(path + fileName);
-
         // 设置响应头通知浏览器下载
         HttpHeaders headers = new HttpHeaders();
         // 将对文件做的特殊处理还原
         headers.setContentDispositionFormData("attachment", fileName);
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.OK);
+        try {
+            return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.OK);
+        } catch (IOException e) {
+            throw new DownloadException("下载异常，请稍后再试");
+        }
     }
 
     @ResponseBody
@@ -1305,6 +1387,9 @@ public class TeacherController {
     public RequestResult taskQuestionBatchImport(@RequestParam(value = "file") MultipartFile file, @RequestParam("taskId") Integer taskId) {
         String fileName = file.getOriginalFilename();
         List<OnlineTaskQuestion> taskQuestions = new ArrayList<>();
+        //原表头顺序：题目、选项A、选项B、选项C、选项D、答案、分值；使用数组来比较
+        String[] original_title = new String[]{"题目", "选项A", "选项B", "选项C", "选项D", "答案", "分值"};
+        String[] current_title = new String[original_title.length];
         //是".xls"格式
         if (fileName.endsWith(".xls")) {
             //定义工作簿，一个工作簿可以有多个并做表Sheet
@@ -1319,24 +1404,20 @@ public class TeacherController {
                         continue;
                     }
                     //获取行
+                    //获取总行数
+                    int totalRows = POIUtil.getExcelRealRowHSSF(hssfSheet);
                     //默认第一行是标题,index=0
                     HSSFRow titleRow = hssfSheet.getRow(0);
                     //判断表头是否被修改或换位置
-                    //原表头顺序：题目、选项A、选项B、选项C、选项D、答案、分值；使用数组来比较
-                    String[] original_title = new String[]{"题目", "选项A", "选项B", "选项C", "选项D", "答案", "分值"};
-                    String[] current_title = new String[7];
-                    for (int cellIndex = 0; cellIndex < 7; cellIndex++) {
+                    for (int cellIndex = 0; cellIndex < original_title.length; cellIndex++) {
                         String cell = POIUtil.getStringHSSF(titleRow.getCell(cellIndex));
                         current_title[cellIndex] = cell;
                     }
                     //判断两个标题数组的内容是否一致
                     boolean equals = Arrays.equals(original_title, current_title);
-
                     if (!equals) {
                         return RequestResult.failure("导入失败，请检查模板中的表头是否被修改");
                     }
-                    //获取总行数
-                    int totalRows = POIUtil.getExcelRealRowHSSF(hssfSheet);
                     //从第二行开始循环读取数据
                     for (int rowIndex = 1; rowIndex <= totalRows; rowIndex++) {
                         //获取行对象
@@ -1346,34 +1427,57 @@ public class TeacherController {
                         }
                         //读取列，从第一列开始
                         OnlineTaskQuestion question = new OnlineTaskQuestion();
-                        String data = POIUtil.getStringHSSF(hssfRow.getCell(0));
-                        HSSFCell cell = hssfRow.getCell(0);
-                        cell.setCellType(CellType.STRING);
-                        question.setTitle(data);
-                        data = POIUtil.getStringHSSF(hssfRow.getCell(1));
-                        question.setItemA(data);
-                        data = POIUtil.getStringHSSF(hssfRow.getCell(2));
-                        question.setItemB(data);
-                        data = POIUtil.getStringHSSF(hssfRow.getCell(3));
-                        question.setItemC(data);
-                        data = POIUtil.getStringHSSF(hssfRow.getCell(4));
-                        question.setItemD(data);
-                        data = POIUtil.getStringHSSF(hssfRow.getCell(5));
-                        if (!(data.contains("A") || data.contains("B") || data.contains("C") || data.contains("D"))) {
-                            return RequestResult.failure("批量导入失败，请检查答案是否符合");
+                        HSSFCell cell;
+                        CellType cellType;
+                        String data;
+                        for (int i = 0; i < original_title.length; i++) {
+                            cell = hssfRow.getCell(i);
+                            cellType = cell.getCellType();
+                            if (cellType != CellType.STRING && cellType != CellType.BLANK) {
+                                return RequestResult.failure("导入失败，第" + (rowIndex + 1) + "行题的" + original_title[i] + "不是文本类型");
+                            }
+                            data = "";
+                            if (cellType == CellType.STRING) {
+                                data = cell.getStringCellValue().trim();
+                            }
+                            if ("".equals(data)) {//空值
+                                return RequestResult.failure("导入失败，第" + (rowIndex + 1) + "行题的" + original_title[i] + "不能为空");
+                            }
+                            if (i == 0) {
+                                question.setTitle(data);
+                            }
+                            if (i == 1) {
+                                question.setItemA(data);
+                            }
+                            if (i == 2) {
+                                question.setItemB(data);
+                            }
+                            if (i == 3) {
+                                question.setItemC(data);
+                            }
+                            if (i == 4) {
+                                question.setItemD(data);
+                            }
+                            if (i == 5) {
+                                if (!(data.contains("A") || data.contains("B") || data.contains("C") || data.contains("D"))) {
+                                    return RequestResult.failure("导入失败，第" + (rowIndex + 1) + "行题的" + original_title[i] + "不在范围之内");
+                                }
+                                question.setAnswer(data);
+                            }
+                            if (i == 6) {
+                                if (data.contains(".")) {
+                                    return RequestResult.failure("导入失败，第" + (rowIndex + 1) + "行题的" + original_title[i] + "不能为小数");
+                                }
+                                if (data.contains(" ")) {
+                                    return RequestResult.failure("导入失败，第" + (rowIndex + 1) + "行题的" + original_title[i] + "不能包含空格");
+                                }
+                                question.setScore(Integer.parseInt(data));
+                            }
+                            question.setOnlineTaskId(taskId);
                         }
-                        question.setAnswer(data);
-                        data = POIUtil.getStringHSSF(hssfRow.getCell(6));
-                        if (data.contains(" ")) {
-                            return RequestResult.failure("批量导入失败，请检查分值中是否有空格");
-                        }
-                        //当用户传入的分值是小数时，该语句会抛出异常，被异常处理的方法catch住
-                        question.setScore(Integer.parseInt(data));
-                        question.setOnlineTaskId(taskId);
-                        System.out.println(question);
                         taskQuestions.add(question);
                     }
-                    boolean i = teacherService.insertTaskQuestionBatch(taskQuestions);
+                    boolean i = teacherService.insertOnlineTaskQuestionBatch(taskQuestions);
                     if (!i) {
                         return RequestResult.failure("批量导入失败，请稍后再试");
                     }
@@ -1396,24 +1500,20 @@ public class TeacherController {
                         continue;
                     }
                     //获取行
+                    //获取总行数
+                    int totalRows = POIUtil.getExcelRealRowXSSF(xssfSheet);
                     //默认第一行是标题,index=0
                     XSSFRow titleRow = xssfSheet.getRow(0);
                     //判断表头是否被修改或换位置
-                    //原表头顺序：题目、选项A、选项B、选项C、选项D、答案、分值；使用数组来比较
-                    String[] original_title = new String[]{"题目", "选项A", "选项B", "选项C", "选项D", "答案", "分值"};
-                    String[] current_title = new String[7];
-                    for (int cellIndex = 0; cellIndex < 7; cellIndex++) {
+                    for (int cellIndex = 0; cellIndex < original_title.length; cellIndex++) {
                         String cell = POIUtil.getStringXSSF(titleRow.getCell(cellIndex));
                         current_title[cellIndex] = cell;
                     }
                     //判断两个标题数组的内容是否一致
                     boolean equals = Arrays.equals(original_title, current_title);
-
                     if (!equals) {
                         return RequestResult.failure("导入失败，请检查模板中的表头是否被修改");
                     }
-                    //获取总行数
-                    int totalRows = POIUtil.getExcelRealRowXSSF(xssfSheet);
                     //从第二行开始循环读取数据
                     for (int rowIndex = 1; rowIndex <= totalRows; rowIndex++) {
                         //获取行对象
@@ -1423,34 +1523,58 @@ public class TeacherController {
                         }
                         //读取列，从第一列开始
                         OnlineTaskQuestion question = new OnlineTaskQuestion();
-                        String data = POIUtil.getStringXSSF(xssfRow.getCell(0));
-                        XSSFCell cell = xssfRow.getCell(0);
-                        cell.setCellType(CellType.STRING);
-                        question.setTitle(data);
-                        data = POIUtil.getStringXSSF(xssfRow.getCell(1));
-                        question.setItemA(data);
-                        data = POIUtil.getStringXSSF(xssfRow.getCell(2));
-                        question.setItemB(data);
-                        data = POIUtil.getStringXSSF(xssfRow.getCell(3));
-                        question.setItemC(data);
-                        data = POIUtil.getStringXSSF(xssfRow.getCell(4));
-                        question.setItemD(data);
-                        data = POIUtil.getStringXSSF(xssfRow.getCell(5));
-                        if (!(data.contains("A") || data.contains("B") || data.contains("C") || data.contains("D"))) {
-                            return RequestResult.failure("批量导入失败，请检查答案是否符合");
+                        XSSFCell cell;
+                        CellType cellType;
+                        String data;
+                        for (int i = 0; i < original_title.length; i++) {
+                            cell = xssfRow.getCell(i);
+                            cellType = cell.getCellType();
+                            if (cellType != CellType.STRING && cellType != CellType.BLANK) {
+                                return RequestResult.failure("导入失败，第" + (rowIndex + 1) + "行题的" + original_title[i] + "不是文本类型");
+                            }
+                            data = "";
+                            if (cellType == CellType.STRING) {
+                                data = cell.getStringCellValue().trim();
+                            }
+                            if ("".equals(data)) {//空值
+                                return RequestResult.failure("导入失败，第" + (rowIndex + 1) + "行题的" + original_title[i] + "不能为空");
+                            }
+                            if (i == 0) {
+                                question.setTitle(data);
+                            }
+                            if (i == 1) {
+                                question.setItemA(data);
+                            }
+                            if (i == 2) {
+                                question.setItemB(data);
+                            }
+                            if (i == 3) {
+                                question.setItemC(data);
+                            }
+                            if (i == 4) {
+                                question.setItemD(data);
+                            }
+                            if (i == 5) {
+                                if (!(data.contains("A") || data.contains("B") || data.contains("C") || data.contains("D"))) {
+                                    return RequestResult.failure("导入失败，第" + (rowIndex + 1) + "行题的" + original_title[i] + "不在范围之内");
+                                }
+                                question.setAnswer(data);
+                            }
+                            if (i == 6) {
+                                if (data.contains(".")) {
+                                    return RequestResult.failure("导入失败，第" + (rowIndex + 1) + "行题的" + original_title[i] + "不能为小数");
+                                }
+                                if (data.contains(" ")) {
+                                    return RequestResult.failure("导入失败，第" + (rowIndex + 1) + "行题的" + original_title[i] + "不能包含空格");
+                                }
+                                question.setScore(Integer.parseInt(data));
+                            }
+                            question.setOnlineTaskId(taskId);
                         }
-                        question.setAnswer(data);
-                        data = POIUtil.getStringXSSF(xssfRow.getCell(6));
-                        if (data.contains(" ")) {
-                            return RequestResult.failure("批量导入失败，请检查分值中是否有空格");
-                        }
-                        //当用户传入的分值是小数时，该语句会抛出异常，被异常处理的方法catch住
-                        question.setScore(Integer.parseInt(data));
-                        question.setOnlineTaskId(taskId);
                         System.out.println(question);
                         taskQuestions.add(question);
                     }
-                    boolean i = teacherService.insertTaskQuestionBatch(taskQuestions);
+                    boolean i = teacherService.insertOnlineTaskQuestionBatch(taskQuestions);
                     if (!i) {
                         return RequestResult.failure("批量导入失败，请稍后再试");
                     }
@@ -1466,17 +1590,18 @@ public class TeacherController {
 
     @RequestMapping("/editTeacherInfo")
     public String updateTeacherInfo(HttpSession session, Map<String, Object> map) {
-        /*Teacher teacher = (Teacher) session.getAttribute("user");
-        map.put("teacher", teacherService.getTeacherByIdWithCollege(teacher.getId()));*/
-        map.put("teacher", teacherService.getTeacherByIdWithCollege(15));
+        Teacher teacher = (Teacher) session.getAttribute("user");
+        map.put("teacher", teacherService.getTeacherByIdWithCollege(teacher.getId()));
         return "teacher/updateTeacherInfo";
     }
 
     @ResponseBody
     @PostMapping("/updateTeacherInfo")
-    public RequestResult updateTeacherInfo(Teacher tea, @RequestParam(value = "code") String code, HttpSession session) {
-//        Teacher teacher = (Teacher) session.getAttribute("user");
-        Teacher teacher = teacherService.getTeacherByIdWithoutCollegeAndCourse(15);
+    public RequestResult updateTeacherInfo(@Validated({UpdateTeacherSequence.class}) Teacher tea, BindingResult result, @RequestParam(value = "code") String code, HttpSession session) {
+        if (result.getErrorCount() > 0) {
+            return RequestResult.failure(result.getFieldErrors().get(0).getDefaultMessage());
+        }
+        Teacher teacher = (Teacher) session.getAttribute("user");
         if (teacher == null || tea == null) {
             return RequestResult.failure("更新信息失败，请稍后再试");
         }
@@ -1492,15 +1617,9 @@ public class TeacherController {
             session.removeAttribute("UpdateInfoCode");
             return RequestResult.failure("验证码已过期，请重新获取");
         }
-        tea.setId(15);
+        tea.setId(teacher.getId());
         tea.setCollegeId(teacher.getCollegeId());
         tea.setNumber(teacher.getNumber());
-        tea.setPassword(tea.getPassword().trim());
-        tea.setName(tea.getName().trim());
-        tea.setEmail(tea.getEmail().trim());
-        tea.setAccount(tea.getAccount().trim());
-        tea.setIdCardNo(tea.getIdCardNo().trim());
-        tea.setTelephone(tea.getTelephone().trim());
         if (teacher.equals(tea)) {
             return RequestResult.failure("未修改任何数据");
         }
@@ -1560,7 +1679,6 @@ public class TeacherController {
         }
         tea.setNumber(null);
         tea.setCollegeId(null);
-
         boolean b = teacherService.updateTeacherByPrimaryKeySelective(tea);
         if (!b) {
             return RequestResult.failure("更新信息失败，请稍后再试");
@@ -1570,24 +1688,23 @@ public class TeacherController {
     }
 
     @RequestMapping("/viewTeacherInfo")
-    public String viewTeacherInfo(Map<String, Object> map) {
-        map.put("teacher", teacherService.getTeacherByIdWithCollege(15));
-        map.put("courses", teacherService.getAllCoursesWithChapterAndCollegeByTeacherId(15));
+    public String viewTeacherInfo(Map<String, Object> map, HttpSession session) {
+        Teacher teacher = (Teacher) session.getAttribute("user");
+        map.put("teacher", teacherService.getTeacherByIdWithCollege(teacher.getId()));
         return "teacher/viewTeacherInfo";
     }
 
     @RequestMapping("/searchCourse")
     public String searchCourse(Map<String, Object> map, HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
-        /*Teacher teacher = (Teacher) session.getAttribute("user");
-        teacherService.getAllCoursesWithCollegeByTeacherId(teacher.getId());*/
+        Teacher teacher = (Teacher) session.getAttribute("user");
         CourseExample courseExample = (CourseExample) session.getAttribute("courseExample");
         if (courseExample == null) {
             courseExample = new CourseExample();
             CourseExample.Criteria criteria = courseExample.createCriteria();
-            criteria.andTeacherIdEqualTo(15);
+            criteria.andTeacherIdEqualTo(teacher.getId());
             courseExample.setOrderByClause("CONVERT(name using gbk) asc");
         }
-        PageHelper.startPage(pageNum, 10);
+        PageHelper.startPage(pageNum, 20);
         List<Course> courses = teacherService.getAllCoursesWithCollegeByExample(courseExample);
         PageInfo<Course> page = new PageInfo(courses, 10);
         map.put("pageInfo", page);
@@ -1598,6 +1715,7 @@ public class TeacherController {
     @ResponseBody
     @PostMapping("/searchCourseByTerm")
     public RequestResult searchCourseByTerm(HttpSession session, @RequestParam("collegeId") Integer collegeId, @RequestParam("name") String name) {
+        Teacher teacher = (Teacher) session.getAttribute("user");
         Map<String, Object> map = new HashMap<>();
         CourseExample courseExample = new CourseExample();
         CourseExample.Criteria criteria = courseExample.createCriteria();
@@ -1611,24 +1729,26 @@ public class TeacherController {
             criteria.andNameLike("%" + name.trim() + "%");
             map.put("name", name.trim());
         }
-        criteria.andTeacherIdEqualTo(15);
+        criteria.andTeacherIdEqualTo(teacher.getId());
         courseExample.setOrderByClause("CONVERT(name using gbk) asc");
         session.setAttribute("courseExample", courseExample);
         session.setAttribute("courseQueryCriteria", map);
         return RequestResult.success();
     }
 
-
     @RequestMapping("/createChapter")
-    public String createChapter(Map<String, Object> map, @RequestParam(value = "courseId", defaultValue = "0") Integer courseId) {
-        map.put("courses", teacherService.getAllCoursesWithChapterAndCollegeByTeacherId(15));
+    public String createChapter(Map<String, Object> map, @RequestParam(value = "courseId") Integer courseId) {
+        map.put("course", teacherService.getCourseWithChapterAndCollegeByCourseId(courseId));
         map.put("courseId", courseId);
         return "teacher/createChapter";
     }
 
     @ResponseBody
     @PostMapping("/saveChapter")
-    public RequestResult saveChapter(CourseChapter chapter) {
+    public RequestResult saveChapter(@Validated({CourseChapterSequence.class}) CourseChapter chapter, BindingResult result) {
+        if (result.getErrorCount() > 0) {
+            return RequestResult.failure(result.getFieldErrors().get(0).getDefaultMessage());
+        }
         if (chapter == null) {
             return RequestResult.failure("新增章节失败，请稍后再试");
         }
@@ -1641,8 +1761,7 @@ public class TeacherController {
     }
 
     @RequestMapping("/searchChapter")
-    public String searchChapter(Map<String, Object> map, HttpSession session, @RequestParam("courseId") Integer courseId, @RequestParam("pageNum") Integer pageNum) {
-        Teacher teacher = (Teacher) session.getAttribute("user");
+    public String searchChapter(Map<String, Object> map, @RequestParam("courseId") Integer courseId, @RequestParam("pageNum") Integer pageNum) {
         CourseChapterExample courseChapterExample = new CourseChapterExample();
         CourseChapterExample.Criteria criteria = courseChapterExample.createCriteria();
         criteria.andCourseIdEqualTo(courseId);
@@ -1656,7 +1775,7 @@ public class TeacherController {
 
     @ResponseBody
     @PostMapping("/deleteChapterBatch")
-    public RequestResult deleteChapterBatch(@RequestParam("ids") String id) {
+    public RequestResult deleteChapterBatch(@RequestParam("ids") String id, HttpServletRequest request, @RequestParam("courseId") Integer courseId) {
         if (id == null) {
             return RequestResult.failure("批量删除失败，请稍后再试");
         }
@@ -1665,7 +1784,7 @@ public class TeacherController {
         for (String s : ids) {
             chapterIds.add(Integer.parseInt(s));
         }
-        boolean success = teacherService.deleteChapterByIdBatch(chapterIds);
+        boolean success = teacherService.deleteChapterByIdBatch(chapterIds, request, courseId);
         if (!success) {
             return RequestResult.failure("批量删除失败，请稍后再试");
         }
@@ -1688,13 +1807,17 @@ public class TeacherController {
 
     @ResponseBody
     @PostMapping("/updateChapter/{id}")
-    public RequestResult updateChapter(CourseChapter chapter) {
+    public RequestResult updateChapter(@Validated({CourseChapterSequence.class}) CourseChapter chapter, BindingResult result) {
+        if (result.getErrorCount() > 0) {
+            return RequestResult.failure(result.getFieldErrors().get(0).getDefaultMessage());
+        }
         if (chapter == null) {
             return RequestResult.failure("章节修改失败，请稍后再试");
         }
+        if (chapter.getCourseId() == 0) {
+            return RequestResult.failure("请选择章节所属课程");
+        }
         CourseChapter chapterById = teacherService.getChapterById(chapter.getId());
-        System.out.println(chapter);
-        System.out.println(chapterById);
         if (chapterById.equals(chapter)) {
             return RequestResult.failure("未修改任何数据");
         }
@@ -1719,11 +1842,12 @@ public class TeacherController {
                                     Map<String, Object> map,
                                     @RequestParam("pageNum") Integer pageNum,
                                     @RequestParam("courseId") Integer courseId) {
-
-        List<OnlineTask> tasks = teacherService.getTaskByChapterIdWithChapterAndCourse(id);
+        List<OnlineTask> onlineTasks = teacherService.getOnlineTaskByChapterId(id);
+        List<OfflineTask> offlineTasks = teacherService.getOfflineTaskByChapterId(id);
         map.put("pageNum", pageNum);
         map.put("courseId", courseId);
-        map.put("tasks", tasks);
+        map.put("onlineTasks", onlineTasks);
+        map.put("offlineTasks", offlineTasks);
         map.put("chapterId", id);
         return "teacher/searchChapterTask";
     }
@@ -1764,6 +1888,188 @@ public class TeacherController {
         map.put("pageNum", pageNum);
         map.put("courseId", courseId);
         return "teacher/viewChapterFiles";
+    }
+
+    @RequestMapping("/viewTaskFinish/{taskId}")
+    public String viewTaskFinish(@PathVariable("taskId") Integer id,
+                                 @RequestParam("type") String type,
+                                 @RequestParam(value = "page", required = false) Integer page,
+                                 @RequestParam(value = "courseId") Integer courseId,
+                                 @RequestParam(value = "pageNum", required = false) Integer pageNum,
+                                 @RequestParam(value = "chapterId") Integer chapterId,
+                                 Map<String, Object> map,
+                                 @RequestParam(value = "name", defaultValue = "") String name,
+                                 @RequestParam(value = "number", defaultValue = "") String number,
+                                 HttpSession session) {
+        StudentExample studentExample = new StudentExample();
+        StudentExample.Criteria criteria = studentExample.createCriteria();
+        if (!"".equals(name.trim())) {
+            criteria.andNameLike("%" + name.trim() + "%");
+        }
+        if (!"".equals(number.trim())) {
+            criteria.andNumberLike("%" + number.trim() + "%");
+        }
+        CollectExample collectExample = new CollectExample();
+        CollectExample.Criteria collectExampleCriteria = collectExample.createCriteria();
+        collectExampleCriteria.andCourseIdEqualTo(courseId);
+        List<Integer> studentIds = teacherService.selectCollectStudentIdByExample(collectExample);
+        if (studentIds.size() == 0) {
+            studentIds.add(0);
+        }
+        criteria.andIdIn(studentIds);
+        //根据课程id，查出选择该课程的学生
+        List<Student> students = teacherService.getCollectStudentByStudentExample(studentExample);
+        studentIds.clear();
+        for (Student student : students) {
+            studentIds.add(student.getId());
+        }
+        if (studentIds.size() == 0) {
+            studentIds.add(0);
+        }
+        map.put("students", students);
+        map.put("taskId", id);
+        map.put("courseId", courseId);
+        map.put("pageNum", pageNum);
+        map.put("page", page);
+        map.put("chapterId", chapterId);
+        map.put("type", type);
+        map.put("name", name.trim());
+        map.put("number", number.trim());
+        if (type.equals("online")) {
+            StudentOnlineTaskExample studentOnlineTaskExample = new StudentOnlineTaskExample();
+            StudentOnlineTaskExample.Criteria studentOnlineTaskExampleCriteria = studentOnlineTaskExample.createCriteria();
+            studentOnlineTaskExampleCriteria.andOnlineTaskIdEqualTo(id).andStudentIdIn(studentIds);
+            List<StudentOnlineTask> studentOnlineTasks = teacherService.getOnlineTaskFinishByExample(studentOnlineTaskExample);
+            Map<Integer, StudentOnlineTask> studentTaskMap = new HashMap<>();
+            for (StudentOnlineTask studentOnlineTask : studentOnlineTasks) {
+                studentTaskMap.put(studentOnlineTask.getStudentId(), studentOnlineTask);
+            }
+            map.put("studentOnlineTaskMap", studentTaskMap);
+        } else if (type.equals("offline")) {
+            StudentOfflineTaskExample studentOfflineTaskExample = new StudentOfflineTaskExample();
+            StudentOfflineTaskExample.Criteria studentOfflineTaskExampleCriteria = studentOfflineTaskExample.createCriteria();
+            studentOfflineTaskExampleCriteria.andOfflineTaskIdEqualTo(id).andStudentIdIn(studentIds);
+            List<StudentOfflineTask> studentOfflineTasks = teacherService.getOfflineTaskFinishByExample(studentOfflineTaskExample);
+            Map<Integer, StudentOfflineTask> studentTaskMap = new HashMap<>();
+            for (StudentOfflineTask studentOfflineTask : studentOfflineTasks) {
+                studentTaskMap.put(studentOfflineTask.getStudentId(), studentOfflineTask);
+            }
+            map.put("studentOfflineTaskMap", studentTaskMap);
+            session.setAttribute("studentOfflineTasks", studentOfflineTasks);
+        } else {
+            throw new RuntimeException("查看任务完成情况出现异常，请稍后再试");
+        }
+        return "teacher/viewTaskFinish";
+    }
+
+    @ResponseBody
+    @RequestMapping("/taskReFinish/{id}")
+    public RequestResult taskReFinish(@PathVariable("id") Integer id, @RequestParam("type") String type) {
+        if (type.equals("online")) {
+            boolean success = teacherService.deleteStudentOnlineTaskById(id);
+            if (!success) {
+                return RequestResult.failure("处理失败，请稍后再试");
+            }
+        } else if (type.equals("offline")) {
+            boolean success = teacherService.deleteStudentOfflineTaskById(id);
+            if (!success) {
+                return RequestResult.failure("处理失败，请稍后再试");
+            }
+        } else {
+            return RequestResult.failure("处理失败，请稍后再试");
+        }
+        return RequestResult.success();
+    }
+
+    @ResponseBody
+    @RequestMapping("/taskReFinishBatch")
+    public RequestResult taskReFinishBatch(@RequestParam("ids") String ids, @RequestParam("type") String type, @RequestParam("taskId") Integer taskId) {
+        String[] id = ids.split("-");
+        List<Integer> studentIds = new ArrayList<>();
+        for (String s : id) {
+            studentIds.add(Integer.parseInt(s));
+        }
+        if (type.equals("online")) {
+            StudentOnlineTaskExample studentOnlineTaskExample = new StudentOnlineTaskExample();
+            StudentOnlineTaskExample.Criteria criteria = studentOnlineTaskExample.createCriteria();
+            criteria.andStudentIdIn(studentIds).andOnlineTaskIdEqualTo(taskId);
+            boolean success = teacherService.deleteStudentOnlineTaskByExample(studentOnlineTaskExample);
+            if (!success) {
+                return RequestResult.failure("处理失败，请稍后再试");
+            }
+        } else if (type.equals("offline")) {
+            StudentOfflineTaskExample studentOfflineTaskExample = new StudentOfflineTaskExample();
+            StudentOfflineTaskExample.Criteria criteria = studentOfflineTaskExample.createCriteria();
+            criteria.andStudentIdIn(studentIds).andOfflineTaskIdEqualTo(taskId);
+            boolean success = teacherService.deleteStudentOfflineTaskByExample(studentOfflineTaskExample);
+            if (!success) {
+                return RequestResult.failure("处理失败，请稍后再试");
+            }
+        } else {
+            return RequestResult.failure("处理失败，请稍后再试");
+        }
+        return RequestResult.success();
+    }
+
+    @RequestMapping("/downloadOfflineTaskFile/{id}")
+    public ResponseEntity<byte[]> downloadOfflineTaskFile(@PathVariable("id") Integer id, HttpServletRequest request) {
+        String path = request.getServletContext().getRealPath("/offlineTask/");
+        StudentOfflineTask studentOfflineTask = teacherService.getOfflineTaskFileById(id);
+        String[] split = studentOfflineTask.getPath().split("_", 3);
+        String fileName = split[2];
+        File file = new File(path + studentOfflineTask.getPath());
+        // 设置响应头通知浏览器下载
+        HttpHeaders headers = new HttpHeaders();
+        try {
+            // 转码，避免文件名显示不出中文
+            fileName = URLEncoder.encode(fileName, "UTF-8");
+            headers.setContentDispositionFormData("attachment", fileName);
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.OK);
+        } catch (IOException e) {
+            throw new DownloadException("下载异常，请稍后再试");
+        }
+    }
+
+    @RequestMapping("/downloadFiles")
+    public ResponseEntity<byte[]> downloadFiles(@RequestParam("courseId") Integer courseId,
+                                                @RequestParam("chapterId") Integer chapterId,
+                                                @RequestParam("taskId") Integer taskId,
+                                                HttpServletRequest request) {
+        String path = request.getServletContext().getRealPath("/offlineTask/") + courseId + "\\" + chapterId + "\\" + taskId + "\\";
+        File file = new File(path);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        String fileName = "学生作业完成内容.zip";
+        File zipFile = new File(path + fileName);
+        if (zipFile.exists()) {
+            zipFile.delete();
+        }
+        HttpSession session = request.getSession();
+        List<StudentOfflineTask> studentOfflineTasks = (List<StudentOfflineTask>) session.getAttribute("studentOfflineTasks");
+        if (studentOfflineTasks == null) {
+            throw new DownloadException("下载异常，请稍后再试");
+        }
+        List<File> files = new ArrayList<>();
+        for (StudentOfflineTask task : studentOfflineTasks) {
+            file = new File(path + task.getPath());
+            if (file.exists()) {
+                files.add(file);
+            }
+        }
+        FileUtil.zipFiles(files, zipFile);
+        // 设置响应头通知浏览器下载
+        HttpHeaders headers = new HttpHeaders();
+        try {
+            // 转码，避免文件名显示不出中文
+            fileName = URLEncoder.encode(fileName, "UTF-8");
+            headers.setContentDispositionFormData("attachment", fileName);
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(zipFile), headers, HttpStatus.OK);
+        } catch (IOException e) {
+            throw new DownloadException("下载异常，请稍后再试");
+        }
     }
 
     @ResponseBody

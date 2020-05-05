@@ -195,7 +195,9 @@
                 if (result.code === 100) {
                     layer.msg("登录成功，即将跳转", {time: 1000, icon: 6}, function () {
                     });
-                    window.location.href = "${APP_PATH}/" + role + "/" + role + "Index";
+                    window.setTimeout(function () {
+                        window.location.href = "${APP_PATH}/" + role + "/" + role + "Index";
+                    }, 1000)
                 }
             },
             error: function () {

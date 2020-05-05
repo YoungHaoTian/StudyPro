@@ -17,7 +17,12 @@ import javax.validation.groups.Default;
         Validate1.class,
         Validate2.class,
         Validate3.class,
-        Validate4.class
+        Validate4.class,
+        Validate5.class,
+        Validate6.class,
+        Validate7.class,
+        Validate8.class,
+        Validate9.class
 })
-public interface NoticeSequence {
+public interface OnlineTaskQuestionSequence {
 }

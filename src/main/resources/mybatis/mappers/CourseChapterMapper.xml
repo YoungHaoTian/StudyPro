@@ -178,6 +178,21 @@
             order by ${orderByClause}
         </if>
     </select>
+    <select id="selectCourseIdByExample" parameterType="com.cdut.studypro.beans.CourseChapterExample"
+            resultType="java.lang.Integer">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        course_id
+        from course_chapter
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
         select

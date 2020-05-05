@@ -135,16 +135,15 @@
                 </c:forEach>
                 </tbody>
             </table>
-            <div class="panel-footer wk-panel-footer" style="margin-top:50px">
-                <button type="button" class="btn btn-info replyBtn"
-                        replyId="${id}" title="回复该讨论"
-                        style="margin-right: 20px">
-                    回&nbsp;&nbsp;复
-                </button>
-                <button type="button" class="btn btn-info" onclick="back();">
-                    返&nbsp;&nbsp;回
-                </button>
-            </div>
+        </div>
+        <div class="panel-footer wk-panel-footer">
+            <button type="button" class="btn btn-info replyBtn" title="回复该讨论"
+                    style="margin-right: 20px">
+                回&nbsp;&nbsp;复
+            </button>
+            <button type="button" class="btn btn-info" onclick="back();">
+                返&nbsp;&nbsp;回
+            </button>
         </div>
     </div>
 </div>
@@ -212,7 +211,7 @@
         </div>
     </div>
     <!-- 页面跳转信息 -->
-    <div class="row">
+    <div class="row" style="margin-bottom: 50px">
         <div class="col-sm-2 col-md-offset-6">
             <input type="number" class="form-control" id="pageNum" placeholder="跳转到...">
         </div>
@@ -234,6 +233,33 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                 <button type="button" class="btn btn-primary" id="post_batchDelete_btn">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="createDiscussReplyModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title" style="color: red">回复讨论</h5>
+            </div>
+            <div class="modal-body" style="text-align: center">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="content1" style="margin-left: 0px;" class="col-sm-2 wk-filed-label">回复内容: </label>
+                        <div class="col-sm-9">
+                                    <textarea required="required" id="content1" name="content1" type="text"
+                                              class="form-control"
+                                              placeholder="请输入回复内容"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="createDiscussReplyBtn">确定</button>
             </div>
         </div>
     </div>
@@ -262,14 +288,53 @@
     });
 
     function back() {
+        ${sessionScope.remove("discussPostQueryCriteria")};
         window.location.href = "${APP_PATH}/teacher/searchDiscuss?pageNum=${pageNumber}";
     }
 
     $(".replyBtn").on("click", function () {
-        let discussId = $(this).attr("replyId");
-        window.location.href = "${APP_PATH}/teacher/createDiscussReply/" + discussId + "?pageNumber=${pageNumber}&pageNum=${pageInfo.total}";
+        $("#createDiscussReplyModal").modal({
+                backdrop: "static"
+            }
+        );
+        <%--window.location.href = "${APP_PATH}/teacher/createDiscussReply/" + discussId + "?pageNumber=${pageNumber}&pageNum=${pageInfo.total}";--%>
     });
-
+    $("#createDiscussReplyBtn").on("click", function () {
+        let content = $("#content1").val().trim();
+        if (content === "") {
+            layer.msg("回复内容不能为空", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        let loadingIndex = layer.msg('处理中', {icon: 16});
+        //发送ajax请求删除
+        $.ajax({
+            url: "${APP_PATH}/teacher/saveDiscussReply/${id}",
+            type: "POST",
+            dataType: "json",
+            data: {
+                "content": content
+            },
+            success: function (result) {
+                layer.close(loadingIndex);
+                if (result.code === 200) {
+                    layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
+                    });
+                }
+                if (result.code === 100) {
+                    layer.msg("新增回复成功", {time: 1000, icon: 1}, function () {
+                    });
+                    window.setTimeout(function () {
+                        window.location.href = "${APP_PATH}/teacher/searchDiscussReply/${id}?pageNum=${pageInfo.total}&pageNumber=${pageNumber}";
+                    }, 1000);
+                }
+            },
+            error: function () {
+                layer.msg("网络异常，请稍后再试", {time: 1500, icon: 5, shift: 6}, function () {
+                });
+            }
+        });
+    });
     //查询按钮
     $("#search").on("click", function () {
         let name = $("#name").val().trim();
@@ -297,7 +362,9 @@
                 if (result.code === 100) {
                     layer.msg("查询成功", {time: 1000, icon: 1}, function () {
                     });
-                    window.location.href = "${APP_PATH}/teacher/searchDiscussReply/${id}?pageNumber=${pageNumber}";
+                    window.setTimeout(function () {
+                        window.location.href = "${APP_PATH}/teacher/searchDiscussReply/${id}?pageNumber=${pageNumber}";
+                    }, 1000)
                 }
             },
             error: function () {
@@ -324,10 +391,15 @@
     $(".select_item").on("click", function () {
         let flag = $(".select_item:checked").length == $(".select_item").length;
         $("#select_all").prop("checked", flag);
+        if (flag) {
+            $("#select_all").parent("th").children("label").text("取消");
+        } else {
+            $("#select_all").parent("th").children("label").text("全选");
+        }
     });
     //点击批量删除按钮
     $(".batchDelete").on("click", function () {
-        ids="";
+        ids = "";
         $.each($(".select_item:checked"), function () {
             //组装课程id字符串
             ids += $(this).attr("postId") + "-";
@@ -365,7 +437,9 @@
                 if (result.code === 100) {
                     layer.msg("批量删除成功", {time: 1000, icon: 1}, function () {
                     });
-                    window.location.href = "${APP_PATH}/teacher/searchDiscussReply/${id}?pageNumber=${pageNumber}&pageNum=" + ${pageInfo.pageNum};
+                    window.setTimeout(function () {
+                        window.location.href = "${APP_PATH}/teacher/searchDiscussReply/${id}?pageNumber=${pageNumber}&pageNum=" + ${pageInfo.pageNum};
+                    }, 1000)
                 }
             },
             error: function () {

@@ -31,4 +31,6 @@ public interface CollectMapper {
     List<Integer> selectCourseIdByStudentId(Integer id);
 
     int insertBatch(@Param("collects") List<Collect> collects);
+
+    List<Integer> selectStudentIdByExample(CollectExample collectExample);
 }

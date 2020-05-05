@@ -2,7 +2,9 @@ package com.cdut.studypro.daos;
 
 import com.cdut.studypro.beans.OfflineTask;
 import com.cdut.studypro.beans.OfflineTaskExample;
+
 import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface OfflineTaskMapper {
@@ -35,4 +37,8 @@ public interface OfflineTaskMapper {
     int updateByPrimaryKey(OfflineTask record);
 
     List<Integer> selectOfflineTaskIdsByExample(OfflineTaskExample offlineTaskExample);
+
+    OfflineTask selectByPrimaryKeyWithCourseAndChapter(Integer id);
+
+    List<OfflineTask> selectByExampleWithCourseAndCollegeAndChapter(OfflineTaskExample taskExample);
 }

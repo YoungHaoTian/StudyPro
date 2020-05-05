@@ -8,6 +8,11 @@
         <result column="path" jdbcType="VARCHAR" property="path"/>
         <result column="record_time" jdbcType="TIMESTAMP" property="recordTime"/>
     </resultMap>
+    <resultMap id="ResultMapWithStudentNameAndNumber" extends="BaseResultMap"
+               type="com.cdut.studypro.beans.StudentOfflineTask">
+        <association property="student" column="student_id"
+                     select="com.cdut.studypro.daos.StudentMapper.selectByPrimaryKeyWithIdNameAndNumber"/>
+    </resultMap>
     <sql id="Example_Where_Clause">
         <where>
             <foreach collection="oredCriteria" item="criteria" separator="or">
@@ -86,6 +91,22 @@
             order by ${orderByClause}
         </if>
     </select>
+    <select id="selectByExampleWithStudent" parameterType="com.cdut.studypro.beans.StudentOfflineTaskExample"
+            resultMap="ResultMapWithStudentNameAndNumber">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from student_online_task
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
     <select id="selectPathByExample" parameterType="com.cdut.studypro.beans.StudentOfflineTaskExample"
             resultType="java.lang.String">
         select

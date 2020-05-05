@@ -18,9 +18,13 @@
     <link rel="stylesheet" href="${APP_PATH}/resources1/bootstrap/css/bootstrap-select.min.css">
     <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap-select.min.js"></script>
     <style>
-        .tree li {
-            list-style-type: none;
-            cursor: pointer;
+        th, td {
+            /*vertical-align: middle;*/
+            text-align: center;
+            height: 30px;
+            width: 50%;
+            vertical-align: middle;
+            border: #CCCCCC 1px solid;
         }
     </style>
 </head>
@@ -35,166 +39,74 @@
         </ul>
     </div>
 </div>
-
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default wk-panel ">
-            <div class="panel-heading">查看个人信息 View Data</div>
-            <form>
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="form-inline">
-                            <div class="form-group col-md-10">
-                                <div class="container-fluid col-md-10">
-                                    <div class="sidebar">
-                                        <div class="tree">
-                                            <ul style="padding-left:0px;" class="list-group">
-                                                <li class="list-group-item tree-closed">
-                                                    <a href="javascript:void(0)"><span
-                                                            class="glyphicon glyphicon-tasks"></span>&nbsp;所授课程及章节</a>
-                                                </li>
-                                                <c:forEach items="${courses}" var="course" varStatus="statu">
-                                                <c:if test="${statu.first}">
-                                                <li class="list-group-item">
-                                                    </c:if>
-                                                    <c:if test="${!statu.first}">
-                                                <li class="list-group-item tree-closed">
-                                                    </c:if>
-                                                    <span class="glyphicon glyphicon-tasks"></span>&nbsp;${course.name}(${course.college.name})
-                                                    <span class="badge"
-                                                          style="float:right">${course.chapters.size()}</span>
-                                                    <c:if test="${!empty course.chapters}">
-                                                    <c:if test="${statu.first}">
-                                                    <ul style="margin-top:10px;">
-                                                        </c:if>
-                                                        <c:if test="${!statu.first}">
-                                                        <ul style="margin-top:10px;display:none;">
-                                                            </c:if>
-                                                            <c:forEach items="${course.chapters}" var="chapter">
-                                                                <li style="height:30px;">
-                                                                    <a href="javascript:void(0)" class="chapter"
-                                                                       text="${course.name}:${course.college.name}:${chapter.title}"
-                                                                       chapterId="${chapter.id}"
-                                                                       courseId="${course.id}"><span
-                                                                            class="glyphicon glyphicon-tags"></span>&nbsp;${chapter.title}
-                                                                    </a>
-                                                                </li>
-                                                            </c:forEach>
-                                                        </ul>
-                                                        </c:if>
-                                                        </li>
-                                                        </c:forEach>
-                                                    </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <div class="panel-heading">查看管理员信息 View Data</div>
+            <div class="panel-body">
+                <div class="row">
+                    <table class="table table-striped table-hover table-bordered"
+                           style="width: 500px;margin: 0 auto">
+                        <thead>
+                        <tr class="danger">
+                            <th colspan=2>查看教师信息</th>
+                        </tr>
+                        <tr class="info">
+                            <th colspan=2>教师：<span style="color: red">${teacher.name}</span>的信息如下</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td style="text-align: right">教师姓名：</td>
+                            <td style="text-align: left">${teacher.name}</td>
+                        </tr>
+                         <tr>
+                            <td style="text-align: right">教师编号：</td>
+                            <td style="text-align: left">${teacher.number}</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: right">所属学院：</td>
+                            <td style="text-align: left">${teacher.college.name}</td>
+                        </tr>
+                         <tr>
+                            <td style="text-align: right">联系电话：</td>
+                            <td style="text-align: left">${teacher.telephone}</td>
+                        </tr>
+                         <tr>
+                            <td style="text-align: right">身份证号码：</td>
+                            <td style="text-align: left">${teacher.idCardNo}</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: right">性别：</td>
+                            <td style="text-align: left">${teacher.gender=="0"?"男":"女"}</td>
+                        </tr>
+
+                        <tr>
+                            <td style="text-align: right">登录账户：</td>
+                            <td style="text-align: left">${teacher.account}</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: right">登录密码：</td>
+                            <td style="text-align: left">${teacher.password}</td>
+                        </tr>
+
+                        <tr>
+                            <td style="text-align: right">邮箱地址：</td>
+                            <td style="text-align: left">${teacher.email}</td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
-            </form>
-            <form>
-                <div class="panel-body">
-                    <div class="row" style="text-align: left">
-                        <div class="form-inline">
-                            <div class="form-group">
-                                <label for="name" class="control-label wk-filed-label">教师姓名:</label>
-                                <div class="input-group">
-                                    <input required="required" id="name" name="name" type="text"
-                                           class="form-control wk-normal-input" value="${teacher.name}"
-                                           readonly="readonly"/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="number" class="control-label wk-filed-label">教师编号:</label>
-                                <div class="input-group">
-                                    <input id="number" name="number" type="text" readonly="readonly"
-                                           class="form-control wk-normal-input" value="${teacher.number}"/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="college" class="control-label wk-filed-label">所属学院:</label>
-                                <div class="input-group">
-                                    <input id="college" name="college" type="text" readonly="readonly"
-                                           class="form-control wk-normal-input" value="${teacher.college.name}"/>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-inline">
-                            <div class="form-group">
-                                <label for="telephone" class="control-label wk-filed-label"> 联系电话:</label>
-                                <div class="input-group">
-                                    <input required="required" id="telephone" name="telephone" type="text"
-                                           class="form-control wk-normal-input" value="${teacher.telephone}"
-                                           readonly="readonly"/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="gender" class="control-label wk-filed-label">教师性别: </label>
-                                <div class="input-group">
-                                    <input required="required" id="gender" name="gender" type="text"
-                                           class="form-control wk-normal-input" value="${teacher.gender==0?'男':'女'}"
-                                           readonly="readonly"/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="idCardNo" class="control-label wk-filed-label">身份证号:</label>
-                                <div class="input-group">
-                                    <input required="required" id="idCardNo" name="idCardNo" type="text"
-                                           class="form-control wk-normal-input" value="${teacher.idCardNo}"
-                                           readonly="readonly"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-inline">
-                            <div class="form-group">
-                                <label for="account" class="control-label wk-filed-label">登录账户: </label>
-                                <div class="input-group">
-                                    <input required="required" id="account" name="account" type="text"
-                                           class="form-control wk-normal-input" value="${teacher.account}"
-                                           readonly="readonly"/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="password" class="control-label wk-filed-label">登录密码: </label>
-                                <div class="input-group">
-                                    <input required="required" id="password" name="password" type="text"
-                                           class="form-control wk-normal-input" value="${teacher.password}"
-                                           readonly="readonly"/>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="email" class="control-label wk-filed-label">邮箱地址: </label>
-                                <div class="input-group">
-                                    <input required="required" id="email" name="email" type="text"
-                                           class="form-control wk-normal-input" value="${teacher.email}"
-                                           readonly="readonly"/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-
+            </div>
+        </div>
+        <div class="panel-footer wk-panel-footer">
+            <button type="button" class="btn btn-info"
+                    onclick="window.location.href='${APP_PATH}/teacher/editTeacherInfo'">
+                修改个人信息
+            </button>
         </div>
     </div>
 </div>
 </body>
 </html>
-<script src="${APP_PATH}/resources1/ztree/jquery.ztree.all-3.5.min.js"></script>
-<script type="text/javascript">
-    $(function () {
-        $(".list-group-item").click(function () {
-            if ($(this).find("ul")) {
-                $(this).toggleClass("tree-closed");
-                if ($(this).hasClass("tree-closed")) {
-                    $("ul", this).hide("fast");
-                } else {
-                    $("ul", this).show("fast");
-                }
-            }
-        });
-    });
-</script>
+

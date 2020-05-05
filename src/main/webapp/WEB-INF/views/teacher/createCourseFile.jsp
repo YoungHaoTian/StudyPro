@@ -72,11 +72,12 @@
                                                         <ul style="margin-top:10px;display:none;">
                                                             </c:if>
                                                             <c:forEach items="${course.chapters}" var="chapter">
-                                                                <li style="height:30px;">
-                                                                    <a href="javascript:void(0)" class="chapter"
-                                                                       text="${course.name}(${course.college.name}) > ${chapter.title}"
-                                                                       chapterId="${chapter.id}"
-                                                                       courseId="${course.id}"><span
+                                                                <li style="height:30px;background-color: #f7f7f7"
+                                                                    class="chapter"
+                                                                    text="${course.name}(${course.college.name})-->${chapter.title}"
+                                                                    chapterId="${chapter.id}"
+                                                                    courseId="${course.id}">
+                                                                    <a href="javascript:void(0)"><span
                                                                             class="glyphicon glyphicon-tags"></span>&nbsp;${chapter.title}
                                                                     </a>
                                                                 </li>
@@ -92,17 +93,21 @@
                             </div>
 
                         </div>
+                    </div>
+                   <div class="row">
                         <div class="form-inline">
                             <div class="form-group">
-                                <label for="chapter" class="control-label wk-filed-label">所选课程及章节: </label>
+                                <label for="chapter" style="margin-right: 0px;"
+                                       class="control-label wk-filed-label">所选课程及章节: </label>
                                 <div class="input-group">
-                                    <input required="required" id="chapter" name="chapter" chapterId="0" courseId="0"
-                                           type="text"
-                                           readonly="readonly"
-                                           class="form-control wk-long-2col-input"/>
+                                    <div id="chapter" name="chapter" chapterId="0" courseId="0">
+                                        <span style="color:red;"></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="form-inline">
                             <div class="form-group">
                                 <label for="file" class="control-label wk-filed-label">选择文件: </label>
@@ -114,10 +119,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="panel-footer wk-panel-footer">
-                    <button type="button" class="btn btn-info" onclick="createCourseFile();">提&nbsp;&nbsp;交</button>
-                </div>
             </form>
+        </div>
+        <div class="panel-footer wk-panel-footer">
+            <button type="button" class="btn btn-info" onclick="createCourseFile();">提&nbsp;&nbsp;交</button>
         </div>
     </div>
 </div>
@@ -128,19 +133,28 @@
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
     $(function () {
+        let isChapter = false;
+        $(".chapter").click(function () {
+            $(".chapter").children("a").css("color", "");
+            $(this).children("a").css("color", "red");
+            isChapter = true;
+        });
         $(".list-group-item").click(function () {
-            if ($(this).find("ul")) {
-                $(this).toggleClass("tree-closed");
-                if ($(this).hasClass("tree-closed")) {
-                    $("ul", this).hide("fast");
-                } else {
-                    $("ul", this).show("fast");
+            if (!isChapter) {
+                if ($(this).find("ul")) {
+                    $(this).toggleClass("tree-closed");
+                    if ($(this).hasClass("tree-closed")) {
+                        $("ul", this).hide("fast");
+                    } else {
+                        $("ul", this).show("fast");
+                    }
                 }
             }
+            isChapter = false;
         });
     });
     $(".chapter").on("click", function () {
-        $("#chapter").val($(this).attr("text"));
+        $("#chapter").children("span").text($(this).attr("text"));
         $("#chapter").attr("chapterId", $(this).attr("chapterId"));
         $("#chapter").attr("courseId", $(this).attr("courseId"));
     });
@@ -150,7 +164,7 @@
         let courseId = $("#chapter").attr("courseId");
         let file = $("#file").val();
         if (chapterId === "0" || courseId === "0") {
-            layer.msg("你还没有选择视频所属课程及章节", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("你还没有选择文档所属课程及章节", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
@@ -169,7 +183,7 @@
             url: "${APP_PATH}/teacher/saveCourseFile",
             type: 'POST',
             dataType: 'json',
-            crossDomain: true, // 如果用到跨域，需要后台开启CORS
+            crossDomain: true, //如果用到跨域，需要后台开启CORS
             data: formData,
             processData: false,
             contentType: false,

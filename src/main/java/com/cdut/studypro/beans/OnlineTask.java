@@ -1,5 +1,10 @@
 package com.cdut.studypro.beans;
 
+import com.cdut.studypro.validates.common.Validate1;
+import com.cdut.studypro.validates.common.Validate2;
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -10,7 +15,8 @@ public class OnlineTask {
     private Integer chapterId;
 
     private Integer teacherId;
-
+    @NotEmpty(message = "作业标题不能为空", groups = {Validate1.class})
+    @Length(max = 100, message = "作业标题请控制在100字以内", groups = {Validate2.class})
     private String title;
 
     private Date recordTime;

@@ -48,11 +48,16 @@ public class DatabaseTest {
 
     @Test
     public void testRegex() {
-        String s="aaaa";
+        /*String s="aaaa";
         System.out.println(s.matches("[^(.*\\s+.*)]"));
         System.out.println(s.matches("(.*\\s+.*)"));
 
         String s1="513901199806163319";
         System.out.println(s1.matches("[1-9]\\d{5}(18|19|([23]\\d))\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{3}[0-9Xx]"));
+*/
+        String filePath="1\\4\\1\\123456_123_abc.txt";
+        String[] split = filePath.split("\\\\", 4);
+        System.out.println(Arrays.toString(split));
     }
+
 }

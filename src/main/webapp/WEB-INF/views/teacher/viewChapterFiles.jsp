@@ -60,21 +60,21 @@
                     </div>
                     <div class="form-group" style="margin-left: 20px">
                         <button type="button" id="search" class="btn btn-success search" data-toggle="tooltip"
-                                data-placement="left" title="查询章节课件" style="margin-right: 20px">
+                                data-placement="left" title="查询章节课件">
                             <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                             查询
                         </button>
                     </div>
                     <div class="form-group" style="margin-left: 20px">
                         <button type="button" id="createVideo" class="btn btn-primary" data-toggle="tooltip"
-                                data-placement="left" title="为该章节添加视频" style="margin-right: 20px">
+                                data-placement="left" title="为该章节添加视频">
                             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                             添加视频
                         </button>
                     </div>
                     <div class="form-group" style="margin-left: 20px">
                         <button type="button" id="createFile" class="btn btn-primary" data-toggle="tooltip"
-                                data-placement="left" title="为该章节添加课件" style="margin-right: 20px">
+                                data-placement="left" title="为该章节添加课件">
                             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                             添加课件
                         </button>
@@ -89,18 +89,21 @@
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default wk-panel">
-            <table class="table table-striped table-hover">
+            <table class="table table-striped table-hover" style="table-layout:fixed;">
                 <thead>
                 <tr class="info">
+                    <th style="width: 80px">序号</th>
                     <th>文件名</th>
-                    <th>上传时间</th>
-                    <th>文件类型</th>
-                    <th>选择操作</th>
+                    <th style="width: 200px">上传时间</th>
+                    <th style="width: 80px">文件类型</th>
+                    <th style="width: 500px">选择操作</th>
                 </tr>
                 </thead>
                 <tbody>
+                <c:set var="index" value="1"/>
                 <c:forEach items="${files}" var="file">
                     <tr>
+                        <td>${index}</td>
                         <td>${file.path.substring(file.path.indexOf("_")+1)}</td>
                         <td><fmt:formatDate value="${file.recordTime}" pattern="yyyy-MM-dd  HH:mm:ss"/></td>
                         <td>课件</td>
@@ -113,19 +116,21 @@
                             </button>
                             <button class="btn btn-primary btn-sm editFile" data-toggle="tooltip" data-placement="left"
                                     title="重新上传当前文档" fileId="${file.id}" style="margin-right: 20px">
-                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                                <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
                                 重新上传
                             </button>
                             <button class="btn btn-danger btn-sm deleteFile" data-toggle="tooltip" data-placement="left"
-                               title="删除当前文档" fileId="${file.id}">
+                                    title="删除当前文档" fileId="${file.id}">
                                 <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                                 删除
                             </button>
                         </td>
                     </tr>
+                    <c:set var="index" value="${index+1}"/>
                 </c:forEach>
                 <c:forEach items="${videos}" var="video">
                     <tr>
+                        <td>${index}</td>
                         <td>${video.path.substring(video.path.indexOf("_")+1)}</td>
                         <td><fmt:formatDate value="${video.recordTime}" pattern="yyyy-MM-dd  HH:mm:ss"/></td>
                         <td>视频</td>
@@ -137,22 +142,25 @@
                             </button>
                             <button class="btn btn-primary btn-sm editVideo" data-toggle="tooltip" data-placement="left"
                                     title="重新上传当前视频" videoId="${video.id}" style="margin-right: 20px">
-                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                                <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
                                 重新上传
                             </button>
-                            <button class="btn btn-danger btn-sm deleteVideo" data-toggle="tooltip" data-placement="left"
-                               title="删除当前视频" videoId="${video.id}">
+                            <button class="btn btn-danger btn-sm deleteVideo" data-toggle="tooltip"
+                                    data-placement="left"
+                                    title="删除当前视频" videoId="${video.id}">
                                 <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                                 删除
                             </button>
                         </td>
                     </tr>
+                    <c:set var="index" value="${index+1}"/>
                 </c:forEach>
                 </tbody>
             </table>
-            <div class="panel-footer wk-panel-footer" style="margin-top:50px">
-                <button type="button" class="btn btn-info" onclick="back()">返&nbsp;&nbsp;回</button>
-            </div>
+
+        </div>
+        <div class="panel-footer wk-panel-footer">
+            <button type="button" class="btn btn-info" onclick="back()">返&nbsp;&nbsp;回</button>
         </div>
     </div>
 </div>
@@ -242,6 +250,56 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="fileUpdateModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title" style="color: red">章节课件重新上传</h5>
+            </div>
+            <div class="modal-body" style="text-align: center">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="file1" class="col-sm-2 control-label">选择文件:</label>
+                        <div class="col-sm-9">
+                            <input type="file" id="file1" name="file1" fileId="0" class="form-control">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="file_update_btn">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="videoUpdateModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title" style="color: red">章节视频重新上传</h5>
+            </div>
+            <div class="modal-body" style="text-align: center">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="video1" class="col-sm-2 control-label">选择文件:</label>
+                        <div class="col-sm-9">
+                            <input type="file" id="video1" name="video1" videoId="0" class="form-control">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="video_update_btn">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
@@ -253,7 +311,7 @@
         id = $(this).attr("fileId");
         console.log(id);
         //删除课程时弹出确认框
-        let name = $(this).parents("tr").find("td:eq(0)").text();
+        let name = $(this).parents("tr").find("td:eq(1)").text();
         console.log(name);
         let message = "确定删除当前文档【" + name + "】吗？";
 
@@ -280,8 +338,12 @@
                     });
                 }
                 if (result.code === 100) {
+                    layer.msg("文档删除成功", {time: 1000, icon: 1}, function () {
+                    });
+                    window.setTimeout(function () {
+                        window.location.reload();
+                    }, 1000);
                     <%--window.location.href = "${APP_PATH}/teacher/viewChapterFiles/${id}?pageNum=${pageNum}&courseId=${courseId}";--%>
-                    window.location.reload(true);
                 }
             },
             error: function () {
@@ -294,9 +356,51 @@
     //编辑文档
     $(".editFile").on("click", function () {
         let id = $(this).attr("fileId");
-        let minTime = $("#minTime").val().trim();
-        let maxTime = $("#maxTime").val().trim();
-        window.location.href = "${APP_PATH}/teacher/editCourseFile/" + id + "?pageNum=0&chapterId=${id}&pageNumber=${pageNum}&minTime=" + minTime + "&maxTime=" + maxTime + "&courseId=${courseId}";
+        $("#file1").attr("fileId", id);
+        $("#fileUpdateModal").modal({
+            backdrop: "static"
+        });
+    });
+    $("#file_update_btn").on("click", function () {
+        let file = $("#file1").val();
+        let fileId = $("#file1").attr("fileId");
+        if (file === "") {
+            layer.msg("请选择需要上传的文件", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        //上传文件
+        let formData = new FormData();
+        let loadingIndex = layer.msg('处理中', {icon: 16});
+        formData.append("file", $("#file1")[0].files[0]);
+        formData.append("courseFileId", fileId);
+        $.ajax({
+            url: "${APP_PATH}/teacher/updateCourseFile",
+            type: 'POST',
+            dataType: 'json',
+            crossDomain: true, // 如果用到跨域，需要后台开启CORS
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                layer.close(loadingIndex);
+                if (result.code === 200) {
+                    layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
+                    });
+                }
+                if (result.code === 100) {
+                    layer.msg("文档重新上传成功", {time: 1000, icon: 1}, function () {
+                    });
+                    window.setTimeout(function () {
+                        window.location.reload();
+                    }, 1000);
+                }
+            },
+            error: function () {
+                layer.msg("网络异常，请稍后再试", {time: 1500, icon: 5, shift: 6}, function () {
+                });
+            }
+        });
     });
     //下载文档
     $(".downloadFile").on("click", function () {
@@ -309,10 +413,9 @@
         id = $(this).attr("videoId");
         console.log(id);
         //删除课程时弹出确认框
-        let name = $(this).parents("tr").find("td:eq(0)").text();
+        let name = $(this).parents("tr").find("td:eq(1)").text();
         console.log(name);
         let message = "确定删除当前视频【" + name + "】吗？";
-
         $("#videoDeleteModal .modal-body").text(message);
         $("#videoDeleteModal").modal({
                 backdrop: "static"
@@ -336,8 +439,12 @@
                     });
                 }
                 if (result.code === 100) {
+                    layer.msg("视频删除成功", {time: 1000, icon: 1}, function () {
+                    });
+                    window.setTimeout(function () {
+                        window.location.reload();
+                    }, 1000);
                     <%--window.location.href = "${APP_PATH}/teacher/viewChapterFiles/${id}?pageNum=${pageNum}&courseId=${courseId}";--%>
-                    window.location.reload(true);
                 }
             },
             error: function () {
@@ -350,16 +457,64 @@
     //重新上传视频
     $(".editVideo").on("click", function () {
         let id = $(this).attr("videoId");
-        let minTime = $("#minTime").val().trim();
-        let maxTime = $("#maxTime").val().trim();
-        window.location.href = "${APP_PATH}/teacher/editCourseVideo/" + id + "?pageNum=0&chapterId=${id}&minTime=" + minTime + "&maxTime=" + maxTime + "&pageNumber=${pageNum}&courseId=${courseId}";
+        $("#video1").attr("videoId", id);
+        $("#videoUpdateModal").modal({
+            backdrop: "static"
+        });
+    });
+    $("#video_update_btn").on("click", function () {
+        let file = $("#video1").val();
+        let videoId = $("#video1").attr("videoId");
+        if (file === "") {
+            layer.msg("请选择需要上传的文件", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        //判断上传文件的后缀名
+        let strExtension = file.substr(file.lastIndexOf('.') + 1);
+        if (strExtension !== "mp4" && strExtension !== "avi") {
+            layer.msg("请上传mp4或avi格式的视频文件", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        //上传文件
+        let formData = new FormData();
+        let loadingIndex = layer.msg('处理中', {icon: 16});
+        formData.append("file", $("#video1")[0].files[0]);
+        formData.append("courseVideoId", videoId);
+        $.ajax({
+            url: "${APP_PATH}/teacher/updateCourseVideo",
+            type: 'POST',
+            dataType: 'json',
+            crossDomain: true, // 如果用到跨域，需要后台开启CORS
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                layer.close(loadingIndex);
+                if (result.code === 200) {
+                    layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
+                    });
+                }
+                if (result.code === 100) {
+                    layer.msg("视频重新上传成功", {time: 1000, icon: 1}, function () {
+                    });
+                    window.setTimeout(function () {
+                        window.location.reload();
+                    }, 1000);
+                }
+            },
+            error: function () {
+                layer.msg("网络异常，请稍后再试", {time: 1500, icon: 5, shift: 6}, function () {
+                });
+            }
+        });
     });
     //在线观看
     $(".viewVideo").on("click", function () {
         let id = $(this).attr("videoId");
         window.location.href = "${APP_PATH}/teacher/viewCourseVideo/" + id + "?pageNum=0";
-    })
-
+    });
     //查询按钮
     $("#search").on("click", function () {
         let minTime = $("#minTime").val().trim();
@@ -370,7 +525,7 @@
     function back() {
         window.location.href = "${APP_PATH}/teacher/searchChapter?courseId=${courseId}&pageNum=${pageNum}";
     }
-
+    //上传视频
     $("#createVideo").on("click", function () {
         $("#createCourseVideoModal").modal({
                 backdrop: "static"
@@ -416,7 +571,10 @@
                 if (result.code === 100) {
                     layer.msg("视频上传成功", {time: 1000, icon: 1}, function () {
                     });
-                    window.location.reload(true);
+                    window.setTimeout(function () {
+                        window.location.reload();
+                    }, 1000);
+                    // window.location.reload(true);
                 }
             },
             error: function () {
@@ -425,8 +583,7 @@
             }
         });
     });
-
-
+    //上传文档
     $("#createFile").on("click", function () {
         $("#createCourseFileModal").modal({
                 backdrop: "static"
@@ -465,7 +622,10 @@
                 if (result.code === 100) {
                     layer.msg("文档上传成功", {time: 1000, icon: 1}, function () {
                     });
-                    window.location.reload(true);
+                    window.setTimeout(function () {
+                        window.location.reload();
+                    }, 1000);
+                    // window.location.reload(true);
                 }
             },
             error: function () {

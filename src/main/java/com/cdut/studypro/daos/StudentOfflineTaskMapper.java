@@ -29,4 +29,6 @@ public interface StudentOfflineTaskMapper {
     int updateByPrimaryKey(StudentOfflineTask record);
 
     List<String> selectPathByExample(StudentOfflineTaskExample studentOfflineTaskExample);
+
+    List<StudentOfflineTask> selectByExampleWithStudent(StudentOfflineTaskExample studentOfflineTaskExample);
 }

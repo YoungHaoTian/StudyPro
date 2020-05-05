@@ -142,7 +142,7 @@
                                 <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/createCollegeBatch">
                                     批量新增学院&nbsp;<span class=" glyphicon glyphicon-hand-right"
-                                                    aria-hidden="true"></span>
+                                                      aria-hidden="true"></span>
                                 </button>
                                 <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/searchCollege">
@@ -171,7 +171,7 @@
                                 <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/createCourseBatch">
                                     批量新增课程&nbsp;<span class=" glyphicon glyphicon-hand-right"
-                                                    aria-hidden="true"></span>
+                                                      aria-hidden="true"></span>
                                 </button>
                                 <button type="button" class="list-group-item"
                                         href="${APP_PATH}/admin/searchCourse">
@@ -257,14 +257,14 @@
     </div>
 </div>
 <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-    <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h5 class="modal-title">注销登录</h5>
+                <h5 class="modal-title" style="color: red">注销登录</h5>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="text-align: center">
 
             </div>
             <div class="modal-footer">
@@ -411,7 +411,9 @@
                 if (result.code === 100) {
                     layer.msg("注销登录成功", {time: 1000, icon: 1}, function () {
                     });
-                    window.location.href = "${APP_PATH}/index/login";
+                    window.setTimeout(function () {
+                        window.location.href = "${APP_PATH}/index/login";
+                    }, 1000)
                 }
             },
             error: function () {

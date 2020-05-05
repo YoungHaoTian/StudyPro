@@ -106,7 +106,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public boolean deleteStudentById(Integer id) {
+    public boolean deleteStudentById(Integer id, HttpServletRequest request) {
         //删除学生时，同时删除与学生相关的记录，选课记录和作业记录
         //删除选课记录
         CollectExample collectExample = new CollectExample();
@@ -130,9 +130,19 @@ public class AdminServiceImpl implements AdminService {
         StudentOfflineTaskExample studentOfflineTaskExample = new StudentOfflineTaskExample();
         StudentOfflineTaskExample.Criteria studentOfflineTaskExampleCriteria = studentOfflineTaskExample.createCriteria();
         studentOfflineTaskExampleCriteria.andStudentIdEqualTo(id);
+        List<StudentOfflineTask> studentOfflineTasks = studentOfflineTaskMapper.selectByExample(studentOfflineTaskExample);
         i = studentOfflineTaskMapper.deleteByExample(studentOfflineTaskExample);
         if (i < 0) {
             throw new RuntimeException("删除失败，请稍后再试");
+        }
+        //删除线下作业文件
+        String basePath = request.getServletContext().getRealPath("/offlineTask/");
+        for (StudentOfflineTask studentOfflineTask : studentOfflineTasks) {
+            String path = studentOfflineTask.getPath();
+            File file = new File(basePath + path);
+            if (file.exists()) {
+                file.delete();
+            }
         }
         //删除学生记录
         i = studentMapper.deleteByPrimaryKey(id);
@@ -143,7 +153,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public boolean deleteStudentByIdBatch(List<Integer> ids) {
+    public boolean deleteStudentByIdBatch(List<Integer> ids, HttpServletRequest request) {
         //删除学生时，同时删除与学生相关的记录，选课记录和作业记录
         //删除选课记录
         CollectExample collectExample = new CollectExample();
@@ -166,9 +176,19 @@ public class AdminServiceImpl implements AdminService {
         StudentOfflineTaskExample studentOfflineTaskExample = new StudentOfflineTaskExample();
         StudentOfflineTaskExample.Criteria studentOfflineTaskExampleCriteria = studentOfflineTaskExample.createCriteria();
         studentOfflineTaskExampleCriteria.andStudentIdIn(ids);
+        List<StudentOfflineTask> studentOfflineTasks = studentOfflineTaskMapper.selectByExample(studentOfflineTaskExample);
         i = studentOfflineTaskMapper.deleteByExample(studentOfflineTaskExample);
         if (i < 0) {
             throw new RuntimeException("删除失败，请稍后再试");
+        }
+        //删除线下作业文件
+        String basePath = request.getServletContext().getRealPath("/offlineTask/");
+        for (StudentOfflineTask studentOfflineTask : studentOfflineTasks) {
+            String path = studentOfflineTask.getPath();
+            File file = new File(basePath + path);
+            if (file.exists()) {
+                file.delete();
+            }
         }
         //删除学生记录
         StudentExample studentExample = new StudentExample();
@@ -546,7 +566,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public boolean deleteCourseByIdBatch(List<Integer> ids, HttpServletRequest request) {
-//删除课程信息的同时删除该课程的章节信息、作业等与课程相关的信息
+        //删除课程信息的同时删除该课程的章节信息、作业等与课程相关的信息
         //1、删除选课信息
         CollectExample collectExample = new CollectExample();
         CollectExample.Criteria collectExampleCriteria = collectExample.createCriteria();
@@ -620,7 +640,7 @@ public class AdminServiceImpl implements AdminService {
         if (i < 0) {
             throw new RuntimeException("删除失败，请稍后再试");
         }
-        //4.3.2、删除在线任务的题目
+        //4.3.2、删除在线任务的题目信息
         OnlineTaskQuestionExample onlineTaskQuestionExample = new OnlineTaskQuestionExample();
         OnlineTaskQuestionExample.Criteria onlineTaskQuestionExampleCriteria = onlineTaskQuestionExample.createCriteria();
         onlineTaskQuestionExampleCriteria.andOnlineTaskIdIn(onlineTaskIds);
@@ -659,6 +679,8 @@ public class AdminServiceImpl implements AdminService {
         if (i < 0) {
             throw new RuntimeException("删除失败，请稍后再试");
         }
+
+        //删除课程信息
         CourseExample courseExample = new CourseExample();
         CourseExample.Criteria criteria = courseExample.createCriteria();
         criteria.andIdIn(ids);
@@ -666,23 +688,17 @@ public class AdminServiceImpl implements AdminService {
         if (i <= 0) {
             throw new RuntimeException("删除失败，请稍后再试");
         }
-        //删除课程课件
-        String base = request.getServletContext().getRealPath("/file/");
+
+        String fileBase = request.getServletContext().getRealPath("/file/");
+        String videoBase = request.getServletContext().getRealPath("/video/");
+        String offlineBase = request.getServletContext().getRealPath("/offlineTask/");
         for (Integer id : ids) {
-            String path = base + id;
-            FileUtil.deleteDir(path);
-        }
-        //删除课程视频
-        base = request.getServletContext().getRealPath("/video/");
-        for (Integer id : ids) {
-            String path = base + id;
-            FileUtil.deleteDir(path);
-        }
-        //删除离线任务文件
-        base = request.getServletContext().getRealPath("/offlineTask/");
-        for (Integer id : ids) {
-            String path = base + id;
-            FileUtil.deleteDir(path);
+            //删除课程课件
+            FileUtil.deleteDir(fileBase + id);
+            //删除课程视频
+            FileUtil.deleteDir(videoBase + id);
+            //删除离线任务文件
+            FileUtil.deleteDir(offlineBase + id);
         }
         return true;
     }
@@ -733,11 +749,23 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public boolean deleteDiscussByIdBatch(List<Integer> ids) {
+        //删除讨论之前，先删除对应的讨论记录
+        DiscussPostExample discussPostExample = new DiscussPostExample();
+        DiscussPostExample.Criteria criteria1 = discussPostExample.createCriteria();
+        criteria1.andDiscussIdIn(ids);
+        int i = discussPostMapper.deleteByExample(discussPostExample);
+        if (i < 0) {
+            throw new RuntimeException("删除失败，请稍后再试");
+        }
+        //删除讨论
         DiscussExample discussExample = new DiscussExample();
         DiscussExample.Criteria criteria = discussExample.createCriteria();
         criteria.andIdIn(ids);
-        return discussMapper.deleteByExample(discussExample) > 0;
-
+        i = discussMapper.deleteByExample(discussExample);
+        if (i <= 0) {
+            throw new RuntimeException("删除失败，请稍后再试");
+        }
+        return true;
     }
 
 

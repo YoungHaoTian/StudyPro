@@ -50,6 +50,14 @@
             <div style="position: absolute;top: -2px;right: 150px;">
                 <form class="navbar-form navbar-right" role="search" action="" method="post">
                     <div class="form-group">
+                        <button type="button" class="btn btn-info addChapter"
+                                data-toggle="tooltip" courseId="${courseId}"
+                                data-placement="left" title="为该课程添加章节" style="margin-right: 20px">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            添加章节
+                        </button>
+                    </div>
+                    <div class="form-group">
                         <button type="button" class="btn btn-danger batchDelete" data-toggle="tooltip"
                                 data-placement="left"
                                 title="批量删除章节">
@@ -76,8 +84,8 @@
                     </th>
                     <th>章节标题</th>
                     <th>章节内容</th>
-                    <th>所属课程(学院)</th>
-                    <th style="width:200px">发布日期</th>
+                    <th>所属课程(<span style="color: green">课程所属学院</span>)</th>
+                    <th style="width:200px">创建日期</th>
                     <th style="width:400px">选择操作</th>
                 </tr>
                 </thead>
@@ -92,7 +100,9 @@
                         <td>${chapter.title}</td>
                         <td>${chapter.content}</td>
                         <c:if test="${chapter.course!=null}">
-                            <td>${chapter.course.name.trim()=="0"?"课程未设置名称":(chapter.course.name.trim()==""?"课程未设置名称":chapter.course.name) }(${chapter.course.college.name})</td>
+                            <td>${chapter.course.name.trim()=="0"?"":chapter.course.name.trim()}(<span
+                                    style="color: green">${chapter.course.college.name.trim()}</span>)
+                            </td>
                         </c:if>
                         <c:if test="${chapter.course==null}">
                             <td>未录入</td>
@@ -127,12 +137,12 @@
                 </c:forEach>
                 </tbody>
             </table>
-            <div class="panel-footer wk-panel-footer" style="margin-top: 50px">
-                <button type="button" class="btn btn-info"
-                        onclick="window.location.href='${APP_PATH}/teacher/searchCourse?pageNum=${pageNum}'"
-                        style="margin-left: 20px">返&nbsp;&nbsp;回
-                </button>
-            </div>
+        </div>
+        <div class="panel-footer wk-panel-footer">
+            <button type="button" class="btn btn-info"
+                    onclick="window.location.href='${APP_PATH}/teacher/searchCourse?pageNum=${pageNum}'"
+                    style="margin-left: 20px">返&nbsp;&nbsp;回
+            </button>
         </div>
     </div>
 </div>
@@ -194,7 +204,7 @@
     });
     //点击批量删除按钮
     $(".batchDelete").on("click", function () {
-        ids="";
+        ids = "";
         $.each($(".select_item:checked"), function () {
             //组装课程id字符串
             ids += $(this).attr("chapterId") + "-";
@@ -221,7 +231,8 @@
             type: "POST",
             dataType: "json",
             data: {
-                "ids": ids
+                "ids": ids,
+                "courseId": ${courseId}
             },
             success: function (result) {
                 layer.close(loadingIndex);
@@ -232,8 +243,10 @@
                 if (result.code === 100) {
                     layer.msg("批量删除成功", {time: 1000, icon: 1}, function () {
                     });
+                    window.setTimeout(function () {
+                        window.location.reload();
+                    }, 1000);
                     <%--window.location.href = "${APP_PATH}/teacher/searchChapter?courseId=${courseId}";--%>
-                    window.location.reload(true);
                 }
             },
             error: function () {
@@ -241,5 +254,10 @@
                 });
             }
         });
+    });
+    $(".addChapter").on("click", function () {
+        let courseId = $(this).attr("courseId");
+        console.log(courseId);
+        window.location.href = "${APP_PATH}/teacher/createChapter?courseId=" + courseId;
     });
 </script>

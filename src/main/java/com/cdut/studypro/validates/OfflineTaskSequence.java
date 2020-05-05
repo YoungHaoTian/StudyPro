@@ -1,6 +1,7 @@
 package com.cdut.studypro.validates;
 
-import com.cdut.studypro.validates.common.*;
+import com.cdut.studypro.validates.common.Validate1;
+import com.cdut.studypro.validates.common.Validate2;
 
 import javax.validation.GroupSequence;
 import javax.validation.groups.Default;
@@ -15,9 +16,7 @@ import javax.validation.groups.Default;
 @GroupSequence(value = {
         Default.class,
         Validate1.class,
-        Validate2.class,
-        Validate3.class,
-        Validate4.class
+        Validate2.class
 })
-public interface NoticeSequence {
+public interface OfflineTaskSequence {
 }

@@ -29,4 +29,6 @@ public interface StudentOnlineTaskMapper {
     int updateByPrimaryKey(StudentOnlineTask record);
 
     List<Integer> selectTaskIdsByExample(StudentOnlineTaskExample studentTaskExample);
+
+    List<StudentOnlineTask> selectByExampleWithStudent(StudentOnlineTaskExample studentOnlineTaskExample);
 }

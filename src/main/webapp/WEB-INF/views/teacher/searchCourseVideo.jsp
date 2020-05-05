@@ -105,7 +105,7 @@
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default  wk-panel">
-            <table class="table table-striped table-hover">
+            <table class="table table-striped table-hover" style="table-layout:fixed;">
                 <thead>
                 <tr class="info">
                     <th style="width: 80px">
@@ -113,10 +113,10 @@
                         <label for="select_all" style="margin-bottom: 0px;font-weight: 200">全选</label>
                     </th>
                     <th>文件名</th>
-                    <th>所属课程：学院</th>
+                    <th>所属课程(<span style="color:green;">课程所属学院</span>)</th>
                     <th>所属章节</th>
-                    <th>上传时间</th>
-                    <th>选择操作</th>
+                    <th style="width: 200px">上传时间</th>
+                    <th style="width: 400px">选择操作</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -128,8 +128,10 @@
                             </label>
                         </th>
                         <td>${video.path}</td>
-                        <td>${video.courseChapter.course.name}：${video.courseChapter.course.college.name}</td>
-                        <td>${video.courseChapter.title}</td>
+                        <td>${video.courseChapter.course.name}(<span
+                                style="color: green">${video.courseChapter.course.college.name}</span>)
+                        </td>
+                        <td><span style="color: red">${video.courseChapter.title}</span></td>
                         <td><fmt:formatDate value="${video.recordTime}" pattern="yyyy-MM-dd  HH:mm:ss"/></td>
                         <td>
                             <button class="btn btn-success btn-sm view" data-toggle="tooltip" data-placement="left"
@@ -139,7 +141,7 @@
                             </button>
                             <button class="btn btn-primary btn-sm edit" data-toggle="tooltip" data-placement="left"
                                     title="重新上传当前课程视频" videoId="${video.id}" style="margin-right: 20px">
-                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                                <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
                                 重新上传
                             </button>
                             <a class="btn btn-danger btn-sm delete" data-toggle="tooltip" data-placement="left"
@@ -211,7 +213,7 @@
         </div>
     </div>
     <!-- 页面跳转信息 -->
-    <div class="row">
+    <div class="row" style="margin-bottom: 50px">
         <div class="col-sm-2 col-md-offset-6">
             <input type="number" class="form-control" id="pageNum" placeholder="跳转到...">
         </div>
@@ -254,6 +256,31 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="videoUpdateModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title" style="color: red">课程视频重新上传</h5>
+            </div>
+            <div class="modal-body" style="text-align: center">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="video" class="col-sm-2 control-label">选择文件:</label>
+                        <div class="col-sm-9">
+                            <input type="file" id="video" name="video" videoId="0" class="form-control">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="video_update_btn">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
@@ -292,7 +319,12 @@
                     });
                 }
                 if (result.code === 100) {
-                    window.location.href = "${APP_PATH}/teacher/deleteCourseVideo?pageNum=${pageInfo.pageNum }";
+                    layer.msg("删除成功", {time: 1000, icon: 1}, function () {
+                    });
+                    window.setTimeout(function () {
+                        window.location.reload();
+                    }, 1000);
+                    <%--window.location.href = "${APP_PATH}/teacher/searchCourseVideo?pageNum=${pageInfo.pageNum }";--%>
                 }
             },
             error: function () {
@@ -308,6 +340,11 @@
         let total =${pageInfo.pages };
         if (pageNum.trim() === "" || total < pageNum || pageNum <= 0) {
             layer.msg("错误的跳转页码，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        if (pageNum ==${pageInfo.pageNum}) {
+            layer.msg("当前已经是第" + pageNum + "页", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
         }
@@ -334,7 +371,7 @@
     });
     //点击批量删除按钮
     $(".batchDelete").on("click", function () {
-        ids="";
+        ids = "";
         $.each($(".select_item:checked"), function () {
             //组装课程id字符串
             ids += $(this).attr("videoId") + "-";
@@ -373,7 +410,10 @@
                 if (result.code === 100) {
                     layer.msg("批量删除成功", {time: 1000, icon: 1}, function () {
                     });
-                    window.location.href = "${APP_PATH}/teacher/searchCourseVideo?pageNum=${pageInfo.pageNum }";
+                    window.setTimeout(function () {
+                        window.location.reload();
+                    }, 1000);
+                    <%--window.location.href = "${APP_PATH}/teacher/searchCourseVideo?pageNum=${pageInfo.pageNum }";--%>
                 }
             },
             error: function () {
@@ -410,7 +450,9 @@
                 if (result.code === 100) {
                     layer.msg("查询成功", {time: 1000, icon: 1}, function () {
                     });
-                    window.location.href = "${APP_PATH}/teacher/searchCourseVideo";
+                    window.setTimeout(function () {
+                        window.location.href = "${APP_PATH}/teacher/searchCourseVideo";
+                    }, 1000);
                 }
             },
             error: function () {
@@ -422,7 +464,59 @@
     //编辑课程视频信息
     $(".edit").on("click", function () {
         let id = $(this).attr("videoId");
-        window.location.href = "${APP_PATH}/teacher/editCourseVideo/" + id + "?pageNum=${pageInfo.pageNum}";
+        $("#video").attr("videoId", id);
+        $("#videoUpdateModal").modal({
+            backdrop: "static"
+        });
+        <%--window.location.href = "${APP_PATH}/teacher/editCourseVideo/" + id + "?pageNum=${pageInfo.pageNum}";--%>
+    });
+    $("#video_update_btn").on("click", function () {
+        let file = $("#video").val();
+        let videoId = $("#video").attr("videoId");
+        if (file === "") {
+            layer.msg("请选择需要上传的文件", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        //判断上传文件的后缀名
+        let strExtension = file.substr(file.lastIndexOf('.') + 1);
+        if (strExtension !== "mp4" && strExtension !== "avi") {
+            layer.msg("请上传mp4或avi格式的视频文件", {time: 1500, icon: 5, shift: 6}, function () {
+            });
+            return;
+        }
+        //上传文件
+        let formData = new FormData();
+        let loadingIndex = layer.msg('处理中', {icon: 16});
+        formData.append("file", $("#video")[0].files[0]);
+        formData.append("courseVideoId", videoId);
+        $.ajax({
+            url: "${APP_PATH}/teacher/updateCourseVideo",
+            type: 'POST',
+            dataType: 'json',
+            crossDomain: true, // 如果用到跨域，需要后台开启CORS
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                layer.close(loadingIndex);
+                if (result.code === 200) {
+                    layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
+                    });
+                }
+                if (result.code === 100) {
+                    layer.msg("视频重新上传成功", {time: 1000, icon: 1}, function () {
+                    });
+                    window.setTimeout(function () {
+                        window.location.reload();
+                    }, 1000);
+                }
+            },
+            error: function () {
+                layer.msg("网络异常，请稍后再试", {time: 1500, icon: 5, shift: 6}, function () {
+                });
+            }
+        });
     });
     $(".view").on("click", function () {
         let id = $(this).attr("videoId");

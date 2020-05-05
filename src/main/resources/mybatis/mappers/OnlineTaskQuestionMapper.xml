@@ -9,13 +9,13 @@
         <result column="item_c" jdbcType="VARCHAR" property="itemC"/>
         <result column="item_d" jdbcType="VARCHAR" property="itemD"/>
         <result column="answer" jdbcType="VARCHAR" property="answer"/>
-        <result column="online_task_id" jdbcType="INTEGER" property="taskId"/>
+        <result column="online_task_id" jdbcType="INTEGER" property="onlineTaskId"/>
         <result column="score" jdbcType="INTEGER" property="score"/>
     </resultMap>
 
     <resultMap id="ResultMapAnswerAndScore" type="com.cdut.studypro.beans.OnlineTaskQuestion">
         <id column="id" jdbcType="INTEGER" property="id"/>
-        <result column="online_task_id" jdbcType="INTEGER" property="taskId"/>
+        <result column="online_task_id" jdbcType="INTEGER" property="onlineTaskId"/>
         <result column="score" jdbcType="INTEGER" property="score"/>
     </resultMap>
 
@@ -159,7 +159,7 @@
       )
     values (#{id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{itemA,jdbcType=VARCHAR}, 
       #{itemB,jdbcType=VARCHAR}, #{itemC,jdbcType=VARCHAR}, #{itemD,jdbcType=VARCHAR}, 
-      #{answer,jdbcType=VARCHAR}, #{taskId,jdbcType=INTEGER}, #{score,jdbcType=INTEGER}
+      #{answer,jdbcType=VARCHAR}, #{onlineTaskId,jdbcType=INTEGER}, #{score,jdbcType=INTEGER}
       )
   </insert>
     <insert id="insertSelective" parameterType="com.cdut.studypro.beans.OnlineTaskQuestion">
@@ -186,7 +186,7 @@
             <if test="answer != null">
                 answer,
             </if>
-            <if test="taskId != null">
+            <if test="onlineTaskId != null">
                 online_task_id,
             </if>
             <if test="score != null">
@@ -215,8 +215,8 @@
             <if test="answer != null">
                 #{answer,jdbcType=VARCHAR},
             </if>
-            <if test="taskId != null">
-                #{taskId,jdbcType=INTEGER},
+            <if test="onlineTaskId != null">
+                #{onlineTaskId,jdbcType=INTEGER},
             </if>
             <if test="score != null">
                 #{score,jdbcType=INTEGER},
@@ -253,8 +253,8 @@
             <if test="record.answer != null">
                 answer = #{record.answer,jdbcType=VARCHAR},
             </if>
-            <if test="record.taskId != null">
-                online_task_id = #{record.taskId,jdbcType=INTEGER},
+            <if test="record.onlineTaskId != null">
+                online_task_id = #{record.onlineTaskId,jdbcType=INTEGER},
             </if>
             <if test="record.score != null">
                 score = #{record.score,jdbcType=INTEGER},
@@ -273,7 +273,7 @@
         item_c = #{record.itemC,jdbcType=VARCHAR},
         item_d = #{record.itemD,jdbcType=VARCHAR},
         answer = #{record.answer,jdbcType=VARCHAR},
-        online_task_id = #{record.taskId,jdbcType=INTEGER},
+        online_task_id = #{record.onlineTaskId,jdbcType=INTEGER},
         score = #{record.score,jdbcType=INTEGER}
         <if test="_parameter != null">
             <include refid="Update_By_Example_Where_Clause"/>
@@ -300,8 +300,8 @@
             <if test="answer != null">
                 answer = #{answer,jdbcType=VARCHAR},
             </if>
-            <if test="taskId != null">
-                online_task_id = #{taskId,jdbcType=INTEGER},
+            <if test="onlineTaskId != null">
+                online_task_id = #{onlineTaskId,jdbcType=INTEGER},
             </if>
             <if test="score != null">
                 score = #{score,jdbcType=INTEGER},
@@ -317,11 +317,11 @@
       item_c = #{itemC,jdbcType=VARCHAR},
       item_d = #{itemD,jdbcType=VARCHAR},
       answer = #{answer,jdbcType=VARCHAR},
-      online_task_id = #{taskId,jdbcType=INTEGER},
+      online_task_id = #{onlineTaskId,jdbcType=INTEGER},
       score = #{score,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
-    <select id="selectByTaskId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="selectByOnlineTaskId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from online_task_question
@@ -339,7 +339,7 @@
             #{question.itemC,jdbcType=VARCHAR},
             #{question.itemD,jdbcType=VARCHAR},
             #{question.answer,jdbcType=VARCHAR},
-            #{question.taskId,jdbcType=INTEGER},
+            #{question.onlineTaskId,jdbcType=INTEGER},
             #{question.score,jdbcType=INTEGER}
             )
         </foreach>

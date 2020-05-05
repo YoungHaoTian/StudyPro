@@ -10,6 +10,7 @@
 <%--<jsp:forward page="/admin/updateTeacher/15"/>--%>
 <%--<jsp:forward page="/admin/editAdminInfo"/>--%>
 <jsp:forward page="/index/login"/>
+<%--<jsp:forward page="/teacher/viewTeacherInfo"/>--%>
 <%--<jsp:forward page="/teacher/teacherIndex"/>--%>
 <html>
 <head>

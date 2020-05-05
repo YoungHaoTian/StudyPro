@@ -14,7 +14,7 @@
     </resultMap>
     <resultMap extends="BaseResultMap" id="ResultMapWithChapter" type="com.cdut.studypro.beans.CourseVideo">
         <association property="courseChapter" column="chapter_id"
-                     select="com.cdut.studypro.daos.CourseChapterMapper.selectByPrimaryKeyWithIdTitleAndCourse"/>
+                     select="com.cdut.studypro.daos.CourseChapterMapper.selectByPrimaryKeyWithIdTitleAndCourseAndCollege"/>
     </resultMap>
     <resultMap extends="BaseResultMap" id="ResultMapWithChapterAndCourseAndTeacher" type="com.cdut.studypro.beans.CourseVideo">
         <association property="courseChapter" column="chapter_id"

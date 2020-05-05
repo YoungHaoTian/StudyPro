@@ -3,9 +3,12 @@ package com.cdut.studypro.services.impl;
 import com.cdut.studypro.beans.*;
 import com.cdut.studypro.daos.*;
 import com.cdut.studypro.services.TeacherService;
+import com.cdut.studypro.utils.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -47,10 +50,25 @@ public class TeacherServiceImpl implements TeacherService {
     private DiscussPostMapper discussPostMapper;
 
     @Autowired
-    private OnlineTaskMapper taskMapper;
+    private OnlineTaskMapper onlineTaskMapper;
+
+    @Autowired
+    private OfflineTaskMapper offlineTaskMapper;
 
     @Autowired
     private OnlineTaskQuestionMapper taskQuestionMapper;
+
+    @Autowired
+    private StudentOfflineTaskMapper studentOfflineTaskMapper;
+
+    @Autowired
+    private StudentOnlineTaskMapper studentOnlineTaskMapper;
+
+    @Autowired
+    private CollectMapper collectMapper;
+
+    @Autowired
+    private OnlineTaskQuestionMapper onlineTaskQuestionMapper;
 
     @Override
     public List<Teacher> selectTeacherByExample(TeacherExample example) {
@@ -93,10 +111,23 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public boolean deleteDiscussByIdBatch(List<Integer> discussIds) {
+        //删除讨论之前，先删除对应的讨论记录
+        DiscussPostExample discussPostExample = new DiscussPostExample();
+        DiscussPostExample.Criteria criteria1 = discussPostExample.createCriteria();
+        criteria1.andDiscussIdIn(discussIds);
+        int i = discussPostMapper.deleteByExample(discussPostExample);
+        if (i < 0) {
+            throw new RuntimeException("删除失败，请稍后再试");
+        }
+        //删除讨论
         DiscussExample discussExample = new DiscussExample();
         DiscussExample.Criteria criteria = discussExample.createCriteria();
         criteria.andIdIn(discussIds);
-        return discussMapper.deleteByExample(discussExample) > 0;
+        i = discussMapper.deleteByExample(discussExample);
+        if (i <= 0) {
+            throw new RuntimeException("删除失败，请稍后再试");
+        }
+        return true;
     }
 
     @Override
@@ -113,34 +144,41 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public boolean saveTask(OnlineTask task) {
-        return taskMapper.insertSelective(task) > 0;
+    public boolean saveOnlineTask(OnlineTask task) {
+        return onlineTaskMapper.insertSelective(task) > 0;
     }
 
     @Override
-    public List<OnlineTask> getAllTasksWithCourseAndChapterExample(OnlineTaskExample taskExample) {
-        return taskMapper.selectByExampleWithCourseAndCollegeAndChapter(taskExample);
+    public List<OnlineTask> getAllOnlineTasksWithCourseAndChapterExample(OnlineTaskExample taskExample) {
+        return onlineTaskMapper.selectByExampleWithCourseAndCollegeAndChapter(taskExample);
     }
 
     @Override
-    public boolean deleteTaskById(Integer id) {
-        //删除作业时，删除作业对应的题目
+    public boolean deleteOnlineTaskById(Integer id) {
+        //删除作业时，删除作业对应的题目和作业记录
         OnlineTaskQuestionExample taskQuestionExample = new OnlineTaskQuestionExample();
         OnlineTaskQuestionExample.Criteria criteria = taskQuestionExample.createCriteria();
         criteria.andOnlineTaskIdEqualTo(id);
         int i = taskQuestionMapper.deleteByExample(taskQuestionExample);
         if (i < 0) {
-            throw new RuntimeException("删除题目时出现错误，请稍后再试");
+            throw new RuntimeException("删除失败，请稍后再试");
         }
-        int j = taskMapper.deleteByPrimaryKey(id);
-        if (j < 0) {
-            throw new RuntimeException("删除作业时出现错误，请稍后再试");
+        StudentOnlineTaskExample studentOnlineTaskExample = new StudentOnlineTaskExample();
+        StudentOnlineTaskExample.Criteria studentOnlineTaskExampleCriteria = studentOnlineTaskExample.createCriteria();
+        studentOnlineTaskExampleCriteria.andOnlineTaskIdEqualTo(id);
+        i = studentOnlineTaskMapper.deleteByExample(studentOnlineTaskExample);
+        if (i < 0) {
+            throw new RuntimeException("删除失败，请稍后再试");
         }
-        return j > 0;
+        i = onlineTaskMapper.deleteByPrimaryKey(id);
+        if (i <= 0) {
+            throw new RuntimeException("删除失败，请稍后再试");
+        }
+        return true;
     }
 
     @Override
-    public boolean deleteTaskByIdBatch(List<Integer> taskIds) {
+    public boolean deleteOnlineTaskByIdBatch(List<Integer> taskIds) {
         //删除作业之前先将对应的所有题目删除
         OnlineTaskQuestionExample taskQuestionExample = new OnlineTaskQuestionExample();
         OnlineTaskQuestionExample.Criteria questionExampleCriteria = taskQuestionExample.createCriteria();
@@ -152,7 +190,7 @@ public class TeacherServiceImpl implements TeacherService {
         OnlineTaskExample taskExample = new OnlineTaskExample();
         OnlineTaskExample.Criteria criteria = taskExample.createCriteria();
         criteria.andIdIn(taskIds);
-        int j = taskMapper.deleteByExample(taskExample);
+        int j = onlineTaskMapper.deleteByExample(taskExample);
         if (j < 0) {
             throw new RuntimeException("批量删除作业时出现错误，请稍后再试");
         }
@@ -160,18 +198,18 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public OnlineTask getTaskWithCourseAndChapterById(Integer id) {
-        return taskMapper.selectByPrimaryKeyWithCourseAndChapter(id);
+    public OnlineTask getOnlineTaskWithCourseAndChapterById(Integer id) {
+        return onlineTaskMapper.selectByPrimaryKeyWithCourseAndChapter(id);
     }
 
     @Override
-    public OnlineTask getTaskById(Integer id) {
-        return taskMapper.selectByPrimaryKey(id);
+    public OnlineTask getOnlineTaskById(Integer id) {
+        return onlineTaskMapper.selectByPrimaryKey(id);
     }
 
     @Override
-    public boolean updateTaskByPrimaryKeySelective(OnlineTask task) {
-        return taskMapper.updateByPrimaryKeySelective(task) > 0;
+    public boolean updateOnlineTaskByPrimaryKeySelective(OnlineTask task) {
+        return onlineTaskMapper.updateByPrimaryKeySelective(task) > 0;
     }
 
     @Override
@@ -185,12 +223,12 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<OnlineTaskQuestion> getTaskQuestionsByTaskId(Integer id) {
-        return taskQuestionMapper.selectByTaskId(id);
+    public List<OnlineTaskQuestion> getOnlineTaskQuestionsByTaskId(Integer id) {
+        return taskQuestionMapper.selectByOnlineTaskId(id);
     }
 
     @Override
-    public boolean deleteTaskQuestionByIdBatch(List<Integer> questionIds) {
+    public boolean deleteOnlineTaskQuestionByIdBatch(List<Integer> questionIds) {
         OnlineTaskQuestionExample taskQuestionExample = new OnlineTaskQuestionExample();
         OnlineTaskQuestionExample.Criteria criteria = taskQuestionExample.createCriteria();
         criteria.andIdIn(questionIds);
@@ -198,22 +236,22 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public boolean insertTaskQuestion(OnlineTaskQuestion taskQuestion) {
+    public boolean insertOnlineTaskQuestion(OnlineTaskQuestion taskQuestion) {
         return taskQuestionMapper.insert(taskQuestion) > 0;
     }
 
     @Override
-    public OnlineTaskQuestion getTaskQuestionsById(Integer id) {
+    public OnlineTaskQuestion getOnlineTaskQuestionsById(Integer id) {
         return taskQuestionMapper.selectByPrimaryKey(id);
     }
 
     @Override
-    public boolean updateTaskQuestionByPrimaryKeySelective(OnlineTaskQuestion taskQuestion) {
+    public boolean updateOnlineTaskQuestionByPrimaryKeySelective(OnlineTaskQuestion taskQuestion) {
         return taskQuestionMapper.updateByPrimaryKeySelective(taskQuestion) > 0;
     }
 
     @Override
-    public boolean insertTaskQuestionBatch(List<OnlineTaskQuestion> taskQuestions) {
+    public boolean insertOnlineTaskQuestionBatch(List<OnlineTaskQuestion> taskQuestions) {
         return taskQuestionMapper.insertBatch(taskQuestions) > 0;
     }
 
@@ -238,15 +276,93 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public boolean deleteChapterByIdBatch(List<Integer> chapterIds) {
-        //删除章节之前，先删除章节对应的课件信息
-
+    public boolean deleteChapterByIdBatch(List<Integer> chapterIds, HttpServletRequest request, Integer courseId) {
+        //删除章节之前，先删除章节对应的文件信息
+        //1.1、删除课件信息
+        CourseFileExample courseFileExample = new CourseFileExample();
+        CourseFileExample.Criteria courseFileExampleCriteria = courseFileExample.createCriteria();
+        courseFileExampleCriteria.andChapterIdIn(chapterIds);
+        int i = courseFileMapper.deleteByExample(courseFileExample);
+        if (i < 0) {
+            throw new RuntimeException("删除失败，请稍后再试");
+        }
+        //1.2、删除视频信息
+        CourseVideoExample courseVideoExample = new CourseVideoExample();
+        CourseVideoExample.Criteria courseVideoExampleCriteria = courseVideoExample.createCriteria();
+        courseVideoExampleCriteria.andChapterIdIn(chapterIds);
+        i = courseVideoMapper.deleteByExample(courseVideoExample);
+        if (i < 0) {
+            throw new RuntimeException("删除失败，请稍后再试");
+        }
+        //删除章节下的所有任务
+        //2.1、删除在线任务
+        OnlineTaskExample onlineTaskExample = new OnlineTaskExample();
+        OnlineTaskExample.Criteria onlineTaskExampleCriteria = onlineTaskExample.createCriteria();
+        onlineTaskExampleCriteria.andChapterIdIn(chapterIds);
+        //获取章节下的所有在线任务id
+        List<Integer> onlineTaskIds = onlineTaskMapper.selectOnlineTaskIdsByExample(onlineTaskExample);
+        if (onlineTaskIds.size() == 0) {
+            onlineTaskIds.add(0);
+        }
+        i = onlineTaskMapper.deleteByExample(onlineTaskExample);
+        if (i < 0) {
+            throw new RuntimeException("删除失败，请稍后再试");
+        }
+        //2.2、删除在线任务的题目信息
+        OnlineTaskQuestionExample onlineTaskQuestionExample = new OnlineTaskQuestionExample();
+        OnlineTaskQuestionExample.Criteria onlineTaskQuestionExampleCriteria = onlineTaskQuestionExample.createCriteria();
+        onlineTaskQuestionExampleCriteria.andOnlineTaskIdIn(onlineTaskIds);
+        i = onlineTaskQuestionMapper.deleteByExample(onlineTaskQuestionExample);
+        if (i < 0) {
+            throw new RuntimeException("删除失败，请稍后再试");
+        }
+        //2.3、删除学生完成在线任务的信息
+        StudentOnlineTaskExample studentOnlineTaskExample = new StudentOnlineTaskExample();
+        StudentOnlineTaskExample.Criteria studentOnlineTaskExampleCriteria = studentOnlineTaskExample.createCriteria();
+        studentOnlineTaskExampleCriteria.andOnlineTaskIdIn(onlineTaskIds);
+        i = studentOnlineTaskMapper.deleteByExample(studentOnlineTaskExample);
+        if (i < 0) {
+            throw new RuntimeException("删除失败，请稍后再试");
+        }
+        //3.1、删除离线任务
+        OfflineTaskExample offlineTaskExample = new OfflineTaskExample();
+        OfflineTaskExample.Criteria offlineTaskExampleCriteria = offlineTaskExample.createCriteria();
+        offlineTaskExampleCriteria.andChapterIdIn(chapterIds);
+        //获取章节下的所有离线任务id
+        List<Integer> offlineTaskIds = offlineTaskMapper.selectOfflineTaskIdsByExample(offlineTaskExample);
+        if (offlineTaskIds.size() == 0) {
+            offlineTaskIds.add(0);
+        }
+        i = offlineTaskMapper.deleteByExample(offlineTaskExample);
+        if (i < 0) {
+            throw new RuntimeException("删除失败，请稍后再试");
+        }
+        //3.2、删除学生完成离线任务的信息
+        StudentOfflineTaskExample studentOfflineTaskExample = new StudentOfflineTaskExample();
+        StudentOfflineTaskExample.Criteria studentOfflineTaskExampleCriteria = studentOfflineTaskExample.createCriteria();
+        studentOfflineTaskExampleCriteria.andOfflineTaskIdIn(offlineTaskIds);
+        i = studentOfflineTaskMapper.deleteByExample(studentOfflineTaskExample);
+        if (i < 0) {
+            throw new RuntimeException("删除失败，请稍后再试");
+        }
 
         //删除章节信息
         CourseChapterExample example = new CourseChapterExample();
         CourseChapterExample.Criteria criteria = example.createCriteria();
         criteria.andIdIn(chapterIds);
-        return courseChapterMapper.deleteByExample(example) > 0;
+        i = courseChapterMapper.deleteByExample(example);
+        if (i <= 0) {
+            throw new RuntimeException("删除失败，请稍后再试");
+        }
+        String fileBasePath = request.getServletContext().getRealPath("/file/");
+        String videoBasePath = request.getServletContext().getRealPath("/video/");
+        String offlineBasePath = request.getServletContext().getRealPath("/offlineTask/");
+        for (Integer chapterId : chapterIds) {
+            FileUtil.deleteDir(fileBasePath + courseId + "\\" + chapterId);
+            FileUtil.deleteDir(videoBasePath + courseId + "\\" + chapterId);
+            FileUtil.deleteDir(offlineBasePath + courseId + "\\" + chapterId);
+        }
+        return true;
     }
 
     @Override
@@ -276,11 +392,11 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<OnlineTask> getTaskByChapterId(Integer id) {
+    public List<OnlineTask> getOnlineTaskByChapterId(Integer id) {
         OnlineTaskExample taskExample = new OnlineTaskExample();
         OnlineTaskExample.Criteria criteria = taskExample.createCriteria();
         criteria.andChapterIdEqualTo(id);
-        return taskMapper.selectByExample(taskExample);
+        return onlineTaskMapper.selectByExample(taskExample);
     }
 
     @Override
@@ -315,11 +431,118 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<OnlineTask> getTaskByChapterIdWithChapterAndCourse(Integer id) {
+    public List<OnlineTask> getOnlineTaskByChapterIdWithChapterAndCourse(Integer id) {
         OnlineTaskExample taskExample = new OnlineTaskExample();
         OnlineTaskExample.Criteria criteria = taskExample.createCriteria();
         criteria.andChapterIdEqualTo(id);
-        return taskMapper.selectByExampleWithCourseAndCollegeAndChapter(taskExample);
+        return onlineTaskMapper.selectByExampleWithCourseAndCollegeAndChapter(taskExample);
+    }
+
+    @Override
+    public Course getCourseWithChapterAndCollegeByCourseId(Integer courseId) {
+        CourseExample courseExample = new CourseExample();
+        CourseExample.Criteria criteria = courseExample.createCriteria();
+        criteria.andIdEqualTo(courseId);
+        return courseMapper.selectByExampleWithChapterAndCollege(courseExample).get(0);
+    }
+
+    @Override
+    public List<OfflineTask> getOfflineTaskByChapterId(Integer id) {
+        OfflineTaskExample offlineTaskExample = new OfflineTaskExample();
+        OfflineTaskExample.Criteria criteria = offlineTaskExample.createCriteria();
+        criteria.andChapterIdEqualTo(id);
+        return offlineTaskMapper.selectByExampleWithBLOBs(offlineTaskExample);
+    }
+
+    @Override
+    public boolean saveOfflineTask(OfflineTask task) {
+        return offlineTaskMapper.insertSelective(task) > 0;
+    }
+
+    @Override
+    public boolean deleteOfflineTaskById(Integer id, String path) {
+        //删除线下作业时，同时删除学生的作业记录以及与改作业有关的文件
+        //删除作业记录
+        StudentOfflineTaskExample studentOfflineTaskExample = new StudentOfflineTaskExample();
+        StudentOfflineTaskExample.Criteria criteria = studentOfflineTaskExample.createCriteria();
+        criteria.andOfflineTaskIdEqualTo(id);
+        int i = studentOfflineTaskMapper.deleteByExample(studentOfflineTaskExample);
+        if (i < 0) {
+            throw new RuntimeException("删除失败，请稍后再试");
+        }
+        //删除线下作业
+        i = offlineTaskMapper.deleteByPrimaryKey(id);
+        if (i <= 0) {
+            throw new RuntimeException("删除失败，请稍后再试");
+        }
+        //删除学生提交的文件
+        FileUtil.deleteDir(path);
+        return true;
+    }
+
+    @Override
+    public OfflineTask getOfflineTaskWithCourseAndChapterById(Integer id) {
+        return offlineTaskMapper.selectByPrimaryKeyWithCourseAndChapter(id);
+    }
+
+    @Override
+    public boolean updateOfflineTaskByPrimaryKeySelective(OfflineTask task) {
+        return offlineTaskMapper.updateByPrimaryKeySelective(task) > 0;
+    }
+
+    @Override
+    public OfflineTask getOfflineTaskById(Integer id) {
+        return offlineTaskMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public List<StudentOnlineTask> getOnlineTaskFinishByExample(StudentOnlineTaskExample example) {
+        return studentOnlineTaskMapper.selectByExample(example);
+    }
+
+    @Override
+    public List<StudentOfflineTask> getOfflineTaskFinishByExample(StudentOfflineTaskExample example) {
+        return studentOfflineTaskMapper.selectByExample(example);
+    }
+
+    @Override
+    public List<Student> getCollectStudentByStudentExample(StudentExample studentExample) {
+        return studentMapper.selectByExampleWithIdNameAndNumber(studentExample);
+    }
+
+    @Override
+    public boolean deleteStudentOnlineTaskById(Integer id) {
+        return studentOnlineTaskMapper.deleteByPrimaryKey(id) > 0;
+    }
+
+    @Override
+    public boolean deleteStudentOfflineTaskById(Integer id) {
+        return studentOfflineTaskMapper.deleteByPrimaryKey(id) > 0;
+    }
+
+    @Override
+    public boolean deleteStudentOnlineTaskByExample(StudentOnlineTaskExample studentOnlineTaskExample) {
+        return studentOnlineTaskMapper.deleteByExample(studentOnlineTaskExample) > 0;
+    }
+
+    @Override
+    public boolean deleteStudentOfflineTaskByExample(StudentOfflineTaskExample studentOfflineTaskExample) {
+        return studentOfflineTaskMapper.deleteByExample(studentOfflineTaskExample) > 0;
+    }
+
+    @Override
+    public List<Integer> selectCollectStudentIdByExample(CollectExample collectExample) {
+        return collectMapper.selectStudentIdByExample(collectExample);
+    }
+
+    @Override
+    public StudentOfflineTask getOfflineTaskFileById(Integer id) {
+        return studentOfflineTaskMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public List<OfflineTask> getAllOfflineTasksWithCourseAndChapterExample(OfflineTaskExample offlineTaskExample) {
+        return offlineTaskMapper.selectByExampleWithCourseAndCollegeAndChapter(offlineTaskExample);
     }
 
     @Override
@@ -389,7 +612,10 @@ public class TeacherServiceImpl implements TeacherService {
         CourseVideoExample courseVideoExample = new CourseVideoExample();
         CourseVideoExample.Criteria criteria = courseVideoExample.createCriteria();
         criteria.andIdIn(videoIds);
-        return courseVideoMapper.deleteByExample(courseVideoExample) > 0;
+        if (courseVideoMapper.deleteByExample(courseVideoExample) != videoIds.size()) {
+            throw new RuntimeException("删除失败，请稍后再试");
+        }
+        return true;
     }
 
     @Override
@@ -444,10 +670,10 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<CourseFile> getCourseFileByIds(List<Integer> videoIds) {
+    public List<CourseFile> getCourseFileByIds(List<Integer> fileIds) {
         CourseFileExample courseFileExample = new CourseFileExample();
         CourseFileExample.Criteria criteria = courseFileExample.createCriteria();
-        criteria.andIdIn(videoIds);
+        criteria.andIdIn(fileIds);
         return courseFileMapper.selectByExample(courseFileExample);
     }
 
@@ -456,7 +682,10 @@ public class TeacherServiceImpl implements TeacherService {
         CourseFileExample courseFileExample = new CourseFileExample();
         CourseFileExample.Criteria criteria = courseFileExample.createCriteria();
         criteria.andIdIn(fileIds);
-        return courseFileMapper.deleteByExample(courseFileExample) > 0;
+        if (courseFileMapper.deleteByExample(courseFileExample) != fileIds.size()) {
+            throw new RuntimeException("删除失败，请稍后再试");
+        }
+        return true;
     }
 
     @Override

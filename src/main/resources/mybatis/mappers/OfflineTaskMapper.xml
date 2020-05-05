@@ -10,6 +10,13 @@
     <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.cdut.studypro.beans.OfflineTask">
         <result column="title" jdbcType="LONGVARCHAR" property="title"/>
     </resultMap>
+
+    <resultMap extends="ResultMapWithBLOBs" id="ResultMapWithCourseAndCollegeAndChapter"
+               type="com.cdut.studypro.beans.OfflineTask">
+        <association property="courseChapter" column="chapter_id"
+                     select="com.cdut.studypro.daos.CourseChapterMapper.selectByPrimaryKeyWithIdTitleAndCourseAndCollege"/>
+    </resultMap>
+
     <sql id="Example_Where_Clause">
         <where>
             <foreach collection="oredCriteria" item="criteria" separator="or">
@@ -107,7 +114,36 @@
             order by ${orderByClause}
         </if>
     </select>
-    <select id="selectOfflineTaskIdsByExample" parameterType="com.cdut.studypro.beans.OfflineTaskExample" resultType="java.lang.Integer">
+    <select id="selectByExampleWithCourseAndCollegeAndChapter"
+            parameterType="com.cdut.studypro.beans.OfflineTaskExample"
+            resultMap="ResultMapWithCourseAndCollegeAndChapter">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from offline_task
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <select id="selectByPrimaryKeyWithCourseAndChapter" parameterType="java.lang.Integer"
+            resultMap="ResultMapWithCourseAndCollegeAndChapter">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from offline_task
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectOfflineTaskIdsByExample" parameterType="com.cdut.studypro.beans.OfflineTaskExample"
+            resultType="java.lang.Integer">
         select
         <if test="distinct">
             distinct

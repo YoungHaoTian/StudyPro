@@ -34,7 +34,7 @@ public interface OnlineTaskQuestionMapper {
 
     int updateByPrimaryKey(OnlineTaskQuestion record);
 
-    List<OnlineTaskQuestion> selectByTaskId(Integer id);
+    List<OnlineTaskQuestion> selectByOnlineTaskId(Integer id);
 
     //批量插入数据
     int insertBatch(@Param("questions") List<OnlineTaskQuestion> questions);

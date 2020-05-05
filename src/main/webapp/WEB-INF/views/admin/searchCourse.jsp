@@ -310,7 +310,10 @@
                     });
                 }
                 if (result.code === 100) {
-                    window.location.href = "${APP_PATH}/admin/searchCourse?pageNum=${pageInfo.pageNum }";
+                    window.setTimeout(function () {
+                        window.location.reload();
+                    }, 1000);
+                    <%--window.location.href = "${APP_PATH}/admin/searchCourse?pageNum=${pageInfo.pageNum }";--%>
                     // window.location.reload();
                 }
             },
@@ -396,7 +399,10 @@
                 if (result.code === 100) {
                     layer.msg("批量删除成功", {time: 1000, icon: 1}, function () {
                     });
-                    window.location.href = "${APP_PATH}/admin/searchCourse?pageNum=${pageInfo.pageNum }";
+                    window.setTimeout(function () {
+                        window.location.reload();
+                    }, 1000);
+                    <%--window.location.href = "${APP_PATH}/admin/searchCourse?pageNum=${pageInfo.pageNum }";--%>
                 }
             },
             error: function () {
@@ -433,7 +439,9 @@
                 if (result.code === 100) {
                     layer.msg("查询成功", {time: 1000, icon: 1}, function () {
                     });
-                    window.location.href = "${APP_PATH}/admin/searchCourse";
+                    window.setTimeout(function () {
+                        window.location.href = "${APP_PATH}/admin/searchCourse";
+                    }, 1000);
                 }
             },
             error: function () {
@@ -445,6 +453,6 @@
     //编辑课程信息
     $(".edit").on("click", function () {
         let id = $(this).attr("courseId");
-        window.location.href = "${APP_PATH}/admin/updateCourse/" + id+"?pageNum=${pageInfo.pageNum}";
+        window.location.href = "${APP_PATH}/admin/updateCourse/" + id + "?pageNum=${pageInfo.pageNum}";
     })
 </script>

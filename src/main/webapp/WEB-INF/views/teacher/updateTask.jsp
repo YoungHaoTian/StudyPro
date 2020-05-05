@@ -42,7 +42,7 @@
             <div class="panel-heading">
                 编辑作业 Update Data
             </div>
-            <form action="" method="POST" enctype="multipart/form-data">
+            <form id="taskData" action="" method="POST" enctype="multipart/form-data">
                 <div class="panel-body">
                     <div class="row">
                         <div class="form-inline">
@@ -77,22 +77,22 @@
                                                             </c:if>
                                                             <c:forEach items="${course.chapters}" var="chapter">
                                                                 <c:if test="${chapter.id==task.chapterId}">
-                                                                    <li style="height:30px;">
-                                                                        <a href="javascript:void(0)" class="chapter"
-                                                                           text="${course.name}(${course.college.name}) > ${chapter.title}"
-                                                                           chapterId="${chapter.id}"
-                                                                           courseId="${course.id}" style="color: red">
-                                                                            <span class="glyphicon glyphicon-tags"></span>&nbsp;${chapter.title}
+                                                                    <li style="height:30px;background-color: #f7f7f7"
+                                                                        class="chapter"
+                                                                        text="${course.name}(${course.college.name}) > ${chapter.title}"
+                                                                        chapterId="${chapter.id}">
+                                                                        <a href="javascript:void(0)" style="color: red"><span
+                                                                                class="glyphicon glyphicon-tags"></span>&nbsp;${chapter.title}
                                                                         </a>
                                                                     </li>
                                                                 </c:if>
                                                                 <c:if test="${chapter.id!=task.chapterId}">
-                                                                    <li style="height:30px;">
-                                                                        <a href="javascript:void(0)" class="chapter"
-                                                                           text="${course.name}(${course.college.name}) > ${chapter.title}"
-                                                                           chapterId="${chapter.id}"
-                                                                           courseId="${course.id}">
-                                                                            <span class="glyphicon glyphicon-tags"></span>&nbsp;${chapter.title}
+                                                                    <li style="height:30px;background-color: #f7f7f7"
+                                                                        class="chapter"
+                                                                        text="${course.name}(${course.college.name})-->${chapter.title}"
+                                                                        chapterId="${chapter.id}">
+                                                                        <a href="javascript:void(0)"><span
+                                                                                class="glyphicon glyphicon-tags"></span>&nbsp;${chapter.title}
                                                                         </a>
                                                                     </li>
                                                                 </c:if>
@@ -107,19 +107,21 @@
                             </div>
 
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="form-inline">
                             <div class="form-group">
-                                <label for="chapter" class="control-label wk-filed-label">所选课程及章节: </label>
+                                <label for="chapter" style="margin-right: 0px;"
+                                       class="control-label wk-filed-label">所选课程及章节: </label>
                                 <div class="input-group">
-                                    <input required="required" id="chapter" name="chapter" chapterId="${task.chapterId}"
-                                           courseId="${task.courseChapter.course.id}"
-                                           type="text"
-                                           readonly="readonly"
-                                           class="form-control wk-long-2col-input"
-                                           value="${task.courseChapter.course.name} (${task.courseChapter.course.college.name}) > ${task.courseChapter.title}"/>
+                                    <div id="chapter" name="chapter" chapterId="${task.chapterId}">
+                                        <span style="color:red;">${task.courseChapter.course.name}(${task.courseChapter.course.college.name})-->${task.courseChapter.title}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="form-inline">
                             <div class="form-group">
                                 <label for="title" class="control-label wk-filed-label">作业标题: </label>
@@ -131,13 +133,16 @@
                         </div>
                     </div>
                 </div>
-                <div class="panel-footer wk-panel-footer">
-                    <button type="button" class="btn btn-info" onclick="updateTask();">提&nbsp;&nbsp;交</button>
-                    <button type="button" class="btn btn-info" style="margin-left: 20px"
-                            onclick="back()">返&nbsp;&nbsp;回
-                    </button>
-                </div>
             </form>
+        </div>
+        <div class="panel-footer wk-panel-footer">
+            <button type="button" class="btn btn-info" onclick="updateTask();">提&nbsp;&nbsp;交</button>
+            <button type="button" class="btn btn-info" style="margin-left: 20px"
+                    onclick="back()">返&nbsp;&nbsp;回
+            </button>
+            <button type="button" class="btn btn-info" style="margin-left: 20px"
+                    onclick="$('#taskData')[0].reset()">重&nbsp;&nbsp;填
+            </button>
         </div>
     </div>
 </div>
@@ -148,28 +153,35 @@
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
     $(function () {
+        let isChapter = false;
+        $(".chapter").click(function () {
+            $(".chapter").children("a").css("color", "");
+            $(this).children("a").css("color", "red");
+            isChapter = true;
+        });
         $(".list-group-item").click(function () {
-            if ($(this).find("ul")) {
-                $(this).toggleClass("tree-closed");
-                if ($(this).hasClass("tree-closed")) {
-                    $("ul", this).hide("fast");
-                } else {
-                    $("ul", this).show("fast");
+            if (!isChapter) {
+                if ($(this).find("ul")) {
+                    $(this).toggleClass("tree-closed");
+                    if ($(this).hasClass("tree-closed")) {
+                        $("ul", this).hide("fast");
+                    } else {
+                        $("ul", this).show("fast");
+                    }
                 }
             }
+            isChapter = false;
         });
     });
     $(".chapter").on("click", function () {
-        $("#chapter").val($(this).attr("text"));
+        $("#chapter").children("span").text($(this).attr("text"));
         $("#chapter").attr("chapterId", $(this).attr("chapterId"));
-        $("#chapter").attr("courseId", $(this).attr("courseId"));
     });
 
     function updateTask() {
         let chapterId = $("#chapter").attr("chapterId");
-        let courseId = $("#chapter").attr("courseId");
         let title = $("#title").val();
-        if (chapterId === "0" || courseId === "0") {
+        if (chapterId === "0") {
             layer.msg("你还没有选择所属课程及章节", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
@@ -179,14 +191,16 @@
             });
             return;
         }
-        if (title.trim().length > 100) {
-            layer.msg("作业标题内容长度不能超过100", {time: 1500, icon: 5, shift: 6}, function () {
-            });
-            return;
-        }
         let loadingIndex = layer.msg('处理中', {icon: 16});
+        let url;
+        if (${type.equals("online")}) {
+            url = "${APP_PATH}/teacher/updateOnlineTask/${task.id}";
+        }
+        if (${type.equals("offline")}) {
+            url = "${APP_PATH}/teacher/updateOfflineTask/${task.id}";
+        }
         $.ajax({
-            url: "${APP_PATH}/teacher/updateTask/${task.id}",
+            url: url,
             type: "POST",
             // contentType: "application/json",//不使用contentType: “application/json”则data可以是对象,使用contentType: “application/json”则data只能是json字符串
             dataType: "json",
@@ -205,12 +219,6 @@
                     console.log("success");
                     layer.msg("作业修改成功", {time: 1500, icon: 6}, function () {
                     });
-                    if (0 ===${pageNum}) {
-                        window.location.href = "${APP_PATH}/teacher/editTask/${taskId}?pageNum=0&pageNumber=${pageNumber}&courseId=${courseId}&chapterId=${chapterId}";
-                    } else {
-                        window.location.href = "${APP_PATH}/teacher/editTask/${taskId}?pageNum=${pageNum}";
-                    }
-
                 }
             },
             error: function () {
@@ -222,7 +230,7 @@
 
     function back() {
         if (0 ===${pageNum}) {
-            window.location.href = "${APP_PATH}/teacher/searchChapterTask/${chapterId}?pageNum=${pageNumber}&courseId=${chapterId}";
+            window.location.href = "${APP_PATH}/teacher/searchChapterTask/${chapterId}?pageNum=${pageNumber}&courseId=${courseId}";
         } else {
             window.location.href = "${APP_PATH}/teacher/searchTask?pageNum=${pageNum}";
         }

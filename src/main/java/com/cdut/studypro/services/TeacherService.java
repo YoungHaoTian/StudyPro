@@ -2,7 +2,9 @@ package com.cdut.studypro.services;
 
 
 import com.cdut.studypro.beans.*;
+import org.omg.CORBA.INTERNAL;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -82,35 +84,35 @@ public interface TeacherService {
 
     List<DiscussPost> getAllDiscussPostByMapWithStudentName(Map<String, Object> map1);
 
-    boolean saveTask(OnlineTask task);
+    boolean saveOnlineTask(OnlineTask task);
 
-    List<OnlineTask> getAllTasksWithCourseAndChapterExample(OnlineTaskExample taskExample);
+    List<OnlineTask> getAllOnlineTasksWithCourseAndChapterExample(OnlineTaskExample taskExample);
 
-    boolean deleteTaskById(Integer id);
+    boolean deleteOnlineTaskById(Integer id);
 
-    boolean deleteTaskByIdBatch(List<Integer> taskIds);
+    boolean deleteOnlineTaskByIdBatch(List<Integer> taskIds);
 
-    OnlineTask getTaskWithCourseAndChapterById(Integer id);
+    OnlineTask getOnlineTaskWithCourseAndChapterById(Integer id);
 
-    OnlineTask getTaskById(Integer id);
+    OnlineTask getOnlineTaskById(Integer id);
 
-    boolean updateTaskByPrimaryKeySelective(OnlineTask task);
+    boolean updateOnlineTaskByPrimaryKeySelective(OnlineTask task);
 
     Discuss getDiscussById(Integer id);
 
     boolean updateDiscussByPrimaryKeySelective(Discuss discuss);
 
-    List<OnlineTaskQuestion> getTaskQuestionsByTaskId(Integer id);
+    List<OnlineTaskQuestion> getOnlineTaskQuestionsByTaskId(Integer id);
 
-    boolean deleteTaskQuestionByIdBatch(List<Integer> questionIds);
+    boolean deleteOnlineTaskQuestionByIdBatch(List<Integer> questionIds);
 
-    boolean insertTaskQuestion(OnlineTaskQuestion taskQuestion);
+    boolean insertOnlineTaskQuestion(OnlineTaskQuestion taskQuestion);
 
-    OnlineTaskQuestion getTaskQuestionsById(Integer id);
+    OnlineTaskQuestion getOnlineTaskQuestionsById(Integer id);
 
-    boolean updateTaskQuestionByPrimaryKeySelective(OnlineTaskQuestion taskQuestion);
+    boolean updateOnlineTaskQuestionByPrimaryKeySelective(OnlineTaskQuestion taskQuestion);
 
-    boolean insertTaskQuestionBatch(List<OnlineTaskQuestion> taskQuestions);
+    boolean insertOnlineTaskQuestionBatch(List<OnlineTaskQuestion> taskQuestions);
 
     Teacher getTeacherByIdWithCollege(Integer id);
 
@@ -120,7 +122,7 @@ public interface TeacherService {
 
     List<CourseChapter> getAllChapterWithBLOBsAndCourseByExample(CourseChapterExample chapterExample);
 
-    boolean deleteChapterByIdBatch(List<Integer> chapterIds);
+    boolean deleteChapterByIdBatch(List<Integer> chapterIds,HttpServletRequest request,Integer courseId);
 
     CourseChapter getChapterById(Integer id);
 
@@ -130,7 +132,7 @@ public interface TeacherService {
 
     List<CourseFile> getCourseFileByChapterId(Integer id);
 
-    List<OnlineTask> getTaskByChapterId(Integer id);
+    List<OnlineTask> getOnlineTaskByChapterId(Integer id);
 
     List<CourseVideo> getCourseVideoByExample(CourseVideoExample example);
 
@@ -140,5 +142,39 @@ public interface TeacherService {
 
     List<College> getAllCollegesByTeacherId(Integer id);
 
-    List<OnlineTask> getTaskByChapterIdWithChapterAndCourse(Integer id);
+    List<OnlineTask> getOnlineTaskByChapterIdWithChapterAndCourse(Integer id);
+
+    Course getCourseWithChapterAndCollegeByCourseId(Integer courseId);
+
+    List<OfflineTask> getOfflineTaskByChapterId(Integer id);
+
+    boolean saveOfflineTask(OfflineTask task);
+
+    boolean deleteOfflineTaskById(Integer id, String path);
+
+    OfflineTask getOfflineTaskWithCourseAndChapterById(Integer id);
+
+    boolean updateOfflineTaskByPrimaryKeySelective(OfflineTask task);
+
+    OfflineTask getOfflineTaskById(Integer id);
+
+    List<StudentOnlineTask> getOnlineTaskFinishByExample(StudentOnlineTaskExample example);
+
+    List<StudentOfflineTask> getOfflineTaskFinishByExample(StudentOfflineTaskExample example);
+
+    List<Student> getCollectStudentByStudentExample(StudentExample studentExample);
+
+    boolean deleteStudentOnlineTaskById(Integer id);
+
+    boolean deleteStudentOfflineTaskById(Integer id);
+
+    boolean deleteStudentOnlineTaskByExample(StudentOnlineTaskExample studentOnlineTaskExample);
+
+    boolean deleteStudentOfflineTaskByExample(StudentOfflineTaskExample studentOfflineTaskExample);
+
+    List<Integer> selectCollectStudentIdByExample(CollectExample collectExample);
+
+    StudentOfflineTask getOfflineTaskFileById(Integer id);
+
+    List<OfflineTask> getAllOfflineTasksWithCourseAndChapterExample(OfflineTaskExample offlineTaskExample);
 }

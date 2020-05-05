@@ -53,6 +53,6 @@ public interface CourseChapterMapper {
     CourseChapter selectByCourseIdWithIdAndTitleAndFile(Integer id);
 
     List<Integer> selectChapterIdByExample(CourseChapterExample courseChapterExample);
-
-
+    
+    List<Integer> selectCourseIdByExample(CourseChapterExample example);
 }

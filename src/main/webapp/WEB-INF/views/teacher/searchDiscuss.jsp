@@ -58,7 +58,8 @@
                                 <c:choose>
                                     <c:when test="${course.id == sessionScope.discussQueryCriteria.get('courseId')}">
                                         <option value="${course.id}"
-                                                selected="selected">${course.name}(${course.college.name})</option>
+                                                selected="selected">${course.name}(${course.college.name})
+                                        </option>
                                     </c:when>
                                     <c:otherwise>
                                         <option value="${course.id}">${course.name}(${course.college.name})</option>
@@ -247,6 +248,7 @@
         </div>
     </div>
 </div>
+
 </body>
 </html>
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
@@ -304,7 +306,9 @@
                 if (result.code === 100) {
                     layer.msg("查询成功", {time: 1000, icon: 1}, function () {
                     });
-                    window.location.href = "${APP_PATH}/teacher/searchDiscuss";
+                    window.setTimeout(function () {
+                        window.location.href = "${APP_PATH}/teacher/searchDiscuss";
+                    }, 1000);
                 }
             },
             error: function () {
@@ -330,10 +334,15 @@
     $(".select_item").on("click", function () {
         let flag = $(".select_item:checked").length == $(".select_item").length;
         $("#select_all").prop("checked", flag);
+        if (flag) {
+            $("#select_all").parent("th").children("label").text("取消");
+        } else {
+            $("#select_all").parent("th").children("label").text("全选");
+        }
     });
     //点击批量删除按钮
     $(".batchDelete").on("click", function () {
-        ids="";
+        ids = "";
         $.each($(".select_item:checked"), function () {
             //组装课程id字符串
             ids += $(this).attr("discussId") + "-";
@@ -371,7 +380,10 @@
                 if (result.code === 100) {
                     layer.msg("批量删除成功", {time: 1000, icon: 1}, function () {
                     });
-                    window.location.href = "${APP_PATH}/teacher/searchDiscuss?&pageNum=" + ${pageInfo.pageNum};
+                    window.setTimeout(function () {
+                        window.location.reload();
+                    }, 1000);
+                    <%--window.location.href = "${APP_PATH}/teacher/searchDiscuss?&pageNum=" + ${pageInfo.pageNum};--%>
                 }
             },
             error: function () {
@@ -380,6 +392,4 @@
             }
         });
     });
-
-
 </script>

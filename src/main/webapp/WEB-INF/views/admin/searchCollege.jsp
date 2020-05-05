@@ -253,7 +253,12 @@
                     });
                 }
                 if (result.code === 100) {
-                    window.location.href = "${APP_PATH}/admin/searchCollege?pageNum=${pageInfo.pageNum }";
+                    layer.msg("删除成功", {time: 1000, icon: 1}, function () {
+                    });
+                    window.setTimeout(function () {
+                        window.location.reload();
+                    }, 1000);
+                    <%--window.location.href = "${APP_PATH}/admin/searchCollege?pageNum=${pageInfo.pageNum }";--%>
                 }
             },
             error: function () {
@@ -280,7 +285,6 @@
         }
         window.location.href = "${APP_PATH}/admin/searchCollege?pageNum=" + pageNum;
     });
-
 
     //批量删除学院
     //全选按钮
@@ -341,7 +345,10 @@
                 if (result.code === 100) {
                     layer.msg("批量删除成功", {time: 1000, icon: 1}, function () {
                     });
-                    window.location.href = "${APP_PATH}/admin/searchCollege?pageNum=${pageInfo.pageNum }";
+                    window.setTimeout(function () {
+                        window.location.reload();
+                    }, 1000);
+                    <%--window.location.href = "${APP_PATH}/admin/searchCollege?pageNum=${pageInfo.pageNum }";--%>
                 }
             },
             error: function () {
@@ -372,7 +379,10 @@
                 if (result.code === 100) {
                     layer.msg("查询成功", {time: 1000, icon: 1}, function () {
                     });
-                    window.location.href = "${APP_PATH}/admin/searchCollege";
+                    window.setTimeout(function () {
+                        window.location.href = "${APP_PATH}/admin/searchCollege";
+                    }, 1000);
+
                 }
             },
             error: function () {

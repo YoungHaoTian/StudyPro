@@ -42,7 +42,7 @@
             <div class="panel-heading">
                 编辑章节 Create Data
             </div>
-            <form action="" method="POST" enctype="multipart/form-data">
+            <form id="chapterData" action="" method="POST" enctype="multipart/form-data">
                 <div class="panel-body">
                     <div class="row">
                         <div class="form-inline">
@@ -57,7 +57,7 @@
                                                 </li>
                                                 <c:forEach items="${courses}" var="course" varStatus="statu">
                                                 <c:if test="${course.id==courseId&&courseId!=0}">
-                                                <li class="list-group-item ${course.id}">
+                                                <li class="list-group-item ${course.id}" style="color: red">
                                                     </c:if>
                                                     <c:if test="${course.id!=courseId||courseId==0}">
                                                 <li class="list-group-item tree-closed">
@@ -73,20 +73,23 @@
                                                         <ul style="margin-top:10px;display:none;" class="${course.id}">
                                                             </c:if>
                                                             <c:forEach items="${course.chapters}" var="courseChapter">
-                                                            <c:if test="${courseChapter.id==chapter.id}">
-                                                            <li style="height:30px;">
-                                                                <a href="javascript:void(0)" class="chapter"
-                                                                   style="color: red"><span
-                                                                        class="glyphicon glyphicon-tags"></span>&nbsp;${courseChapter.title}
-                                                                </a>
+                                                                <c:if test="${chapter.id==courseChapter.id}">
+                                                                    <li style="height:30px;background-color: #f7f7f7"
+                                                                        class="chapter">
+                                                                        <a href="javascript:void(0)" style="color: red"><span
+                                                                                class="glyphicon glyphicon-tags"></span>&nbsp;${courseChapter.title}
+                                                                        </a>
+                                                                    </li>
                                                                 </c:if>
-                                                                <c:if test="${courseChapter.id!=chapter.id}">
-                                                            <li style="height:30px;">
-                                                                <a href="javascript:void(0)" class="chapter"><span
-                                                                        class="glyphicon glyphicon-tags"></span>&nbsp;${courseChapter.title}
-                                                                </a>
+                                                                <c:if test="${chapter.id!=courseChapter.id}">
+                                                                    <li style="height:30px;background-color: #f7f7f7"
+                                                                        class="chapter">
+                                                                        <a href="javascript:void(0)"><span
+                                                                                class="glyphicon glyphicon-tags"></span>&nbsp;${courseChapter.title}
+                                                                        </a>
+                                                                    </li>
                                                                 </c:if>
-                                                                </c:forEach>
+                                                            </c:forEach>
                                                         </ul>
                                                         </c:if>
                                                         </li>
@@ -113,7 +116,6 @@
                                                 <option value="${course.id}">${course.name}(${course.college.name})</option>
                                             </c:otherwise>
                                         </c:choose>
-
                                     </c:forEach>
                                 </select>
                             </div>
@@ -122,8 +124,8 @@
                             <div class="form-group">
                                 <label for="title" class="control-label wk-filed-label">章节标题: </label>
                                 <div class="input-group">
-                                    <input required="required" id="title" name="title" maxlength="100"
-                                           class="form-control wk-long-2col-input" value="${chapter.title}"/>
+                                    <textarea required="required" id="title" name="title" rows="2"
+                                              class="form-control wk-long-2col-input">${chapter.title}</textarea>
                                 </div>
                             </div>
                         </div>
@@ -131,19 +133,23 @@
                             <div class="form-group">
                                 <label for="content" class="control-label wk-filed-label">章节内容: </label>
                                 <div class="input-group">
-                                    <textarea required="required" id="content" name="content"
+                                    <textarea required="required" id="content" name="content" rows="5"
                                               class="form-control wk-long-2col-input">${chapter.content}</textarea>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="panel-footer wk-panel-footer">
-                    <button type="button" class="btn btn-info" onclick="updateChapter();">提&nbsp;&nbsp;交</button>
-                    <button type="button" class="btn btn-info" onclick="back()" style="margin-left: 20px">返&nbsp;&nbsp;回
-                    </button>
-                </div>
+
             </form>
+        </div>
+        <div class="panel-footer wk-panel-footer">
+            <button type="button" class="btn btn-info" onclick="updateChapter();">提&nbsp;&nbsp;交</button>
+            <button type="button" class="btn btn-info" onclick="back()" style="margin-left: 20px">返&nbsp;&nbsp;回
+            </button>
+            <button type="button" class="btn btn-info" onclick="$('#chapterData')[0].reset()" style="margin-left: 20px">
+                重&nbsp;&nbsp;填
+            </button>
         </div>
     </div>
 </div>
@@ -154,15 +160,24 @@
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
     $(function () {
+        let isChapter = false;
+        $(".chapter").click(function () {
+            /*$(".chapter").children("a").css("color", "");
+            $(this).children("a").css("color", "red");*/
+            isChapter = true;
+        });
         $(".list-group-item").click(function () {
-            if ($(this).find("ul")) {
-                $(this).toggleClass("tree-closed");
-                if ($(this).hasClass("tree-closed")) {
-                    $("ul", this).hide("fast");
-                } else {
-                    $("ul", this).show("fast");
+            if (!isChapter) {
+                if ($(this).find("ul")) {
+                    $(this).toggleClass("tree-closed");
+                    if ($(this).hasClass("tree-closed")) {
+                        $("ul", this).hide("fast");
+                    } else {
+                        $("ul", this).show("fast");
+                    }
                 }
             }
+            isChapter = false;
         });
     });
 
@@ -170,7 +185,7 @@
         let courseId = $("#courseId").val();
         let title = $("#title").val();
         let content = $("#content").val();
-        if (courseId === "0") {
+        /*if (courseId === "0") {
             layer.msg("你还没有选择章节所属课程", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
@@ -194,7 +209,7 @@
             layer.msg("章节内容不能为空", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
-        }
+        }*/
         let loadingIndex = layer.msg('处理中', {icon: 16});
         $.ajax({
             url: "${APP_PATH}/teacher/updateChapter/${chapter.id}",
@@ -210,7 +225,7 @@
                 layer.close(loadingIndex);
                 console.log(result);
                 if (result.code === 200) {
-                    layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
+                    layer.msg(result.message, {time: 3000, icon: 5, shift: 6}, function () {
                     });
                 }
                 if (result.code === 100) {

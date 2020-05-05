@@ -26,9 +26,9 @@ public interface AdminService {
 
     boolean insertStudentBatch(List<Student> students);
 
-    boolean deleteStudentById(Integer id);
+    boolean deleteStudentById(Integer id,HttpServletRequest request);
 
-    boolean deleteStudentByIdBatch(List<Integer> ids);
+    boolean deleteStudentByIdBatch(List<Integer> ids,HttpServletRequest request);
 
     Student getStudentByPrimaryKey(Integer id);
 

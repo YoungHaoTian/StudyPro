@@ -33,9 +33,9 @@
     <div class="col-lg-12">
         <div class="panel panel-default wk-panel ">
             <div class="panel-heading">
-                新增题目 Create Data
+                修改题目 Update Data
             </div>
-            <form action="" method="POST">
+            <form id="onlineTaskQuestionData" action="" method="POST">
                 <div class="panel-body">
                     <div class="row">
 
@@ -44,7 +44,8 @@
                                 <label for="title" class="control-label wk-filed-label">题目: </label>
                                 <div class="input-group">
                                     <input required="required" id="title" name="title" type="text"
-                                           class="form-control wk-long-2col-input" placeholder="请输入题目"/>
+                                           class="form-control wk-long-2col-input" placeholder="请输入题目"
+                                           value="${taskQuestion.title}"/>
                                 </div>
                             </div>
                         </div>
@@ -54,7 +55,8 @@
                                 <label for="itemA" class="control-label wk-filed-label">选项A: </label>
                                 <div class="input-group">
                                     <input required="required" id="itemA" name="itemA" type="text"
-                                           class="form-control wk-normal-input" placeholder="请输入选项A"/>
+                                           class="form-control wk-normal-input" placeholder="请输入选项A"
+                                           value="${taskQuestion.itemA}"/>
                                 </div>
                             </div>
                         </div>
@@ -63,7 +65,8 @@
                                 <label for="itemB" class="control-label wk-filed-label">选项B: </label>
                                 <div class="input-group">
                                     <input required="required" id="itemB" name="itemB" type="text"
-                                           class="form-control wk-normal-input" placeholder="请输入选项B"/>
+                                           class="form-control wk-normal-input" placeholder="请输入选项B"
+                                           value="${taskQuestion.itemB}"/>
                                 </div>
                             </div>
                         </div>
@@ -72,7 +75,8 @@
                                 <label for="itemC" class="control-label wk-filed-label">选项C: </label>
                                 <div class="input-group">
                                     <input required="required" id="itemC" name="itemC" type="text"
-                                           class="form-control wk-normal-input" placeholder="请输入选项C"/>
+                                           class="form-control wk-normal-input" placeholder="请输入选项C"
+                                           value="${taskQuestion.itemC}"/>
                                 </div>
                             </div>
                         </div>
@@ -81,7 +85,8 @@
                                 <label for="itemD" class="control-label wk-filed-label">选项D: </label>
                                 <div class="input-group">
                                     <input required="required" id="itemD" name="itemD" type="text"
-                                           class="form-control wk-normal-input" placeholder="请输入选项D"/>
+                                           class="form-control wk-normal-input" placeholder="请输入选项D"
+                                           value="${taskQuestion.itemD}"/>
                                 </div>
                             </div>
                         </div>
@@ -90,10 +95,37 @@
                             <div class="form-group">
                                 <label for="answer" class="control-label wk-filed-label">答案: </label>
                                 <select class="selectpicker" id="answer" name="answer">
-                                    <option value="A">A</option>
-                                    <option value="B">B</option>
-                                    <option value="C">C</option>
-                                    <option value="D">D</option>
+                                    <c:if test="${taskQuestion.answer=='A'}">
+                                        <option value="A" selected="selected">A</option>
+                                        <option value="B">B</option>
+                                        <option value="C">C</option>
+                                        <option value="D">D</option>
+                                    </c:if>
+                                    <c:if test="${taskQuestion.answer=='B'}">
+                                        <option value="A">A</option>
+                                        <option value="B" selected="selected">B</option>
+                                        <option value="C">C</option>
+                                        <option value="D">D</option>
+                                    </c:if>
+                                    <c:if test="${taskQuestion.answer=='C'}">
+                                        <option value="A">A</option>
+                                        <option value="B">B</option>
+                                        <option value="C" selected="selected">C</option>
+                                        <option value="D">D</option>
+                                    </c:if>
+                                    <c:if test="${taskQuestion.answer=='D'}">
+                                        <option value="A">A</option>
+                                        <option value="B">B</option>
+                                        <option value="C">C</option>
+                                        <option value="D" selected="selected">D</option>
+                                    </c:if>
+                                    <c:if test="${taskQuestion.answer!='A'&&taskQuestion.answer!='B'&&taskQuestion.answer!='C'&&taskQuestion.answer!='D'}">
+                                        <option value="0">请选择答案</option>
+                                        <option value="A">A</option>
+                                        <option value="B">B</option>
+                                        <option value="C">C</option>
+                                        <option value="D">D</option>
+                                    </c:if>
                                 </select>
                             </div>
                         </div>
@@ -104,36 +136,34 @@
                                 <div class="input-group">
                                     <input required="required" id="score" name="score" type="text" maxlength="3"
                                            oninput="value=value.replace(/[^\d]/g,'')"
-                                           class="form-control wk-normal-input" placeholder="请输入分值"/>
+                                           class="form-control wk-normal-input" placeholder="请输入分值"
+                                           value="${taskQuestion.score}"/>
                                 </div>
                             </div>
                         </div>
 
                     </div>
                 </div>
-                <div class="panel-footer wk-panel-footer" style="margin-top:50px">
-                    <button type="button" class="btn btn-info" onclick="createTaskQuestionBatch()">批量导入</button>
-                    <button type="button" class="btn btn-info" onclick="createTaskQuestion()" style="margin-left: 20px">
-                        提&nbsp;&nbsp;交
-                    </button>
-                    <button type="button" class="btn btn-info" onclick="window.history.back()"
-                            style="margin-left: 20px">返&nbsp;&nbsp;回
-                    </button>
-                </div>
             </form>
+        </div>
+        <div class="panel-footer wk-panel-footer" style="margin-top:50px">
+            <button type="button" class="btn btn-info" onclick="updateTaskQuestion()">提&nbsp;&nbsp;交</button>
+            <button type="button" class="btn btn-info"
+                    onclick="back()" style="margin-left: 20px">返&nbsp;&nbsp;回
+            </button>
+            <button type="button" class="btn btn-info"
+                    onclick="$('#onlineTaskQuestionData')[0].reset();" style="margin-left: 20px">重&nbsp;&nbsp;填
+            </button>
+
         </div>
     </div>
 </div>
+
 </body>
 </html>
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
-    function createTaskQuestionBatch() {
-        let taskId =${taskId};
-        window.location.href = "${APP_PATH}/teacher/createTaskQuestionBatch/" + taskId;
-    }
-
-    function createTaskQuestion() {
+    function updateTaskQuestion() {
         let title = $("#title").val();
         let itemA = $("#itemA").val();
         let itemB = $("#itemB").val();
@@ -141,8 +171,6 @@
         let itemD = $("#itemD").val();
         let answer = $("#answer").val();
         let score = $("#score").val();
-        let taskId =${id};
-
         if (title.trim() === "") {
             layer.msg("标题不能为空，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
             });
@@ -154,12 +182,12 @@
             return;
         }
         if (itemA.trim() === "" || itemB.trim() === "" || itemC.trim() === "" || itemD.trim() === "") {
-            layer.msg("选项内容不能为空，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("选项内容不能为空，请重新输入", {time: 2000, icon: 5, shift: 6}, function () {
             });
             return;
         }
         if (itemA.indexOf(" ") === 0 || itemB.indexOf(" ") === 0 || itemC.indexOf(" ") === 0 || itemD.indexOf(" ") === 0) {
-            layer.msg("选项内容不能以空格开头，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("选项内容不能以空格开头，请重新输入", {time: 2000, icon: 5, shift: 6}, function () {
             });
             return;
         }
@@ -171,10 +199,11 @@
         let loadingIndex = layer.msg('处理中', {icon: 16});
         //发送ajax请求
         $.ajax({
-            url: "${APP_PATH}/teacher/saveTaskQuestion",
+            url: "${APP_PATH}/teacher/updateOnlineTaskQuestion",
             type: "POST",
             dataType: "json",
             data: {
+                "id":${taskQuestion.id},
                 "title": title.trim(),
                 "itemA": itemA.trim(),
                 "itemB": itemB.trim(),
@@ -182,7 +211,7 @@
                 "itemD": itemD.trim(),
                 "answer": answer.trim(),
                 "score": score,
-                "taskId": taskId
+                "onlineTaskId": ${taskQuestion.onlineTaskId}
             },
             success: function (result) {
                 layer.close(loadingIndex);
@@ -191,7 +220,7 @@
                     });
                 }
                 if (result.code === 100) {
-                    layer.msg("添加题目成功", {time: 1000, icon: 1}, function () {
+                    layer.msg("修改成功", {time: 1000, icon: 1}, function () {
                     });
                 }
             },
@@ -201,4 +230,13 @@
             }
         });
     }
+
+    function back() {
+        if (${page!=null}) {
+            window.location.href = "${APP_PATH}/teacher/searchOnlineTaskQuestion/${taskQuestion.onlineTaskId}?page=${page}&courseId=${courseId}&chapterId=${chapterId}";
+        } else {
+            window.location.href = "${APP_PATH}/teacher/searchOnlineTaskQuestion/${taskQuestion.onlineTaskId}?pageNum=${pageNum}&pageNumber=${pageNumber}";
+        }
+    }
+
 </script>

@@ -2,6 +2,8 @@ package com.cdut.studypro.controllers;
 
 import com.cdut.studypro.beans.*;
 import com.cdut.studypro.beans.AdminExample.*;
+import com.cdut.studypro.exceptions.DownloadException;
+import com.cdut.studypro.exceptions.FileIsNotExistException;
 import com.cdut.studypro.exceptions.MaxUploadSizeExceedException;
 import com.cdut.studypro.exceptions.NotExistException;
 import com.cdut.studypro.services.AdminService;
@@ -50,26 +52,35 @@ public class AdminController {
     @Autowired
     private AdminService adminService;
 
-    //异常处理
+    //运行时异常处理
     @ResponseBody
     @ExceptionHandler(RuntimeException.class)
     public RequestResult handException(RuntimeException e, HttpServletRequest request) {
         return RequestResult.failure(e.getMessage());
     }
 
-    //异常处理
+    //文件上传超过最大容量异常处理
     @ResponseBody
     @ExceptionHandler(MaxUploadSizeExceedException.class)
     public RequestResult handMaxUploadSizeExceedException(MaxUploadSizeExceedException e) {
         return RequestResult.failure(e.getMessage());
     }
 
+    //数据库中数据不存在异常处理
     @ExceptionHandler(NotExistException.class)
     public String handNotExistException(NotExistException e, HttpServletRequest request) {
         request.setAttribute("exception", e);
         return "error";
     }
 
+    //下载时异常处理
+    @ExceptionHandler(DownloadException.class)
+    public String handDownloadException(DownloadException e, HttpServletRequest request) {
+        request.setAttribute("exception", e);
+        return "error";
+    }
+
+    //操作文件时异常处理
     @ExceptionHandler(IOException.class)
     public String handIOException(IOException e, HttpServletRequest request) {
         request.setAttribute("exception", e);
@@ -84,21 +95,21 @@ public class AdminController {
         String message = null;
         if ("phone".equals(map.get("type"))) {
             criteria.andTelephoneEqualTo(map.get("username"));
-            message = "手机号不存在，请稍后重试";
+            message = "手机号不存在，请重新输入";
         }
         if ("email".equals(map.get("type"))) {
             criteria.andEmailEqualTo(map.get("username"));
-            message = "邮箱不存在，请稍后重试";
+            message = "邮箱不存在，请重新输入";
         }
         if ("account".equals(map.get("type"))) {
             criteria.andAccountEqualTo(map.get("username"));
-            message = "帐号不存在，请稍后重试";
+            message = "帐号不存在，请重新输入";
         }
         if (message == null) {
-            return RequestResult.failure("登录失败，请稍后再试");
+            return RequestResult.failure("登录失败，请稍后重试");
         }
         List<Admin> admins = adminService.selectAdminByExample(adminExample);
-        if (admins != null && admins.size() != 0) {
+        if (admins != null && admins.size() > 0) {
             if (admins.size() != 1) {
                 return RequestResult.failure("登录异常，请选择其他方式登录");
             }
@@ -199,7 +210,6 @@ public class AdminController {
         String path = request.getServletContext().getRealPath("/excels/");
         String fileName = "Student_Template.xlsx";
         File file = new File(path + fileName);
-
         // 设置响应头通知浏览器下载
         HttpHeaders headers = new HttpHeaders();
         // 将对文件做的特殊处理还原
@@ -208,7 +218,7 @@ public class AdminController {
         try {
             return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.OK);
         } catch (IOException e) {
-            throw new NotExistException("你所访问的文件不存在");
+            throw new DownloadException("下载异常，请稍后再试");
         }
     }
 
@@ -589,12 +599,12 @@ public class AdminController {
 
     @ResponseBody
     @PostMapping("/deleteStudent")
-    public RequestResult deleteStudent(@RequestParam("id") Integer id) {
+    public RequestResult deleteStudent(@RequestParam("id") Integer id,HttpServletRequest request) {
         if (id == null) {
             return RequestResult.failure("学生删除失败，请稍后再试");
         }
         //删除学生信息
-        boolean i = adminService.deleteStudentById(id);
+        boolean i = adminService.deleteStudentById(id,request);
         if (!i) {
             return RequestResult.failure("学生删除失败，请稍后再试");
         }
@@ -603,7 +613,7 @@ public class AdminController {
 
     @ResponseBody
     @PostMapping("/deleteStudentBatch")
-    public RequestResult deleteStudentBatch(@RequestParam("ids") String id) {
+    public RequestResult deleteStudentBatch(@RequestParam("ids") String id,HttpServletRequest request) {
         if (id == null) {
             return RequestResult.failure("批量删除失败，请稍后再试");
         }
@@ -612,7 +622,7 @@ public class AdminController {
         for (String s : ids) {
             studentIds.add(Integer.parseInt(s));
         }
-        boolean b = adminService.deleteStudentByIdBatch(studentIds);
+        boolean b = adminService.deleteStudentByIdBatch(studentIds,request);
         if (!b) {
             return RequestResult.failure("批量删除失败，请稍后再试");
         }
@@ -1173,7 +1183,7 @@ public class AdminController {
 
     //下载教师模板
     @RequestMapping("/downloadTeacherTemplate")
-    public ResponseEntity<byte[]> downloadTeacherTemplate(HttpServletRequest request) {
+    public ResponseEntity<byte[]> downloadTeacherTemplate(HttpServletRequest request){
         String path = request.getServletContext().getRealPath("/excels/");
         String fileName = "Teacher_Template.xlsx";
         File file = new File(path + fileName);
@@ -1185,7 +1195,7 @@ public class AdminController {
         try {
             return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.OK);
         } catch (IOException e) {
-            throw new NotExistException("你所访问的文件不存在");
+            throw new DownloadException("下载异常，请稍后再试");
         }
     }
 
@@ -1444,7 +1454,7 @@ public class AdminController {
 
     //下载学院模板
     @RequestMapping("/downloadCollegeTemplate")
-    public ResponseEntity<byte[]> downloadCollegeTemplate(HttpServletRequest request) {
+    public ResponseEntity<byte[]> downloadCollegeTemplate(HttpServletRequest request){
         String path = request.getServletContext().getRealPath("/excels/");
         String fileName = "College_Template.xlsx";
         File file = new File(path + fileName);
@@ -1457,7 +1467,7 @@ public class AdminController {
         try {
             return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.OK);
         } catch (IOException e) {
-            throw new NotExistException("你所访问的文件不存在");
+            throw new DownloadException("下载异常，请稍后再试");
         }
     }
 
@@ -1792,115 +1802,117 @@ public class AdminController {
         String path = request.getServletContext().getRealPath("/excels/");
         String fileName = "Course_Template.xlsx";
         File file = new File(path + fileName);
-        //查询教师信息
-        List<Teacher> teachers = adminService.getAllTeachersWithIdNameNumberAndCollege(false);
-        List<String> teacherIds = new ArrayList<>();
-        for (Teacher teacher : teachers) {
-            teacherIds.add(String.valueOf(teacher.getId()));
-        }
-        request.getSession().setAttribute("teacherIds", teacherIds);
-        //查询学院信息
-        List<College> colleges = adminService.getAllColleges();
-        List<String> collegeIds = new ArrayList<>();
-        for (College college : colleges) {
-            collegeIds.add(String.valueOf(college.getId()));
-        }
-        request.getSession().setAttribute("collegeIds", collegeIds);
-        OutputStream os = null;
-        try (InputStream is = new FileInputStream(file)) {
-            XSSFWorkbook xssfWorkbook = new XSSFWorkbook(is);
-            XSSFCellStyle cellStyle = xssfWorkbook.createCellStyle();
-            XSSFCellStyle cellColorStyle = xssfWorkbook.createCellStyle();
-            //设置居中
-            cellStyle.setAlignment(HorizontalAlignment.CENTER); // 居中
-            cellColorStyle.setAlignment(HorizontalAlignment.CENTER); // 居中
-            //设置字体样式
-            XSSFFont font = xssfWorkbook.createFont();
-            font.setFontName("宋体");
-            cellStyle.setFont(font);
-            cellColorStyle.setFont(font);
-            cellColorStyle.setFillForegroundColor(IndexedColors.AQUA.getIndex());
-            cellColorStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-            cellStyle.setBorderBottom(BorderStyle.THIN); //下边框
-            cellStyle.setBorderLeft(BorderStyle.THIN);//左边框
-            cellStyle.setBorderTop(BorderStyle.THIN);//上边框
-            cellStyle.setBorderRight(BorderStyle.THIN);//右边框
-            cellColorStyle.setBorderBottom(BorderStyle.THIN); //下边框
-            cellColorStyle.setBorderLeft(BorderStyle.THIN);//左边框
-            cellColorStyle.setBorderTop(BorderStyle.THIN);//上边框
-            cellColorStyle.setBorderRight(BorderStyle.THIN);//右边框
-            //获取"教师信息"表
-            XSSFSheet teacherSheet = xssfWorkbook.getSheet("教师信息");
-            //获取"学院信息"表
-            XSSFSheet collegeSheet = xssfWorkbook.getSheet("学院信息");
-            XSSFRow xssfRow;
-            XSSFCell xssfCell;
-            int i = 0;
-            for (; i < teachers.size(); i++) {
-                //从第二行开始写入
-                xssfRow = teacherSheet.createRow(i + 1);
-                //创建每个单元格Cell，即列的数据
-                Teacher teacher = teachers.get(i);
-                xssfCell = xssfRow.createCell(0, CellType.STRING);
-                xssfCell.setCellStyle(cellColorStyle);
-                xssfCell.setCellValue(String.valueOf(teacher.getId()));
-                xssfCell = xssfRow.createCell(1, CellType.STRING);
-                xssfCell.setCellStyle(cellStyle);
-                xssfCell.setCellValue(teacher.getName());
-                xssfCell = xssfRow.createCell(2, CellType.STRING);
-                xssfCell.setCellStyle(cellStyle);
-                if (teacher.getCollege() != null) {
-                    xssfCell.setCellValue(teacher.getCollege().getName());
-                } else {
-                    xssfCell.setCellValue("未录入");
+        if (file.exists()) {
+            //查询教师信息
+            List<Teacher> teachers = adminService.getAllTeachersWithIdNameNumberAndCollege(false);
+            List<String> teacherIds = new ArrayList<>();
+            for (Teacher teacher : teachers) {
+                teacherIds.add(String.valueOf(teacher.getId()));
+            }
+            request.getSession().setAttribute("teacherIds", teacherIds);
+            //查询学院信息
+            List<College> colleges = adminService.getAllColleges();
+            List<String> collegeIds = new ArrayList<>();
+            for (College college : colleges) {
+                collegeIds.add(String.valueOf(college.getId()));
+            }
+            request.getSession().setAttribute("collegeIds", collegeIds);
+            OutputStream os = null;
+            try (InputStream is = new FileInputStream(file)) {
+                XSSFWorkbook xssfWorkbook = new XSSFWorkbook(is);
+                XSSFCellStyle cellStyle = xssfWorkbook.createCellStyle();
+                XSSFCellStyle cellColorStyle = xssfWorkbook.createCellStyle();
+                //设置居中
+                cellStyle.setAlignment(HorizontalAlignment.CENTER); // 居中
+                cellColorStyle.setAlignment(HorizontalAlignment.CENTER); // 居中
+                //设置字体样式
+                XSSFFont font = xssfWorkbook.createFont();
+                font.setFontName("宋体");
+                cellStyle.setFont(font);
+                cellColorStyle.setFont(font);
+                cellColorStyle.setFillForegroundColor(IndexedColors.AQUA.getIndex());
+                cellColorStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+                cellStyle.setBorderBottom(BorderStyle.THIN); //下边框
+                cellStyle.setBorderLeft(BorderStyle.THIN);//左边框
+                cellStyle.setBorderTop(BorderStyle.THIN);//上边框
+                cellStyle.setBorderRight(BorderStyle.THIN);//右边框
+                cellColorStyle.setBorderBottom(BorderStyle.THIN); //下边框
+                cellColorStyle.setBorderLeft(BorderStyle.THIN);//左边框
+                cellColorStyle.setBorderTop(BorderStyle.THIN);//上边框
+                cellColorStyle.setBorderRight(BorderStyle.THIN);//右边框
+                //获取"教师信息"表
+                XSSFSheet teacherSheet = xssfWorkbook.getSheet("教师信息");
+                //获取"学院信息"表
+                XSSFSheet collegeSheet = xssfWorkbook.getSheet("学院信息");
+                XSSFRow xssfRow;
+                XSSFCell xssfCell;
+                int i = 0;
+                for (; i < teachers.size(); i++) {
+                    //从第二行开始写入
+                    xssfRow = teacherSheet.createRow(i + 1);
+                    //创建每个单元格Cell，即列的数据
+                    Teacher teacher = teachers.get(i);
+                    xssfCell = xssfRow.createCell(0, CellType.STRING);
+                    xssfCell.setCellStyle(cellColorStyle);
+                    xssfCell.setCellValue(String.valueOf(teacher.getId()));
+                    xssfCell = xssfRow.createCell(1, CellType.STRING);
+                    xssfCell.setCellStyle(cellStyle);
+                    xssfCell.setCellValue(teacher.getName());
+                    xssfCell = xssfRow.createCell(2, CellType.STRING);
+                    xssfCell.setCellStyle(cellStyle);
+                    if (teacher.getCollege() != null) {
+                        xssfCell.setCellValue(teacher.getCollege().getName());
+                    } else {
+                        xssfCell.setCellValue("未录入");
+                    }
+                    xssfCell = xssfRow.createCell(3, CellType.STRING);
+                    xssfCell.setCellStyle(cellStyle);
+                    xssfCell.setCellValue(teacher.getNumber());
                 }
-                xssfCell = xssfRow.createCell(3, CellType.STRING);
-                xssfCell.setCellStyle(cellStyle);
-                xssfCell.setCellValue(teacher.getNumber());
-            }
-            while (true) {
-                i++;
-                xssfRow = teacherSheet.getRow(i);
-                if (xssfRow != null) {
-                    teacherSheet.removeRow(xssfRow);
-                    continue;
+                while (true) {
+                    i++;
+                    xssfRow = teacherSheet.getRow(i);
+                    if (xssfRow != null) {
+                        teacherSheet.removeRow(xssfRow);
+                        continue;
+                    }
+                    break;
                 }
-                break;
-            }
-            int j = 0;
-            for (; j < colleges.size(); j++) {
-                //从第二行开始写入
-                xssfRow = collegeSheet.createRow(j + 1);
-                //创建每个单元格Cell，即列的数据
-                College college = colleges.get(j);
-                xssfCell = xssfRow.createCell(0, CellType.STRING);
-                xssfCell.setCellStyle(cellColorStyle);
-                xssfCell.setCellValue(String.valueOf(college.getId()));
-                xssfCell = xssfRow.createCell(1, CellType.STRING);
-                xssfCell.setCellStyle(cellStyle);
-                xssfCell.setCellValue(college.getName());
-            }
-            while (true) {
-                j++;
-                xssfRow = collegeSheet.getRow(j);
-                if (xssfRow != null) {
-                    collegeSheet.removeRow(xssfRow);
-                    continue;
+                int j = 0;
+                for (; j < colleges.size(); j++) {
+                    //从第二行开始写入
+                    xssfRow = collegeSheet.createRow(j + 1);
+                    //创建每个单元格Cell，即列的数据
+                    College college = colleges.get(j);
+                    xssfCell = xssfRow.createCell(0, CellType.STRING);
+                    xssfCell.setCellStyle(cellColorStyle);
+                    xssfCell.setCellValue(String.valueOf(college.getId()));
+                    xssfCell = xssfRow.createCell(1, CellType.STRING);
+                    xssfCell.setCellStyle(cellStyle);
+                    xssfCell.setCellValue(college.getName());
                 }
-                break;
-            }
-            os = new FileOutputStream(file);
-            xssfWorkbook.write(os);
-            os.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-            //throw new NotExistException("跳转异常，请稍后再试");
-        } finally {
-            if (os != null) {
-                try {
-                    os.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                while (true) {
+                    j++;
+                    xssfRow = collegeSheet.getRow(j);
+                    if (xssfRow != null) {
+                        collegeSheet.removeRow(xssfRow);
+                        continue;
+                    }
+                    break;
+                }
+                os = new FileOutputStream(file);
+                xssfWorkbook.write(os);
+                os.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+                //throw e;
+            } finally {
+                if (os != null) {
+                    try {
+                        os.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -1909,7 +1921,7 @@ public class AdminController {
 
     //下载课程模板
     @RequestMapping("/downloadCourseTemplate")
-    public ResponseEntity<byte[]> downloadCourseTemplate(HttpServletRequest request) {
+    public ResponseEntity<byte[]> downloadCourseTemplate(HttpServletRequest request){
         String path = request.getServletContext().getRealPath("/excels/");
         String fileName = "Course_Template.xlsx";
         File file = new File(path + fileName);
@@ -1918,10 +1930,10 @@ public class AdminController {
         // 将对文件做的特殊处理还原
         headers.setContentDispositionFormData("attachment", fileName);
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        try {
+         try {
             return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.OK);
         } catch (IOException e) {
-            throw new NotExistException("你所访问的文件不存在");
+            throw new DownloadException("下载异常，请稍后再试");
         }
     }
 
@@ -2179,7 +2191,6 @@ public class AdminController {
         PageInfo<Course> page = new PageInfo(courses, 10);
         map.put("pageInfo", page);
         map.put("colleges", adminService.getAllColleges());
-//        map.put("courses", courses);
         return "admin/searchCourse";
     }
 
@@ -2422,12 +2433,10 @@ public class AdminController {
         for (String s : ids) {
             discussIds.add(Integer.parseInt(s));
         }
-        //删除讨论的同时删除对应的讨论内容
         boolean b = adminService.deleteDiscussByIdBatch(discussIds);
         if (!b) {
             return RequestResult.failure("批量删除失败，请稍后再试");
         }
-        adminService.deleteDiscussPostByDiscussIds(discussIds);
         return RequestResult.success();
     }
 
