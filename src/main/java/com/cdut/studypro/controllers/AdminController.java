@@ -3,7 +3,6 @@ package com.cdut.studypro.controllers;
 import com.cdut.studypro.beans.*;
 import com.cdut.studypro.beans.AdminExample.*;
 import com.cdut.studypro.exceptions.DownloadException;
-import com.cdut.studypro.exceptions.FileIsNotExistException;
 import com.cdut.studypro.exceptions.MaxUploadSizeExceedException;
 import com.cdut.studypro.exceptions.NotExistException;
 import com.cdut.studypro.services.AdminService;
