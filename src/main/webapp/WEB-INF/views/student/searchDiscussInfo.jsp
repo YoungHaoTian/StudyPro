@@ -92,8 +92,8 @@
                 <tr class="info">
                     <th>讨论标题</th>
                     <th>讨论内容</th>
-                    <th>所属课程(学院)</th>
-                    <th style="width:200px">发布教师</th>
+                    <th>所属课程(<span style="color:green;">课程所属学院)</span></th>
+                    <th style="width:300px">发布教师(<span style="color:green;">教师所属学院)</span></th>
                     <th style="width:200px">发布日期</th>
                     <th style="width:200px">选择操作</th>
                 </tr>
@@ -103,11 +103,11 @@
                     <tr>
                         <td>${discuss.title}</td>
                         <td>${discuss.content}</td>
-                        <td>${discuss.course.name}(${discuss.course.college.name})</td>
-                        <td>${discuss.course.teacher.name}</td>
+                        <td>${discuss.course.name}(<span style="color: green">${discuss.course.college.name}</span>)</td>
+                        <td>${discuss.course.teacher.name}(<span style="color: green">${discuss.course.teacher.college.name}</span>)</td>
                         <td><fmt:formatDate value="${discuss.recordTime}" pattern="yyyy-MM-dd  HH:mm:ss"/></td>
                         <td>
-                            <button type="button" class="btn btn-info viewReplyBtn"
+                            <button type="button" class="btn btn-info btn-sm viewReplyBtn"
                                     data-toggle="tooltip" discussId="${discuss.id}"
                                     data-placement="left" title="查看该讨论的所有回复" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>

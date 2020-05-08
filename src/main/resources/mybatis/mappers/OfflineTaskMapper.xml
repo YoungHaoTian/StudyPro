@@ -17,6 +17,18 @@
                      select="com.cdut.studypro.daos.CourseChapterMapper.selectByPrimaryKeyWithIdTitleAndCourseAndCollege"/>
     </resultMap>
 
+    <resultMap id="BaseResultMapWithoutTeacher" type="com.cdut.studypro.beans.OnlineTask">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="chapter_id" jdbcType="INTEGER" property="chapterId"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="record_time" jdbcType="TIMESTAMP" property="recordTime"/>
+    </resultMap>
+    <resultMap extends="BaseResultMapWithoutTeacher" id="ResultMapWithChapter"
+               type="com.cdut.studypro.beans.OfflineTask">
+        <association property="courseChapter" column="chapter_id"
+                     select="com.cdut.studypro.daos.CourseChapterMapper.selectByPrimaryKeyWithIdTitle"/>
+    </resultMap>
+
     <sql id="Example_Where_Clause">
         <where>
             <foreach collection="oredCriteria" item="criteria" separator="or">
@@ -114,6 +126,38 @@
             order by ${orderByClause}
         </if>
     </select>
+    <select id="selectByExampleWithChapter" parameterType="com.cdut.studypro.beans.OfflineTaskExample"
+            resultMap="ResultMapWithChapter">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        id, chapter_id, title, record_time
+        from offline_task
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <select id="selectOnlineTaskIdsByExample" parameterType="com.cdut.studypro.beans.OfflineTaskExample"
+            resultType="java.lang.Integer">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        id
+        from offline_task
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
     <select id="selectByExampleWithCourseAndCollegeAndChapter"
             parameterType="com.cdut.studypro.beans.OfflineTaskExample"
             resultMap="ResultMapWithCourseAndCollegeAndChapter">

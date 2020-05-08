@@ -38,4 +38,6 @@ public interface OnlineTaskQuestionMapper {
 
     //批量插入数据
     int insertBatch(@Param("questions") List<OnlineTaskQuestion> questions);
+
+    Integer getTotalScore(Integer id);
 }

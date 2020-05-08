@@ -50,13 +50,22 @@ public class StudentServiceImpl implements StudentService {
     private NoticeMapper noticeMapper;
 
     @Autowired
-    private OnlineTaskMapper taskMapper;
+    private OnlineTaskMapper onlineTaskMapper;
+
+    @Autowired
+    private OnlineTaskQuestionMapper onlineTaskQuestionMapper;
+
+    @Autowired
+    private OfflineTaskMapper offlineTaskMapper;
 
     @Autowired
     private OnlineTaskQuestionMapper taskQuestionMapper;
 
     @Autowired
     private StudentOnlineTaskMapper studentOnlineTaskMapper;
+
+    @Autowired
+    private StudentOfflineTaskMapper studentOfflineTaskMapper;
 
     @Override
     public List<Student> selectStudentByExample(StudentExample example) {
@@ -88,7 +97,6 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<Course> getAllCourseWithBLOBsAndTeacherByExample(CourseExample courseExample) {
-
         return courseMapper.selectByExampleWithBLOBsAndTeacher(courseExample);
     }
 
@@ -209,19 +217,25 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Course getCourseWithChapterAndTeacherByCourseId(Integer courseId) {
-        CourseExample courseExample = new CourseExample();
-        CourseExample.Criteria criteria = courseExample.createCriteria();
-        criteria.andIdEqualTo(courseId);
-        return courseMapper.selectByExampleWithChapterAndTeacher(courseExample).get(0);
+        return courseMapper.selectByPrimaryKeyWithChapterAndTeacher(courseId);
     }
 
     @Override
-    public List<OnlineTask> getAllTasksByChapterId(Integer id) {
+    public List<OnlineTask> getAllOnlineTasksByChapterId(Integer id) {
         OnlineTaskExample taskExample = new OnlineTaskExample();
         OnlineTaskExample.Criteria criteria = taskExample.createCriteria();
         criteria.andChapterIdEqualTo(id);
         taskExample.setOrderByClause("record_time desc");
-        return taskMapper.selectByExample(taskExample);
+        return onlineTaskMapper.selectByExample(taskExample);
+    }
+
+    @Override
+    public List<OfflineTask> getAllOfflineTasksByChapterId(Integer id) {
+        OfflineTaskExample taskExample = new OfflineTaskExample();
+        OfflineTaskExample.Criteria criteria = taskExample.createCriteria();
+        criteria.andChapterIdEqualTo(id);
+        taskExample.setOrderByClause("record_time desc");
+        return offlineTaskMapper.selectByExampleWithBLOBs(taskExample);
     }
 
     @Override
@@ -268,7 +282,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<StudentOnlineTask> getFinishTaskByStudentIdAndTaskIds(Integer studentId, List<Integer> taskIds) {
+    public List<StudentOnlineTask> getFinishOnlineTaskByStudentIdAndTaskIds(Integer studentId, List<Integer> taskIds) {
         StudentOnlineTaskExample studentTaskExample = new StudentOnlineTaskExample();
         StudentOnlineTaskExample.Criteria criteria = studentTaskExample.createCriteria();
         criteria.andStudentIdEqualTo(studentId).andOnlineTaskIdIn(taskIds);
@@ -276,17 +290,17 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public boolean insertStudentTaskSelective(StudentOnlineTask studentTask) {
+    public boolean insertStudentOnlineTaskSelective(StudentOnlineTask studentTask) {
         return studentOnlineTaskMapper.insertSelective(studentTask) > 0;
     }
 
     @Override
-    public List<OnlineTask> getAllTasksWithChapterByTaskIds(List<Integer> taskIds) {
+    public List<OnlineTask> getAllOnlineTasksWithChapterByTaskIds(List<Integer> taskIds) {
         OnlineTaskExample taskExample = new OnlineTaskExample();
         OnlineTaskExample.Criteria criteria = taskExample.createCriteria();
         criteria.andIdIn(taskIds);
         taskExample.setOrderByClause("record_time asc");
-        return taskMapper.selectByExampleWithChapter(taskExample);
+        return onlineTaskMapper.selectByExampleWithChapter(taskExample);
     }
 
     @Override
@@ -298,11 +312,11 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<Integer> getTaskIdsByChapterIds(List<Integer> chapterIds) {
+    public List<Integer> getOnlineTaskIdsByChapterIds(List<Integer> chapterIds) {
         OnlineTaskExample taskExample = new OnlineTaskExample();
         OnlineTaskExample.Criteria criteria = taskExample.createCriteria();
         criteria.andChapterIdIn(chapterIds);
-        return taskMapper.selectOnlineTaskIdsByExample(taskExample);
+        return onlineTaskMapper.selectOnlineTaskIdsByExample(taskExample);
     }
 
     @Override
@@ -318,7 +332,7 @@ public class StudentServiceImpl implements StudentService {
         OnlineTaskExample taskExample = new OnlineTaskExample();
         OnlineTaskExample.Criteria criteria = taskExample.createCriteria();
         criteria.andChapterIdEqualTo(id);
-        return taskMapper.selectOnlineTaskIdsByExample(taskExample);
+        return onlineTaskMapper.selectOnlineTaskIdsByExample(taskExample);
     }
 
     @Override
@@ -339,5 +353,53 @@ public class StudentServiceImpl implements StudentService {
         return studentMapper.selectByPrimaryKey(id);
     }
 
+    @Override
+    public List<StudentOfflineTask> getFinishOfflineTaskByStudentIdAndTaskIds(Integer studentId, List<Integer> taskIds) {
+        StudentOfflineTaskExample studentTaskExample = new StudentOfflineTaskExample();
+        StudentOfflineTaskExample.Criteria criteria = studentTaskExample.createCriteria();
+        criteria.andStudentIdEqualTo(studentId).andOfflineTaskIdIn(taskIds);
+        return studentOfflineTaskMapper.selectByExample(studentTaskExample);
+    }
 
+    @Override
+    public boolean uploadOfflineTaskFile(StudentOfflineTask studentOfflineTask) {
+        return studentOfflineTaskMapper.insertSelective(studentOfflineTask) > 0;
+    }
+
+    @Override
+    public StudentOfflineTask getStudentOfflineTask(Integer studentTaskId) {
+        return studentOfflineTaskMapper.selectByPrimaryKey(studentTaskId);
+    }
+
+    @Override
+    public boolean reUploadOfflineTaskFile(StudentOfflineTask studentOfflineTask) {
+        return studentOfflineTaskMapper.updateByPrimaryKeySelective(studentOfflineTask) > 0;
+    }
+
+    @Override
+    public Integer getOnlineTaskTotalScore(Integer id) {
+        return onlineTaskQuestionMapper.getTotalScore(id);
+    }
+
+    @Override
+    public OnlineTask getOnlineTask(Integer id) {
+        return onlineTaskMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public List<Integer> getOfflineTaskIdsByChapterIds(List<Integer> chapterIds) {
+        OfflineTaskExample taskExample = new OfflineTaskExample();
+        OfflineTaskExample.Criteria criteria = taskExample.createCriteria();
+        criteria.andChapterIdIn(chapterIds);
+        return offlineTaskMapper.selectOnlineTaskIdsByExample(taskExample);
+    }
+
+    @Override
+    public List<OfflineTask> getAllOfflineTasksWithChapterByTaskIds(List<Integer> taskIds) {
+        OfflineTaskExample taskExample = new OfflineTaskExample();
+        OfflineTaskExample.Criteria criteria = taskExample.createCriteria();
+        criteria.andIdIn(taskIds);
+        taskExample.setOrderByClause("record_time asc");
+        return offlineTaskMapper.selectByExampleWithChapter(taskExample);
+    }
 }

@@ -42,14 +42,14 @@
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default wk-panel ">
-            <div class="panel-heading">查看管理员信息 View Data</div>
+            <div class="panel-heading">查看个人信息 View Data</div>
             <div class="panel-body">
                 <div class="row">
                     <table class="table table-striped table-hover table-bordered"
                            style="width: 500px;margin: 0 auto">
                         <thead>
                         <tr class="danger">
-                            <th colspan=2>查看教师信息</th>
+                            <th colspan=2>查看个人信息</th>
                         </tr>
                         <tr class="info">
                             <th colspan=2>教师：<span style="color: red">${teacher.name}</span>的信息如下</th>
@@ -60,7 +60,7 @@
                             <td style="text-align: right">教师姓名：</td>
                             <td style="text-align: left">${teacher.name}</td>
                         </tr>
-                         <tr>
+                        <tr>
                             <td style="text-align: right">教师编号：</td>
                             <td style="text-align: left">${teacher.number}</td>
                         </tr>
@@ -68,11 +68,11 @@
                             <td style="text-align: right">所属学院：</td>
                             <td style="text-align: left">${teacher.college.name}</td>
                         </tr>
-                         <tr>
+                        <tr>
                             <td style="text-align: right">联系电话：</td>
                             <td style="text-align: left">${teacher.telephone}</td>
                         </tr>
-                         <tr>
+                        <tr>
                             <td style="text-align: right">身份证号码：</td>
                             <td style="text-align: left">${teacher.idCardNo}</td>
                         </tr>
@@ -99,7 +99,7 @@
                 </div>
             </div>
         </div>
-        <div class="panel-footer wk-panel-footer">
+        <div class="panel-footer wk-panel-footer" style="margin-bottom: 50px">
             <button type="button" class="btn btn-info"
                     onclick="window.location.href='${APP_PATH}/teacher/editTeacherInfo'">
                 修改个人信息

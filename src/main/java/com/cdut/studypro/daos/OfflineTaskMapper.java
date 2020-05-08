@@ -41,4 +41,8 @@ public interface OfflineTaskMapper {
     OfflineTask selectByPrimaryKeyWithCourseAndChapter(Integer id);
 
     List<OfflineTask> selectByExampleWithCourseAndCollegeAndChapter(OfflineTaskExample taskExample);
+
+    List<Integer> selectOnlineTaskIdsByExample(OfflineTaskExample taskExample);
+
+    List<OfflineTask> selectByExampleWithChapter(OfflineTaskExample taskExample);
 }

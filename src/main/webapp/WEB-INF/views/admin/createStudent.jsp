@@ -123,7 +123,7 @@
                 </div>
             </form>
         </div>
-        <div class="panel-footer wk-panel-footer">
+        <div class="panel-footer wk-panel-footer" style="margin-bottom: 50px">
             <button type="button" class="btn btn-info" onclick="createStudent()">提&nbsp;&nbsp;交</button>
             <button type="button" class="btn btn-info" onclick="$('#studentData')[0].reset();"
                     style="margin-left: 30px">
@@ -263,7 +263,7 @@
                 layer.close(loadingIndex);
                 console.log(result);
                 if (result.code === 200) {
-                    layer.msg(result.message, {time: 2500, icon: 5, shift: 6}, function () {
+                    layer.msg(result.message, {time: 3000, icon: 5, shift: 6}, function () {
                     });
                 }
                 if (result.code === 100) {

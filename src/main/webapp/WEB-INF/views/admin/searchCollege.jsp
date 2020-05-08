@@ -254,10 +254,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("删除成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.reload();
-                    }, 1000);
+                    });
                     <%--window.location.href = "${APP_PATH}/admin/searchCollege?pageNum=${pageInfo.pageNum }";--%>
                 }
             },
@@ -344,10 +342,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("批量删除成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.reload();
-                    }, 1000);
+                    });
                     <%--window.location.href = "${APP_PATH}/admin/searchCollege?pageNum=${pageInfo.pageNum }";--%>
                 }
             },
@@ -378,11 +374,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("查询成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.href = "${APP_PATH}/admin/searchCollege";
-                    }, 1000);
-
+                    });
                 }
             },
             error: function () {

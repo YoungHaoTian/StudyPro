@@ -143,7 +143,7 @@
 
             </form>
         </div>
-        <div class="panel-footer wk-panel-footer">
+        <div class="panel-footer wk-panel-footer" style="margin-bottom: 50px">
             <button type="button" class="btn btn-info" onclick="updateChapter();">提&nbsp;&nbsp;交</button>
             <button type="button" class="btn btn-info" onclick="back()" style="margin-left: 20px">返&nbsp;&nbsp;回
             </button>
@@ -185,7 +185,7 @@
         let courseId = $("#courseId").val();
         let title = $("#title").val();
         let content = $("#content").val();
-        /*if (courseId === "0") {
+        if (courseId === "0") {
             layer.msg("你还没有选择章节所属课程", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
@@ -209,7 +209,7 @@
             layer.msg("章节内容不能为空", {time: 1500, icon: 5, shift: 6}, function () {
             });
             return;
-        }*/
+        }
         let loadingIndex = layer.msg('处理中', {icon: 16});
         $.ajax({
             url: "${APP_PATH}/teacher/updateChapter/${chapter.id}",
@@ -231,8 +231,8 @@
                 if (result.code === 100) {
                     console.log("success");
                     layer.msg("章节修改成功", {time: 1500, icon: 6}, function () {
+                        window.location.href = "${APP_PATH}/teacher/editChapter/${chapter.id}?courseId=" + courseId + "&pageNum=${pageNum}&preCourseId=${preCourseId}";
                     });
-                    window.location.href = "${APP_PATH}/teacher/editChapter/${chapter.id}?courseId=" + courseId + "&pageNum=${pageNum}&preCourseId=${preCourseId}";
                 }
             },
             error: function () {

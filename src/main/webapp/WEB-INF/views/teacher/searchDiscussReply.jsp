@@ -325,7 +325,7 @@
                     layer.msg("新增回复成功", {time: 1000, icon: 1}, function () {
                     });
                     window.setTimeout(function () {
-                        window.location.href = "${APP_PATH}/teacher/searchDiscussReply/${id}?pageNum=${pageInfo.total}&pageNumber=${pageNumber}";
+                        window.location.href = "${APP_PATH}/teacher/searchDiscussReply/${id}?pageNum=${pageInfo.pages}&pageNumber=${pageNumber}";
                     }, 1000);
                 }
             },

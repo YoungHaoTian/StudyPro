@@ -78,10 +78,12 @@
                                value="${'online'.equals(sessionScope.taskType)?sessionScope.onlineTaskQueryCriteria.get('title'):sessionScope.offlineTaskQueryCriteria.get('title')}">
                     </div>
                     <div class="form-group">
-                        <label for="minTime" class="control-label wk-filed-label" style="margin-top: 20px;margin-left: 0px;">发布时间:</label>
+                        <label for="minTime" class="control-label wk-filed-label"
+                               style="margin-top: 20px;margin-left: 0px;">发布时间:</label>
                         <input type="date" class="form-control" name="name" id="minTime"
                                value="${'online'.equals(sessionScope.taskType)?sessionScope.onlineTaskQueryCriteria.get('minTime'):sessionScope.offlineTaskQueryCriteria.get('minTime')}"/>
-                        <label for="maxTime" class="control-label wk-filed-label" style="margin-top: 20px;margin-left: 0px;">到:</label>
+                        <label for="maxTime" class="control-label wk-filed-label"
+                               style="margin-top: 20px;margin-left: 0px;">到:</label>
                         <input type="date" class="form-control" name="name" id="maxTime"
                                value="${'online'.equals(sessionScope.taskType)?sessionScope.onlineTaskQueryCriteria.get('maxTime'):sessionScope.offlineTaskQueryCriteria.get('maxTime')}"/>
                     </div>
@@ -128,7 +130,12 @@
                     <th>所属章节</th>
                     <th style="width:300px">所属课程：学院</th>
                     <th style="width:200px">发布时间</th>
-                    <th style="width:650px">选择操作</th>
+                    <c:if test="${'offline'.equals(sessionScope.taskType)}">
+                        <th style="width:200px">选择操作</th>
+                    </c:if>
+                    <c:if test="${'online'.equals(sessionScope.taskType)}">
+                        <th style="width:350px">选择操作</th>
+                    </c:if>
                 </tr>
                 </thead>
                 <tbody>
@@ -144,61 +151,58 @@
                         <td><fmt:formatDate value="${task.recordTime}" pattern="yyyy-MM-dd  HH:mm:ss"/></td>
                         <c:if test="${'online'.equals(sessionScope.taskType)}">
                             <td>
-                                <button type="button" class="btn btn-danger deleteOnlineBtn"
+                                <button type="button" class="btn btn-danger btn-sm deleteOnlineBtn"
                                         data-toggle="tooltip" onlineTaskId="${task.id}"
                                         data-placement="left" title="删除该作业" style="margin-right: 20px">
                                     <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                                    删除
+
                                 </button>
-                                <button type="button" class="btn btn-info updateOnlineBtn"
+                                <button type="button" class="btn btn-info btn-sm updateOnlineBtn"
                                         data-toggle="tooltip" onlineTaskId="${task.id}"
                                         data-placement="left" title="编辑该作业" style="margin-right: 20px">
                                     <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-                                    编辑
+
                                 </button>
-                                <button type="button" class="btn btn-info searchQuestionBtn"
+                                <button type="button" class="btn btn-info btn-sm searchQuestionBtn"
                                         data-toggle="tooltip" onlineTaskId="${task.id}"
                                         data-placement="left" title="查看该作业的题目" style="margin-right: 20px">
                                     <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-                                    查看题目
+
                                 </button>
-                                <button type="button" class="btn btn-info createQuestionBtn"
+                                <button type="button" class="btn btn-info btn-sm createQuestionBtn"
                                         data-toggle="tooltip" onlineTaskId="${task.id}"
                                         data-placement="left" title="录入该作业的题目" style="margin-right: 20px">
-                                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-                                    录入题目
+                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+
                                 </button>
-                                <button type="button" class="btn btn-success viewTaskFinishBtn"
+                                <button type="button" class="btn btn-success btn-sm viewTaskFinishBtn"
                                         data-toggle="tooltip" onlineTaskId="${task.id}"
                                         chapterId="${task.courseChapter.id}" courseId="${task.courseChapter.course.id}"
-                                        data-placement="left" title="查看作业完成情况" style="margin-right: 20px">
-                                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-                                    完成情况
+                                        data-placement="left" title="查看作业完成情况">
+                                    <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
+
                                 </button>
                             </td>
                         </c:if>
                         <c:if test="${'offline'.equals(sessionScope.taskType)}">
                             <td>
-                                <button type="button" class="btn btn-danger deleteOfflineBtn"
+                                <button type="button" class="btn btn-danger btn-sm deleteOfflineBtn"
                                         data-toggle="tooltip" offlineTaskId="${task.id}"
                                         courseId="${task.courseChapter.course.id}"
                                         chapterId="${task.courseChapter.id}"
                                         data-placement="left" title="删除该作业" style="margin-right: 20px">
                                     <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                                    删除
                                 </button>
-                                <button type="button" class="btn btn-info updateOfflineBtn"
+                                <button type="button" class="btn btn-info btn-sm updateOfflineBtn"
                                         data-toggle="tooltip" offlineTaskId="${task.id}"
                                         data-placement="left" title="编辑该作业" style="margin-right: 20px">
                                     <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-                                    编辑
                                 </button>
-                                <button type="button" class="btn btn-success viewTaskFinishBtn"
+                                <button type="button" class="btn btn-success btn-sm viewTaskFinishBtn"
                                         data-toggle="tooltip" offlineTaskId="${task.id}"
                                         chapterId="${task.courseChapter.id}" courseId="${task.courseChapter.course.id}"
-                                        data-placement="left" title="查看作业完成情况" style="margin-right: 20px">
-                                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-                                    完成情况
+                                        data-placement="left" title="查看作业完成情况">
+                                    <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
                                 </button>
                             </td>
                         </c:if>
@@ -361,11 +365,8 @@
                     });
                 }
                 if (result.code === 100) {
-                    layer.msg("删除成功", {time: 1000, icon: 1}, function () {
+                    layer.msg("删除成功", {time: 1000, icon: 1}, function () {window.location.reload();
                     });
-                    window.setTimeout(function () {
-                        window.location.reload();
-                    }, 1000);
                     <%--window.location.href = "${APP_PATH}/teacher/searchTask?pageNum=${pageInfo.pageNum }";--%>
                 }
             },
@@ -407,10 +408,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("删除成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.reload();
-                    }, 1000);
+                    });
                 }
             },
             error: function () {
@@ -458,10 +457,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("查询成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.href = "${APP_PATH}/teacher/searchTask";
-                    }, 1000);
+                    });
                 }
             },
             error: function () {

@@ -48,6 +48,9 @@ import java.util.*;
 @RequestMapping("/admin")
 public class AdminController {
 
+    //文件上传最大容量:50M
+    private final static long FILE_MAX_SIZE = 20;
+
     @Autowired
     private AdminService adminService;
 
@@ -88,7 +91,10 @@ public class AdminController {
 
     @ResponseBody
     @PostMapping(value = "/login")
-    public RequestResult login(@RequestBody Map<String, String> map, HttpSession session) {
+    public RequestResult login(@RequestBody Map<String, String> map, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        /*ServletContext application = request.getServletContext();
+        List<Integer> adminLogin = (List<Integer>) application.getAttribute("adminLogin");*/
         AdminExample adminExample = new AdminExample();
         Criteria criteria = adminExample.createCriteria();
         String message = null;
@@ -115,9 +121,20 @@ public class AdminController {
             Admin admin = admins.get(0);
             String password = map.get("password");
             if (password.equals(MD5Util.stringToMD5(admin.getPassword()))) {
+                //同时只能登陆一个账户
+                Object user = session.getAttribute("user");
+                if (user != null) {
+                    return RequestResult.failure("同时只能登陆一个账户");
+                }
+                //先查看当前管理员是否已经登录
+                /*if (adminLogin.contains(admin.getId())) {
+                    return RequestResult.failure("请勿重复登录");
+                }*/
                 //登录成功后将管理员信息保存在session中，并设置角色
                 session.setAttribute("user", admin);
                 session.setAttribute("role", "admin");
+                //登录成功后将该管理员id记录到adminLogin中
+                //adminLogin.add(admin.getId());
                 return RequestResult.success();
             } else {
                 return RequestResult.failure("密码错误，请稍后重试");
@@ -231,6 +248,10 @@ public class AdminController {
     @ResponseBody
     @PostMapping("/studentDataImport")
     public RequestResult studentDataImport(@RequestParam(value = "file") MultipartFile file, @RequestParam("collegeId") Integer collegeId) {
+        long size = file.getSize();
+        if (size > FILE_MAX_SIZE * 1024 * 1024) {
+            throw new MaxUploadSizeExceedException(FILE_MAX_SIZE);
+        }
         String phone = "((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\\d{8}";
         String idCardNo = "[1-9]\\d{5}(18|19|([23]\\d))\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{3}[0-9Xx]";
         String email = "(\\w+\\.)*\\w+\\@+[0-9a-zA-Z]+\\.(com|com.cn|edu|hk|cn|net)";
@@ -598,12 +619,12 @@ public class AdminController {
 
     @ResponseBody
     @PostMapping("/deleteStudent")
-    public RequestResult deleteStudent(@RequestParam("id") Integer id,HttpServletRequest request) {
+    public RequestResult deleteStudent(@RequestParam("id") Integer id, HttpServletRequest request) {
         if (id == null) {
             return RequestResult.failure("学生删除失败，请稍后再试");
         }
         //删除学生信息
-        boolean i = adminService.deleteStudentById(id,request);
+        boolean i = adminService.deleteStudentById(id, request);
         if (!i) {
             return RequestResult.failure("学生删除失败，请稍后再试");
         }
@@ -612,7 +633,7 @@ public class AdminController {
 
     @ResponseBody
     @PostMapping("/deleteStudentBatch")
-    public RequestResult deleteStudentBatch(@RequestParam("ids") String id,HttpServletRequest request) {
+    public RequestResult deleteStudentBatch(@RequestParam("ids") String id, HttpServletRequest request) {
         if (id == null) {
             return RequestResult.failure("批量删除失败，请稍后再试");
         }
@@ -621,7 +642,7 @@ public class AdminController {
         for (String s : ids) {
             studentIds.add(Integer.parseInt(s));
         }
-        boolean b = adminService.deleteStudentByIdBatch(studentIds,request);
+        boolean b = adminService.deleteStudentByIdBatch(studentIds, request);
         if (!b) {
             return RequestResult.failure("批量删除失败，请稍后再试");
         }
@@ -835,6 +856,10 @@ public class AdminController {
     @ResponseBody
     @PostMapping("/teacherDataImport")
     public RequestResult teacherDataImport(@RequestParam(value = "file") MultipartFile file, @RequestParam("collegeId") Integer collegeId) {
+        long size = file.getSize();
+        if (size > FILE_MAX_SIZE * 1024 * 1024) {
+            throw new MaxUploadSizeExceedException(FILE_MAX_SIZE);
+        }
         String phone = "((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\\d{8}";
         String idCardNo = "[1-9]\\d{5}(18|19|([23]\\d))\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{3}[0-9Xx]";
         String email = "(\\w+\\.)*\\w+\\@+[0-9a-zA-Z]+\\.(com|com.cn|edu|hk|cn|net)";
@@ -1182,7 +1207,7 @@ public class AdminController {
 
     //下载教师模板
     @RequestMapping("/downloadTeacherTemplate")
-    public ResponseEntity<byte[]> downloadTeacherTemplate(HttpServletRequest request){
+    public ResponseEntity<byte[]> downloadTeacherTemplate(HttpServletRequest request) {
         String path = request.getServletContext().getRealPath("/excels/");
         String fileName = "Teacher_Template.xlsx";
         File file = new File(path + fileName);
@@ -1453,7 +1478,7 @@ public class AdminController {
 
     //下载学院模板
     @RequestMapping("/downloadCollegeTemplate")
-    public ResponseEntity<byte[]> downloadCollegeTemplate(HttpServletRequest request){
+    public ResponseEntity<byte[]> downloadCollegeTemplate(HttpServletRequest request) {
         String path = request.getServletContext().getRealPath("/excels/");
         String fileName = "College_Template.xlsx";
         File file = new File(path + fileName);
@@ -1473,6 +1498,10 @@ public class AdminController {
     @ResponseBody
     @PostMapping("/collegeDataImport")
     public RequestResult collegeDataImport(@RequestParam(value = "file") MultipartFile file) {
+        long size = file.getSize();
+        if (size > FILE_MAX_SIZE * 1024 * 1024) {
+            throw new MaxUploadSizeExceedException(FILE_MAX_SIZE);
+        }
         String fileName = file.getOriginalFilename();
         List<College> colleges = new ArrayList<>();
         //批量导入学院需要保证学院名称是唯一的
@@ -1920,7 +1949,7 @@ public class AdminController {
 
     //下载课程模板
     @RequestMapping("/downloadCourseTemplate")
-    public ResponseEntity<byte[]> downloadCourseTemplate(HttpServletRequest request){
+    public ResponseEntity<byte[]> downloadCourseTemplate(HttpServletRequest request) {
         String path = request.getServletContext().getRealPath("/excels/");
         String fileName = "Course_Template.xlsx";
         File file = new File(path + fileName);
@@ -1929,7 +1958,7 @@ public class AdminController {
         // 将对文件做的特殊处理还原
         headers.setContentDispositionFormData("attachment", fileName);
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-         try {
+        try {
             return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.OK);
         } catch (IOException e) {
             throw new DownloadException("下载异常，请稍后再试");
@@ -1939,6 +1968,10 @@ public class AdminController {
     @ResponseBody
     @PostMapping("/courseDataImport")
     public RequestResult courseDataImport(@RequestParam(value = "file") MultipartFile file, HttpSession session) {
+        long size = file.getSize();
+        if (size > FILE_MAX_SIZE * 1024 * 1024) {
+            throw new MaxUploadSizeExceedException(FILE_MAX_SIZE);
+        }
         String fileName = file.getOriginalFilename();
         String number = "[a-zA-Z0-9]{6,18}";
         List<Course> courses = new ArrayList<>();
@@ -2679,7 +2712,12 @@ public class AdminController {
 
     @ResponseBody
     @PostMapping("/logout")
-    public RequestResult logout(HttpSession session) {
+    public RequestResult logout(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        /*Admin admin = (Admin) session.getAttribute("user");
+        ServletContext application = request.getServletContext();
+        List<Integer> adminLogin = (List<Integer>) application.getAttribute("adminLogin");
+        adminLogin.remove(admin.getId());*/
         //执行该方法后会让session失效，其中的内容就会删除，但是会立即重新创建一个新的session对象
         session.invalidate();
         return RequestResult.success();

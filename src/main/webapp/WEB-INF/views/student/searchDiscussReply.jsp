@@ -118,17 +118,16 @@
                 </c:forEach>
                 </tbody>
             </table>
-            <div class="panel-footer wk-panel-footer" style="margin-top:50px">
-                <button type="button" class="btn btn-info replyBtn"
-                        postId="${id}" title="回复该讨论"
-                        style="margin-right: 20px">
-                    回&nbsp;&nbsp;复
-                </button>
-                <button type="button" class="btn btn-info"
-                        onclick="window.location.href='${APP_PATH}/student/searchDiscussInfo?courseId=${courseId}'">
-                    返&nbsp;&nbsp;回
-                </button>
-            </div>
+        </div>
+        <div class="panel-footer wk-panel-footer">
+            <button type="button" class="btn btn-info replyBtn" title="回复该讨论"
+                    style="margin-right: 20px">
+                回&nbsp;&nbsp;复
+            </button>
+            <button type="button" class="btn btn-info"
+                    onclick="window.location.href='${APP_PATH}/student/searchDiscussInfo?courseId=${courseId}';${sessionScope.remove('discussPostParameterMap')}">
+                返&nbsp;&nbsp;回
+            </button>
         </div>
     </div>
 </div>
@@ -196,7 +195,7 @@
         </div>
     </div>
     <!-- 页面跳转信息 -->
-    <div class="row">
+    <div class="row" style="margin-bottom: 50px">
         <div class="col-sm-2 col-md-offset-6">
             <input type="number" class="form-control" id="pageNum" placeholder="跳转到...">
         </div>
@@ -252,7 +251,6 @@
     });
 
     $(".replyBtn").on("click", function () {
-
         $("#createReplyModal").modal({
                 backdrop: "static"
             }
@@ -260,7 +258,6 @@
     });
 
     $("#reply_add_btn").on("click", function () {
-        let postId = $(".replyBtn").attr("postId");
         let content = $("#replyContent").val().trim();
         if (content === "") {
             layer.msg("回复内容不能为空", {time: 1500, icon: 5, shift: 6}, function () {
@@ -284,8 +281,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("新增回复成功", {time: 1000, icon: 1}, function () {
+                        window.location.href = "${APP_PATH}/student/searchDiscussReply/${id}?courseId=${courseId}&pageNum=${pageInfo.pages}"
                     });
-                    window.location.reload(true);
                 }
             },
             error: function () {
@@ -320,8 +317,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("查询成功", {time: 1000, icon: 1}, function () {
+                        window.location.href = "${APP_PATH}/student/searchDiscussReply/${id}?courseId=${courseId}";
                     });
-                    window.location.href = "${APP_PATH}/student/searchDiscussReply/${id}?courseId=${courseId}";
                 }
             },
             error: function () {

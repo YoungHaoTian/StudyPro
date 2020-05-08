@@ -80,6 +80,8 @@ public interface CourseMapper {
 
     List<Course> selectByExampleWithChapterAndTeacher(CourseExample courseExample);
 
+    Course selectByPrimaryKeyWithChapterAndTeacher(Integer id);
+
     List<String> selectNumberByExample(CourseExample courseExample);
 
     boolean insertBatch(@Param("courses") List<Course> courses);

@@ -305,10 +305,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("删除成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.reload();
-                    }, 1000);
+                    });
                     <%--window.location.href = "${APP_PATH}/admin/searchStudent?pageNum=${pageInfo.pageNum }";--%>
                 }
             },
@@ -399,10 +397,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("批量删除成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.reload();
-                    }, 1000);
+                    });
                     <%--window.location.href = "${APP_PATH}/admin/searchStudent?pageNum=${pageInfo.pageNum }";--%>
                 }
             },
@@ -416,17 +412,7 @@
     //查询按钮
     $("#search").on("click", function () {
         let number = $("#number").val().trim();
-        /*if (number.trim() === "") {
-            layer.msg("请输入学生学号", {time: 1500, icon: 5, shift: 6}, function () {
-            });
-            return;
-        }*/
         let collegeId = $("#collegeId").val();
-        /*if (collegeId === "0") {
-            layer.msg("请选择学院", {time: 1500, icon: 5, shift: 6}, function () {
-            });
-            return;
-        }*/
         let loadingIndex = layer.msg('处理中', {icon: 16});
         //发送ajax请求
         $.ajax({
@@ -445,11 +431,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("查询成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.href = "${APP_PATH}/admin/searchStudent";
-                    }, 1000);
-
+                    });
                 }
             },
             error: function () {

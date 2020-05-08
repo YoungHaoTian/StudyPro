@@ -109,7 +109,7 @@
                 </div>
             </form>
         </div>
-        <div class="panel-footer wk-panel-footer">
+        <div class="panel-footer wk-panel-footer" style="margin-bottom: 50px">
             <button type="button" class="btn btn-info" onclick="createChapter();">提&nbsp;&nbsp;交</button>
             <button type="button" class="btn btn-info" onclick="window.history.back()"
                     style="margin-left: 20px">返&nbsp;&nbsp;回
@@ -165,10 +165,8 @@
                 if (result.code === 100) {
                     console.log("success");
                     layer.msg("章节添加成功", {time: 1500, icon: 6}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.reload();
-                    }, 1000);
+                    });
                     <%--window.location.href = "${APP_PATH}/teacher/createChapter?courseId=${courseId}";--%>
                 }
             },

@@ -34,6 +34,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.File;
@@ -57,6 +58,7 @@ import java.util.*;
 public class TeacherController {
     //单位：MB
     private final static long VIDEO_MAX_SIZE = 512;
+    private final static long FILE_MAX_SIZE = 100;
 
     @Autowired
     private TeacherService teacherService;
@@ -66,6 +68,13 @@ public class TeacherController {
     public String handRuntimeException(RuntimeException e, HttpServletRequest request) {
         request.setAttribute("exception", e);
         return "error";
+    }
+
+    //文件上传超过最大容量异常处理
+    @ResponseBody
+    @ExceptionHandler(MaxUploadSizeExceedException.class)
+    public RequestResult handMaxUploadSizeExceedException(MaxUploadSizeExceedException e) {
+        return RequestResult.failure(e.getMessage());
     }
 
     //操作文件时异常处理
@@ -82,13 +91,6 @@ public class TeacherController {
         return "error";
     }
 
-    //文件上传超过最大容量异常处理
-    @ResponseBody
-    @ExceptionHandler(MaxUploadSizeExceedException.class)
-    public RequestResult handMaxUploadSizeExceedException(MaxUploadSizeExceedException e) {
-        return RequestResult.failure(e.getMessage());
-    }
-
     //类型转换异常处理
     @ExceptionHandler(ParseException.class)
     public String handParseException(ParseException e, HttpServletRequest request) {
@@ -98,7 +100,10 @@ public class TeacherController {
 
     @ResponseBody
     @PostMapping(value = "/login")
-    public RequestResult login(@RequestBody Map<String, String> map, HttpSession session) {
+    public RequestResult login(@RequestBody Map<String, String> map, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        /*ServletContext application = request.getServletContext();
+        List<Integer> teacherLogin = (List<Integer>) application.getAttribute("teacherLogin");*/
         TeacherExample teacherExample = new TeacherExample();
         TeacherExample.Criteria criteria = teacherExample.createCriteria();
         String message = null;
@@ -123,9 +128,22 @@ public class TeacherController {
             Teacher teacher = teachers.get(0);
             String password = map.get("password");
             if (password.equals(MD5Util.stringToMD5(teacher.getPassword()))) {
+                //同时只能登陆一个账户
+                Object user = session.getAttribute("user");
+                if (user != null) {
+                    return RequestResult.failure("同时只能登陆一个账户");
+                }
+                //先查看当前教师是否已经登录
+                /*if (teacherLogin.contains(teacher.getId())) {
+                    return RequestResult.failure("请勿重复登录");
+                }*/
                 //登录成功后将教师信息保存在session中
+                Teacher teacher1 = new Teacher();
+                teacher1.setId(teacher.getId());
                 session.setAttribute("role", "teacher");
-                session.setAttribute("user", teacher);
+                session.setAttribute("user", teacher1);
+                //登录成功之后将该教师id记录到teacherLogin中
+                //teacherLogin.add(teacher.getId());
                 return RequestResult.success();
             } else {
                 return RequestResult.failure("密码错误，请稍后重试");
@@ -191,6 +209,9 @@ public class TeacherController {
         if (courseId == 0 || chapterId == 0) {
             return RequestResult.failure("你还没有选择视频所属课程及章节");
         }
+        if (!(file.getOriginalFilename().endsWith(".mp4") || file.getOriginalFilename().endsWith(".avi"))) {
+            return RequestResult.failure("请上传mp4或avi格式的视频文件");
+        }
         if (size > VIDEO_MAX_SIZE * 1024 * 1024) {
             throw new MaxUploadSizeExceedException("视频上传最大大小为：", VIDEO_MAX_SIZE);
         }
@@ -250,11 +271,6 @@ public class TeacherController {
         }
         PageHelper.startPage(pageNum, 20);
         List<CourseVideo> videos = teacherService.searchCourseVideoByExampleWithCourseChapter(courseVideoExample);
-        for (CourseVideo video : videos) {
-            String path = video.getPath();
-            path = path.substring(path.indexOf('_') + 1);
-            video.setPath(path);
-        }
         PageInfo<CourseVideo> page = new PageInfo(videos, 10);
         map.put("pageInfo", page);
         map.put("colleges", teacherService.getAllCollegesByTeacherId(teacher.getId()));
@@ -395,6 +411,9 @@ public class TeacherController {
         if (file == null) {
             return RequestResult.failure("视频更新失败，请稍后再试");
         }
+        if (!(file.getOriginalFilename().endsWith(".mp4") || file.getOriginalFilename().endsWith(".avi"))) {
+            return RequestResult.failure("请上传mp4或avi格式的视频文件");
+        }
         long size = file.getSize();
         if (size > VIDEO_MAX_SIZE * 1024 * 1024) {
             throw new MaxUploadSizeExceedException("视频上传最大大小为：", VIDEO_MAX_SIZE);
@@ -459,6 +478,10 @@ public class TeacherController {
         if (courseId == 0 || chapterId == 0) {
             return RequestResult.failure("你还没有选择文档所属课程及章节");
         }
+        long size = file.getSize();
+        if (size > FILE_MAX_SIZE * 1024 * 1024) {
+            throw new MaxUploadSizeExceedException(FILE_MAX_SIZE);
+        }
         String path = request.getServletContext().getRealPath("/file/");
         //文档存放路径：//课程id/章节id/上传时间_fileName
         String fileDir = courseId + "\\" + chapterId + "\\";
@@ -513,11 +536,6 @@ public class TeacherController {
         }
         PageHelper.startPage(pageNum, 20);
         List<CourseFile> files = teacherService.searchCourseFileByExampleWithCourseChapter(courseFileExample);
-        for (CourseFile file : files) {
-            String path = file.getPath();
-            path = path.substring(path.indexOf('_') + 1);
-            file.setPath(path);
-        }
         PageInfo<CourseFile> page = new PageInfo(files, 10);
         map.put("pageInfo", page);
         map.put("colleges", teacherService.getAllCollegesByTeacherId(teacher.getId()));
@@ -656,6 +674,10 @@ public class TeacherController {
         if (file == null) {
             return RequestResult.failure("文档更新失败，请稍后再试");
         }
+        long size = file.getSize();
+        if (size > FILE_MAX_SIZE * 1024 * 1024) {
+            throw new MaxUploadSizeExceedException(FILE_MAX_SIZE);
+        }
         CourseFile courseFile = teacherService.getCourseFileById(courseFileId);
         if (courseFile == null) {
             return RequestResult.failure("文档更新失败，请稍后再试");
@@ -698,13 +720,40 @@ public class TeacherController {
     public ResponseEntity<byte[]> downloadCourseFile(@PathVariable("id") Integer id, HttpServletRequest request) {
         String path = request.getServletContext().getRealPath("/file/");
         CourseFile courseFile = teacherService.getCourseFileById(id);
-        String fileName = courseFile.getPath().substring(courseFile.getPath().indexOf("_") + 1);
+        String fileName = courseFile.getPath().split("_", 2)[1];
         File file = new File(path + courseFile.getPath());
         // 设置响应头通知浏览器下载
         HttpHeaders headers = new HttpHeaders();
         try {
             // 转码，避免文件名显示不出中文
+            String tempStr = UUID.randomUUID().toString();
+            //替换空格
+            fileName = fileName.replace(" ", tempStr);
             fileName = URLEncoder.encode(fileName, "UTF-8");
+            fileName = fileName.replace(tempStr, " ");
+            headers.setContentDispositionFormData("attachment", fileName);
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.OK);
+        } catch (IOException e) {
+            throw new DownloadException("下载异常，请稍后再试");
+        }
+    }
+
+    @RequestMapping("/downloadCourseVideo/{id}")
+    public ResponseEntity<byte[]> downloadCourseVideo(@PathVariable("id") Integer id, HttpServletRequest request) {
+        String path = request.getServletContext().getRealPath("/video/");
+        CourseVideo courseVideo = teacherService.getCourseVideoById(id);
+        String fileName = courseVideo.getPath().split("_", 2)[1];
+        File file = new File(path + courseVideo.getPath());
+        // 设置响应头通知浏览器下载
+        HttpHeaders headers = new HttpHeaders();
+        try {
+            // 转码，避免文件名显示不出中文
+            String tempStr = UUID.randomUUID().toString();
+            //替换空格
+            fileName = fileName.replace(" ", tempStr);
+            fileName = URLEncoder.encode(fileName, "UTF-8");
+            fileName = fileName.replace(tempStr, " ");
             headers.setContentDispositionFormData("attachment", fileName);
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
             return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.OK);
@@ -933,14 +982,15 @@ public class TeacherController {
     @ResponseBody
     @PostMapping("/saveDiscussReply/{id}")
     public RequestResult saveDiscussReply(@PathVariable("id") Integer id, @RequestParam("content") String content) {
-        if (id == null) {
-            return RequestResult.failure("新增回复失败，请稍后再试");
-        }
+
         if (content == null) {
             return RequestResult.failure("新增回复失败，请稍后再试");
         }
         if ("".equals(content.trim())) {
             return RequestResult.failure("回复内容为空，请重新输入");
+        }
+        if (content.length() >= 100) {
+            return RequestResult.failure("回复内容请控制在100字以内");
         }
         DiscussPost discussPost = new DiscussPost();
         discussPost.setContent(content);
@@ -1366,16 +1416,21 @@ public class TeacherController {
 
     //下载作业模板
     @RequestMapping("/downloadTaskQuestionTemplate")
-    public ResponseEntity<byte[]> downloadTaskQuestionTemplate(HttpServletRequest request) throws IOException {
+    public ResponseEntity<byte[]> downloadTaskQuestionTemplate(HttpServletRequest request) {
         String path = request.getServletContext().getRealPath("/excels/");
         String fileName = "Task_Template.xlsx";
         File file = new File(path + fileName);
         // 设置响应头通知浏览器下载
         HttpHeaders headers = new HttpHeaders();
-        // 将对文件做的特殊处理还原
-        headers.setContentDispositionFormData("attachment", fileName);
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         try {
+            // 转码，避免文件名显示不出中文
+            String tempStr = UUID.randomUUID().toString();
+            //替换空格
+            fileName = fileName.replace(" ", tempStr);
+            fileName = URLEncoder.encode(fileName, "UTF-8");
+            fileName = fileName.replace(tempStr, " ");
+            headers.setContentDispositionFormData("attachment", fileName);
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
             return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.OK);
         } catch (IOException e) {
             throw new DownloadException("下载异常，请稍后再试");
@@ -1385,6 +1440,10 @@ public class TeacherController {
     @ResponseBody
     @PostMapping("/taskQuestionBatchImport")
     public RequestResult taskQuestionBatchImport(@RequestParam(value = "file") MultipartFile file, @RequestParam("taskId") Integer taskId) {
+        long size = file.getSize();
+        if (size > FILE_MAX_SIZE * 1024 * 1024) {
+            throw new MaxUploadSizeExceedException(FILE_MAX_SIZE);
+        }
         String fileName = file.getOriginalFilename();
         List<OnlineTaskQuestion> taskQuestions = new ArrayList<>();
         //原表头顺序：题目、选项A、选项B、选项C、选项D、答案、分值；使用数组来比较
@@ -1602,6 +1661,7 @@ public class TeacherController {
             return RequestResult.failure(result.getFieldErrors().get(0).getDefaultMessage());
         }
         Teacher teacher = (Teacher) session.getAttribute("user");
+        teacher = teacherService.getTeacherByIdWithoutCollegeAndCourse(teacher.getId());
         if (teacher == null || tea == null) {
             return RequestResult.failure("更新信息失败，请稍后再试");
         }
@@ -1940,11 +2000,13 @@ public class TeacherController {
             StudentOnlineTaskExample.Criteria studentOnlineTaskExampleCriteria = studentOnlineTaskExample.createCriteria();
             studentOnlineTaskExampleCriteria.andOnlineTaskIdEqualTo(id).andStudentIdIn(studentIds);
             List<StudentOnlineTask> studentOnlineTasks = teacherService.getOnlineTaskFinishByExample(studentOnlineTaskExample);
+            Integer total = teacherService.getOnlineTaskTotalScore(id);
             Map<Integer, StudentOnlineTask> studentTaskMap = new HashMap<>();
             for (StudentOnlineTask studentOnlineTask : studentOnlineTasks) {
                 studentTaskMap.put(studentOnlineTask.getStudentId(), studentOnlineTask);
             }
             map.put("studentOnlineTaskMap", studentTaskMap);
+            map.put("total", total);
         } else if (type.equals("offline")) {
             StudentOfflineTaskExample studentOfflineTaskExample = new StudentOfflineTaskExample();
             StudentOfflineTaskExample.Criteria studentOfflineTaskExampleCriteria = studentOfflineTaskExample.createCriteria();
@@ -2015,14 +2077,17 @@ public class TeacherController {
     public ResponseEntity<byte[]> downloadOfflineTaskFile(@PathVariable("id") Integer id, HttpServletRequest request) {
         String path = request.getServletContext().getRealPath("/offlineTask/");
         StudentOfflineTask studentOfflineTask = teacherService.getOfflineTaskFileById(id);
-        String[] split = studentOfflineTask.getPath().split("_", 3);
-        String fileName = split[2];
+        String fileName = studentOfflineTask.getPath().split("_", 3)[2];
         File file = new File(path + studentOfflineTask.getPath());
         // 设置响应头通知浏览器下载
         HttpHeaders headers = new HttpHeaders();
         try {
             // 转码，避免文件名显示不出中文
+            String tempStr = UUID.randomUUID().toString();
+            //替换空格
+            fileName = fileName.replace(" ", tempStr);
             fileName = URLEncoder.encode(fileName, "UTF-8");
+            fileName = fileName.replace(tempStr, " ");
             headers.setContentDispositionFormData("attachment", fileName);
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
             return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.OK);
@@ -2063,7 +2128,11 @@ public class TeacherController {
         HttpHeaders headers = new HttpHeaders();
         try {
             // 转码，避免文件名显示不出中文
+            String tempStr = UUID.randomUUID().toString();
+            //替换空格
+            fileName = fileName.replace(" ", tempStr);
             fileName = URLEncoder.encode(fileName, "UTF-8");
+            fileName = fileName.replace(tempStr, " ");
             headers.setContentDispositionFormData("attachment", fileName);
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
             return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(zipFile), headers, HttpStatus.OK);
@@ -2074,7 +2143,12 @@ public class TeacherController {
 
     @ResponseBody
     @PostMapping("/logout")
-    public RequestResult logout(HttpSession session) {
+    public RequestResult logout(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        /*Teacher teacher = (Teacher) session.getAttribute("user");
+        ServletContext application = request.getServletContext();
+        List<Integer> adminLogin = (List<Integer>) application.getAttribute("teacherLogin");
+        adminLogin.remove(teacher.getId());*/
         session.invalidate();
         return RequestResult.success();
     }

@@ -135,7 +135,7 @@
                 </div>
             </form>
         </div>
-        <div class="panel-footer wk-panel-footer">
+        <div class="panel-footer wk-panel-footer" style="margin-bottom: 50px">
             <button type="button" class="btn btn-info" onclick="updateTask();">提&nbsp;&nbsp;交</button>
             <button type="button" class="btn btn-info" style="margin-left: 20px"
                     onclick="back()">返&nbsp;&nbsp;回

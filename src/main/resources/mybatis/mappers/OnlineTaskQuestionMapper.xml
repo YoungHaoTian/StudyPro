@@ -344,4 +344,9 @@
             )
         </foreach>
     </insert>
+    <select id="getTotalScore" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select SUM(score)
+        from online_task_question
+        where online_task_id = #{id,jdbcType=INTEGER}
+    </select>
 </mapper>

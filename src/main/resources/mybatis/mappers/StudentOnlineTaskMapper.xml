@@ -140,7 +140,7 @@
     <insert id="insert" parameterType="com.cdut.studypro.beans.StudentOnlineTask">
     insert into student_online_task (id, student_id, online_task_id,
       score, record_time)
-    values (#{id,jdbcType=INTEGER}, #{studentId,jdbcType=INTEGER}, #{taskId,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=INTEGER}, #{studentId,jdbcType=INTEGER}, #{onlineTaskId,jdbcType=INTEGER},
       #{score,jdbcType=INTEGER}, #{recordTime,jdbcType=TIMESTAMP})
   </insert>
     <insert id="insertSelective" parameterType="com.cdut.studypro.beans.StudentOnlineTask">
@@ -152,7 +152,7 @@
             <if test="studentId != null">
                 student_id,
             </if>
-            <if test="taskId != null">
+            <if test="onlineTaskId != null">
                 online_task_id,
             </if>
             <if test="score != null">
@@ -169,8 +169,8 @@
             <if test="studentId != null">
                 #{studentId,jdbcType=INTEGER},
             </if>
-            <if test="taskId != null">
-                #{taskId,jdbcType=INTEGER},
+            <if test="onlineTaskId != null">
+                #{onlineTaskId,jdbcType=INTEGER},
             </if>
             <if test="score != null">
                 #{score,jdbcType=INTEGER},
@@ -196,8 +196,8 @@
             <if test="record.studentId != null">
                 student_id = #{record.studentId,jdbcType=INTEGER},
             </if>
-            <if test="record.taskId != null">
-                online_task_id = #{record.taskId,jdbcType=INTEGER},
+            <if test="record.onlineTaskId != null">
+                online_task_id = #{record.onlineTaskId,jdbcType=INTEGER},
             </if>
             <if test="record.score != null">
                 score = #{record.score,jdbcType=INTEGER},
@@ -214,7 +214,7 @@
         update student_online_task
         set id = #{record.id,jdbcType=INTEGER},
         student_id = #{record.studentId,jdbcType=INTEGER},
-        online_task_id = #{record.taskId,jdbcType=INTEGER},
+        online_task_id = #{record.onlineTaskId,jdbcType=INTEGER},
         score = #{record.score,jdbcType=INTEGER},
         record_time = #{record.recordTime,jdbcType=TIMESTAMP}
         <if test="_parameter != null">
@@ -227,8 +227,8 @@
             <if test="studentId != null">
                 student_id = #{studentId,jdbcType=INTEGER},
             </if>
-            <if test="taskId != null">
-                online_task_id = #{taskId,jdbcType=INTEGER},
+            <if test="onlineTaskId != null">
+                online_task_id = #{onlineTaskId,jdbcType=INTEGER},
             </if>
             <if test="score != null">
                 score = #{score,jdbcType=INTEGER},
@@ -242,7 +242,7 @@
     <update id="updateByPrimaryKey" parameterType="com.cdut.studypro.beans.StudentOnlineTask">
     update student_online_task
     set student_id = #{studentId,jdbcType=INTEGER},
-      online_task_id = #{taskId,jdbcType=INTEGER},
+      online_task_id = #{onlineTaskId,jdbcType=INTEGER},
       score = #{score,jdbcType=INTEGER},
       record_time = #{recordTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}

@@ -124,7 +124,7 @@
                 </div>
             </form>
         </div>
-        <div class="panel-footer wk-panel-footer">
+        <div class="panel-footer wk-panel-footer" style="margin-bottom: 50px">
             <button type="button" class="btn btn-info" onclick="createTask();">提&nbsp;&nbsp;交</button>
             <button type="button" class="btn btn-info" onclick="$('#taskData')[0].reset()" style="margin-left: 30px">重&nbsp;&nbsp;填</button>
         </div>

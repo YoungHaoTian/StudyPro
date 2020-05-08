@@ -127,7 +127,12 @@
                                 <input videoId="${video.id}" type="checkbox" class="select_item"/>
                             </label>
                         </th>
-                        <td>${video.path}</td>
+                        <td>
+                            <a class="btn btn-link" title="下载该视频"
+                               href="${APP_PATH}/teacher/downloadCourseVideo/${video.id}">
+                                    ${video.path.split("_",2)[1]}
+                            </a>
+                        </td>
                         <td>${video.courseChapter.course.name}(<span
                                 style="color: green">${video.courseChapter.course.college.name}</span>)
                         </td>
@@ -320,10 +325,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("删除成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.reload();
-                    }, 1000);
+                    });
                     <%--window.location.href = "${APP_PATH}/teacher/searchCourseVideo?pageNum=${pageInfo.pageNum }";--%>
                 }
             },
@@ -368,6 +371,11 @@
     $(".select_item").on("click", function () {
         let flag = $(".select_item:checked").length == $(".select_item").length;
         $("#select_all").prop("checked", flag);
+        if (flag) {
+            $("#select_all").parent("th").children("label").text("取消");
+        } else {
+            $("#select_all").parent("th").children("label").text("全选");
+        }
     });
     //点击批量删除按钮
     $(".batchDelete").on("click", function () {
@@ -409,10 +417,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("批量删除成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.reload();
-                    }, 1000);
+                    });
                     <%--window.location.href = "${APP_PATH}/teacher/searchCourseVideo?pageNum=${pageInfo.pageNum }";--%>
                 }
             },
@@ -449,10 +455,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("查询成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.href = "${APP_PATH}/teacher/searchCourseVideo";
-                    }, 1000);
+                    });
                 }
             },
             error: function () {
@@ -506,10 +510,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("视频重新上传成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.reload();
-                    }, 1000);
+                    });
                 }
             },
             error: function () {

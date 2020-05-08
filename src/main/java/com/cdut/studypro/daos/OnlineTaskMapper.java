@@ -40,4 +40,5 @@ public interface OnlineTaskMapper {
 
     List<Integer> selectOnlineTaskIdsByExample(OnlineTaskExample taskExample);
 
+
 }

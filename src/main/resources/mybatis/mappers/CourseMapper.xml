@@ -293,6 +293,14 @@
         from course
         where id = #{id,jdbcType=INTEGER}
     </select>
+    <select id="selectByPrimaryKeyWithChapterAndTeacher" parameterType="java.lang.Integer"
+            resultMap="ResultMapWithIdAndNameAndTeacherAndChapter">
+        select
+        id,name,teacher_id
+        from course
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
     <select id="selectByPrimaryKeyWithoutBLOBs" parameterType="java.lang.Integer"
             resultMap="ResultMapWithCollegeAndTeacher">
         select

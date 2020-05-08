@@ -146,13 +146,13 @@
                             <td>未录入</td>
                         </c:if>
                         <td>
-                            <button type="button" class="btn btn-info viewReplyBtn"
+                            <button type="button" class="btn btn-info btn-sm viewReplyBtn"
                                     data-toggle="tooltip" viewId="${discuss.id}"
                                     data-placement="left" title="查看该讨论的所有回复" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
                                 查看
                             </button>
-                            <button type="button" class="btn btn-info edit"
+                            <button type="button" class="btn btn-info btn-sm edit"
                                     data-toggle="tooltip" discussId="${discuss.id}"
                                     data-placement="left" title="编辑改讨论的信息" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
@@ -305,10 +305,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("查询成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.href = "${APP_PATH}/teacher/searchDiscuss";
-                    }, 1000);
+                    });
                 }
             },
             error: function () {
@@ -379,10 +377,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("批量删除成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.reload();
-                    }, 1000);
+                    });
                     <%--window.location.href = "${APP_PATH}/teacher/searchDiscuss?&pageNum=" + ${pageInfo.pageNum};--%>
                 }
             },

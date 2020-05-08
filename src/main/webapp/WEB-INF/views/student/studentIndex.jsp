@@ -15,6 +15,13 @@
     <script type="text/javascript" src="${APP_PATH}/resources1/js/jquery-3.1.1.js"></script>
     <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap-select.min.js"></script>
     <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap.min.js"></script>
+    <style>
+        .wk-accordion-list-group .current-list-group-item {
+            border: none;
+            background: #AAA;
+            color: #00fff2;
+        }
+    </style>
 </head>
 
 <body>
@@ -31,15 +38,16 @@
                                                                           aria-hidden="true"></span></a></li>
             <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item"
                                        id="searchCourseInfo">课程信息查询</a></li>
-            <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item" id="searchCourseVideoInfo">在线课程视频</a>
+            <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item" id="searchCourseVideoInfo">课程视频</a>
             </li>
-            <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item" id="searchCourseFileInfo">课程文件下载</a>
+            <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item" id="searchCourseFileInfo">课程文档</a>
             </li>
             <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item"
                                        id="searchDiscussInfo">话题讨论</a></li>
             <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item"
                                        id="searchNoticeInfo">查看公告</a></li>
-            <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item" id="searchTaskInfo">完成作业</a>
+            <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item"
+                                       id="searchCourseChapterInfo">完成作业</a>
             </li>
             <li role="presentation"><a href="javascript:void(0);" class="wk-main-menu-item" id="searchStudentTaskInfo">查询已完成作业</a>
             </li>
@@ -55,7 +63,8 @@
                 <div class="panel-group wk-accordion-panel-group" id="accordion">
                     <div class="panel panel-info wk-accordion-header">
                         <div class="panel-heading">
-                            <a data-toggle="collapse" href="#BMenu" data-parent="#accordion" class="click">课程管理&nbsp;<span
+                            <a data-toggle="collapse" href="#BMenu" data-parent="#accordion"
+                               class="click">课程管理&nbsp;<span
                                     class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
                         </div>
                         <div id="BMenu" class="panel-collapse collapse">
@@ -76,35 +85,20 @@
 
                     <div class="panel panel-info wk-accordion-header">
                         <div class="panel-heading">
-                            <a data-toggle="collapse" href="#CMenu" data-parent="#accordion" class="click">课程文件管理&nbsp;<span
+                            <a data-toggle="collapse" href="#CMenu" data-parent="#accordion"
+                               class="click">课程文件管理&nbsp;<span
                                     class=" glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
                         </div>
 
                         <div id="CMenu" class="panel-collapse collapse">
                             <div class="list-group wk-accordion-list-group">
                                 <button type="button" class="list-group-item"
-                                        href="${APP_PATH}/student/searchCourseVideoInfo">在线课程视频&nbsp;<span
+                                        href="${APP_PATH}/student/searchCourseVideoInfo">课程视频&nbsp;<span
                                         class=" glyphicon glyphicon-hand-right"
                                         aria-hidden="true"></span>
                                 </button>
                                 <button type="button" class="list-group-item"
-                                        href="${APP_PATH}/student/searchCourseFileInfo">下载课程文件&nbsp;<span
-                                        class=" glyphicon glyphicon-hand-right"
-                                        aria-hidden="true"></span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="panel panel-info wk-accordion-header">
-                        <div class="panel-heading">
-                            <a data-toggle="collapse" href="#DMenu" data-parent="#accordion" class="click">讨论管理&nbsp;<span
-                                    class=" glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
-                        </div>
-                        <div id="DMenu" class="panel-collapse collapse">
-                            <div class="list-group wk-accordion-list-group">
-                                <button type="button" class="list-group-item"
-                                        href="${APP_PATH}/student/searchDiscussInfo">话题讨论&nbsp;<span
+                                        href="${APP_PATH}/student/searchCourseFileInfo">课程文档&nbsp;<span
                                         class=" glyphicon glyphicon-hand-right"
                                         aria-hidden="true"></span>
                                 </button>
@@ -113,23 +107,8 @@
                     </div>
                     <div class="panel panel-info wk-accordion-header">
                         <div class="panel-heading">
-                            <a data-toggle="collapse" href="#EMenu" data-parent="#accordion" class="click">公告管理&nbsp;<span
-                                    class=" glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
-                        </div>
-                        <div id="EMenu" class="panel-collapse collapse">
-                            <div class="list-group wk-accordion-list-group">
-                                <button type="button" class="list-group-item"
-                                        href="${APP_PATH}/student/searchNoticeInfo">查看公告&nbsp;<span
-                                        class=" glyphicon glyphicon-hand-right"
-                                        aria-hidden="true"></span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="panel panel-info wk-accordion-header">
-                        <div class="panel-heading">
-                            <a data-toggle="collapse" href="#AMenu" data-parent="#accordion" class="click">作业管理&nbsp;<span
+                            <a data-toggle="collapse" href="#AMenu" data-parent="#accordion"
+                               class="click">作业管理&nbsp;<span
                                     class=" glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
                         </div>
                         <div id="AMenu" class="panel-collapse collapse">
@@ -147,10 +126,44 @@
                             </div>
                         </div>
                     </div>
+                    <div class="panel panel-info wk-accordion-header">
+                        <div class="panel-heading">
+                            <a data-toggle="collapse" href="#DMenu" data-parent="#accordion"
+                               class="click">讨论管理&nbsp;<span
+                                    class=" glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
+                        </div>
+                        <div id="DMenu" class="panel-collapse collapse">
+                            <div class="list-group wk-accordion-list-group">
+                                <button type="button" class="list-group-item"
+                                        href="${APP_PATH}/student/searchDiscussInfo">话题讨论&nbsp;<span
+                                        class=" glyphicon glyphicon-hand-right"
+                                        aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-info wk-accordion-header">
+                        <div class="panel-heading">
+                            <a data-toggle="collapse" href="#EMenu" data-parent="#accordion"
+                               class="click">公告管理&nbsp;<span
+                                    class=" glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
+                        </div>
+                        <div id="EMenu" class="panel-collapse collapse">
+                            <div class="list-group wk-accordion-list-group">
+                                <button type="button" class="list-group-item"
+                                        href="${APP_PATH}/student/searchNoticeInfo">查看公告&nbsp;<span
+                                        class=" glyphicon glyphicon-hand-right"
+                                        aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
 
                     <div class="panel panel-info wk-accordion-header">
                         <div class="panel-heading">
-                            <a data-toggle="collapse" href="#FMenu" data-parent="#accordion" class="click">个人信息管理&nbsp;<span
+                            <a data-toggle="collapse" href="#FMenu" data-parent="#accordion"
+                               class="click">个人信息管理&nbsp;<span
                                     class=" glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
                         </div>
                         <div id="FMenu" class="panel-collapse collapse">
@@ -173,8 +186,9 @@
         </div>
     </div>
 
-    <div id="rightTable" class="col-lg-10" style="padding:0px;">
-        <iframe id="mainFrame" src="" width="100%" frameborder="0" onload="changeFrameHeight()">
+    <div id="rightTable" class="col-lg-10" style="padding:0px;width: 85%">
+        <iframe id="mainFrame" src="${APP_PATH}/index/welcome" width="100%" frameborder="0"
+                onload="changeFrameHeight()">
         </iframe>
     </div>
 </div>
@@ -203,7 +217,7 @@
         let flag = true;
         let span = $("#leftNav span");
         let pre = null;
-        let previous = null;
+        /*let previous = null;
         $('#wk-nav-menu .wk-main-menu-item').on("click", function () {
             if (previous == null) {
                 previous = $(this);
@@ -219,7 +233,7 @@
                     previous = $(this);
                 }
             }
-        });
+        });*/
         $(".click").click(function () {
             if (pre != null && pre.text() !== $(this).text()) {
                 if (pre.children(span).hasClass("glyphicon-chevron-up")) {
@@ -248,10 +262,10 @@
             $("#wk-menu-panel").slideToggle();
             if (flag) {
                 $("#rightTable").css("width", "100%");
-                $("#rightTable").css("margin-left", "6px");
+                $("#rightTable").css("margin-left", "0px");
                 flag = false;
             } else {
-                $("#rightTable").css("width", "84%");
+                $("#rightTable").css("width", "85%");
                 $("#rightTable").css("margin-left", "0px");
                 flag = true;
             }
@@ -288,6 +302,10 @@
             if ($(".wk-main-menu-item").hasClass("current")) {
                 $(".wk-main-menu-item").removeClass("current")
             }
+            if ($(".list-group-item").hasClass("current-list-group-item")) {
+                $(".list-group-item").removeClass("current-list-group-item")
+            }
+            $(this).addClass("current-list-group-item");
             let url = $(this).attr("href");
             $("#mainFrame").attr("src", url);
         });
@@ -295,8 +313,15 @@
     //为主的按钮设置点击事件
     $(".wk-main-menu-item").each(function () {
         $(this).on("click", function () {
+            if ($(".wk-main-menu-item").hasClass("current")) {
+                $(".wk-main-menu-item").removeClass("current")
+            }
+            if ($(".list-group-item").hasClass("current-list-group-item")) {
+                $(".list-group-item").removeClass("current-list-group-item")
+            }
+            $(this).addClass("current");
             let url = $(this).attr("id");
-            $("#mainFrame").attr("src", "${APP_PATH}/teacher/" + url);
+            $("#mainFrame").attr("src", "${APP_PATH}/student/" + url);
         });
     });
     $("#logout").on("click", function () {
@@ -320,8 +345,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("注销登录成功", {time: 1000, icon: 1}, function () {
+                        window.location.href = "${APP_PATH}/index/login";
                     });
-                    window.location.href = "${APP_PATH}/index/login";
                 }
             },
             error: function () {

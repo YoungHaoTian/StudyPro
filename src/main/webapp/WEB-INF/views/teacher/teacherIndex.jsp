@@ -334,10 +334,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("注销登录成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.href = "${APP_PATH}/index/login";
-                    }, 1000)
+                    });
                 }
             },
             error: function () {

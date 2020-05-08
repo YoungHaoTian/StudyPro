@@ -71,7 +71,7 @@
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default  wk-panel">
-            <table class="table table-striped table-hover">
+            <table class="table table-striped table-hover" style="table-layout:fixed;">
                 <thead>
                 <tr class="info">
                     <th style="width: 80px">
@@ -79,10 +79,10 @@
                         <label for="select_all" style="margin-bottom: 0px;font-weight: 200">全选</label>
                     </th>
                     <th>课程名称</th>
-                    <th>课程编号</th>
-                    <th>授课教师</th>
+                    <th style="width: 150px">课程编号</th>
+                    <th style="width: 300px">授课教师(<span style="color: green">所属学院</span>)</th>
                     <th>课程简介</th>
-                    <th style="width: 400px">选择操作</th>
+                    <th style="width: 300px">选择操作</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -95,7 +95,8 @@
                         </th>
                         <td>${course.name}</td>
                         <td>${course.number}</td>
-                        <td>${course.teacher.name}</td>
+                        <td>${course.teacher.name}(<span style="color: green">${course.teacher.college.name}</span>)
+                        </td>
                         <td>${course.intro}</td>
                         <td>
                             <button class="btn btn-success btn-sm viewCourseFile" data-toggle="tooltip"
@@ -174,7 +175,7 @@
         </div>
     </div>
     <!-- 页面跳转信息 -->
-    <div class="row">
+    <div class="row" style="margin-bottom: 50px">
         <div class="col-sm-2 col-md-offset-6">
             <input type="number" class="form-control" id="pageNum" placeholder="跳转到...">
         </div>
@@ -259,6 +260,11 @@
     $(".select_item").on("click", function () {
         let flag = $(".select_item:checked").length == $(".select_item").length;
         $("#select_all").prop("checked", flag);
+        if (flag) {
+            $("#select_all").parent("th").children("label").text("取消");
+        } else {
+            $("#select_all").parent("th").children("label").text("全选");
+        }
     });
     //点击批量移除按钮
     $(".removeCourseBatch").on("click", function () {
@@ -297,8 +303,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("批量移除课程成功", {time: 1000, icon: 1}, function () {
+                        window.location.reload();
                     });
-                    window.location.reload(true);
                 }
             },
             error: function () {
@@ -343,8 +349,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("移除课程成功", {time: 1000, icon: 1}, function () {
+                        window.location.reload();
                     });
-                    window.location.reload(true);
                 }
             },
             error: function () {

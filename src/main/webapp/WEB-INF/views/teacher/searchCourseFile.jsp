@@ -128,7 +128,7 @@
                                 <input fileId="${file.id}" type="checkbox" class="select_item"/>
                             </label>
                         </th>
-                        <td>${file.path}</td>
+                        <td>${file.path.split("_",2)[1]}</td>
                         <td>${file.courseChapter.course.name}(<span
                                 style="color: green">${file.courseChapter.course.college.name}</span>)
                         </td>
@@ -288,7 +288,7 @@
 <script type="text/javascript">
     let ids = "";
     let id = "";
-    //删除单个课程视频
+
     $(".delete").on("click", function () {
         id = $(this).attr("fileId");
         console.log(id);
@@ -321,10 +321,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("删除成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.reload();
-                    }, 1000);
+                    });
                 }
             },
             error: function () {
@@ -368,6 +366,11 @@
     $(".select_item").on("click", function () {
         let flag = $(".select_item:checked").length == $(".select_item").length;
         $("#select_all").prop("checked", flag);
+        if (flag) {
+            $("#select_all").parent("th").children("label").text("取消");
+        } else {
+            $("#select_all").parent("th").children("label").text("全选");
+        }
     });
     //点击批量删除按钮
     $(".batchDelete").on("click", function () {
@@ -408,10 +411,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("批量删除成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.reload();
-                    }, 1000);
+                    });
                     <%--window.location.href = "${APP_PATH}/teacher/searchCourseFile?pageNum=${pageInfo.pageNum }";--%>
                 }
             },
@@ -448,11 +449,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("查询成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.href = "${APP_PATH}/teacher/searchCourseFile";
-                    }, 1000);
-
+                    });
                 }
             },
             error: function () {
@@ -499,10 +497,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("文档重新上传成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.reload();
-                    }, 1000);
+                    });
                 }
             },
             error: function () {

@@ -110,7 +110,7 @@
                     <th style="width: 200px;">完成时间</th>
                     <th>
                         <c:if test="${type.equals('online')}">
-                            得分
+                            分数<span style="color:red;">/总分</span>
                         </c:if>
                         <c:if test="${type.equals('offline')}">
                             文件
@@ -138,9 +138,11 @@
                             </c:if>
                             <c:if test="${studentOnlineTaskMap.get(student.id)!=null}">
                                 <td><span style="color:green;">已完成</span></td>
-                                <td><fmt:formatDate value="${studentOnlineTaskMap.get(student.id).recordTime}"
-                                                    pattern="yyyy-MM-dd  HH:mm:ss"/></td>
-                                <td>${studentOnlineTaskMap.get(student.id).score}</td>
+                                <td><span style="color: red"><fmt:formatDate
+                                        value="${studentOnlineTaskMap.get(student.id).recordTime}"
+                                        pattern="yyyy-MM-dd  HH:mm:ss"/></span></td>
+                                <td>${studentOnlineTaskMap.get(student.id).score}<span
+                                        style="color: red">/${total}</span></td>
                                 <td>
                                     <button type="button" class="btn btn-danger refinish"
                                             data-toggle="tooltip"
@@ -162,9 +164,11 @@
                             <c:if test="${studentOfflineTaskMap.get(student.id)!=null}">
                                 <c:set var="path" value="${studentOfflineTaskMap.get(student.id).path.split('_',3)}"/>
                                 <td><span style="color:green;">已完成</span></td>
-                                <td><fmt:formatDate value="${studentOfflineTaskMap.get(student.id).recordTime}"
-                                                    pattern="yyyy-MM-dd  HH:mm:ss"/></td>
-                                <td><a class="btn btn-link"
+                                <td><span style="color: red"><fmt:formatDate
+                                        value="${studentOfflineTaskMap.get(student.id).recordTime}"
+                                        pattern="yyyy-MM-dd  HH:mm:ss"/></span></td>
+                                <td>
+                                    <a class="btn btn-link"
                                        href="${APP_PATH}/teacher/downloadOfflineTaskFile/${studentOfflineTaskMap.get(student.id).id}">${path[2]}</a>
                                 </td>
                                 <td>
@@ -275,10 +279,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("处理成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.reload();
-                    }, 1000);
+                    });
                 }
             },
             error: function () {
@@ -316,10 +318,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("处理成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.reload();
-                    }, 1000);
+                    });
                 }
             },
             error: function () {

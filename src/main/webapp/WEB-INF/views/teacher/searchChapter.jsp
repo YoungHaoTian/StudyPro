@@ -114,19 +114,19 @@
                             <td>未录入</td>
                         </c:if>
                         <td>
-                            <button type="button" class="btn btn-info viewFiles"
+                            <button type="button" class="btn btn-info btn-sm viewFiles"
                                     data-toggle="tooltip" chapterId="${chapter.id}"
                                     data-placement="left" title="查看该章节下所有的课件" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
                                 查看课件
                             </button>
-                            <button type="button" class="btn btn-info viewTask"
+                            <button type="button" class="btn btn-info btn-sm viewTask"
                                     data-toggle="tooltip" chapterId="${chapter.id}"
                                     data-placement="left" title="查看该章节下所有的作业" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
                                 查看作业
                             </button>
-                            <button type="button" class="btn btn-info edit"
+                            <button type="button" class="btn btn-info btn-sm edit"
                                     data-toggle="tooltip" chapterId="${chapter.id}" courseId="${chapter.courseId}"
                                     data-placement="left" title="编辑该章节信息" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
@@ -138,7 +138,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="panel-footer wk-panel-footer">
+        <div class="panel-footer wk-panel-footer" style="margin-bottom: 50px">
             <button type="button" class="btn btn-info"
                     onclick="window.location.href='${APP_PATH}/teacher/searchCourse?pageNum=${pageNum}'"
                     style="margin-left: 20px">返&nbsp;&nbsp;回
@@ -201,6 +201,11 @@
     $(".select_item").on("click", function () {
         let flag = $(".select_item:checked").length == $(".select_item").length;
         $("#select_all").prop("checked", flag);
+        if (flag) {
+            $("#select_all").parent("th").children("label").text("取消");
+        } else {
+            $("#select_all").parent("th").children("label").text("全选");
+        }
     });
     //点击批量删除按钮
     $(".batchDelete").on("click", function () {
@@ -242,10 +247,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("批量删除成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.reload();
-                    }, 1000);
+                    });
                     <%--window.location.href = "${APP_PATH}/teacher/searchChapter?courseId=${courseId}";--%>
                 }
             },

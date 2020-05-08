@@ -50,6 +50,7 @@
                         <label for="courseId" class="control-label wk-filed-label"
                                style="margin-top: 20px">所属课程:</label>
                         <select class="selectpicker" id="courseId" name="courseId">
+                            <option value="0">请选择所属课程</option>
                             <c:forEach items="${courses}" var="course">
                                 <c:choose>
                                     <c:when test="${courseId==course.id}">
@@ -84,22 +85,24 @@
             <div class="container-fluid col-md-10">
                 <div class="sidebar">
                     <div class="tree">
-                        <ul style="padding-left:0px;" class="list-group">
-                            <li class="list-group-item">
-                                <span class="glyphicon glyphicon-tasks"></span>&nbsp;${course.name}(${course.teacher.name})
-                                <span class="badge" style="float:right">${course.chapters.size()}</span>
-                                <ul style="margin-top:10px;">
-                                    <c:forEach items="${course.chapters}" var="chapter">
-                                        <li style="height:30px;">
-                                            <a href="${APP_PATH}/student/searchTaskInfo/${chapter.id}?courseId=${courseId}"
-                                               class="chapter"><span
-                                                    class="glyphicon glyphicon-tags"></span>&nbsp;${chapter.title}
-                                            </a>
-                                        </li>
-                                    </c:forEach>
-                                </ul>
-                            </li>
-                        </ul>
+                        <c:if test="${course!=null}">
+                            <ul style="padding-left:0px;" class="list-group">
+                                <li class="list-group-item">
+                                    <span class="glyphicon glyphicon-tasks"></span>&nbsp;${course.name}(${course.teacher.name})
+                                    <span class="badge" style="float:right">${course.chapters.size()}</span>
+                                    <ul style="margin-top:10px;">
+                                        <c:forEach items="${course.chapters}" var="chapter">
+                                            <li style="height:30px;">
+                                                <a href="${APP_PATH}/student/searchTaskInfo/${chapter.id}?courseId=${courseId}"
+                                                   class="chapter"><span
+                                                        class="glyphicon glyphicon-tags"></span>&nbsp;${chapter.title}
+                                                </a>
+                                            </li>
+                                        </c:forEach>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </c:if>
                     </div>
                 </div>
             </div>
@@ -111,18 +114,6 @@
 </html>
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
-    /*$(function () {
-        $(".list-group-item").click(function () {
-            if ($(this).find("ul")) {
-                $(this).toggleClass("tree-closed");
-                if ($(this).hasClass("tree-closed")) {
-                    $("ul", this).hide("fast");
-                } else {
-                    $("ul", this).show("fast");
-                }
-            }
-        });
-    });*/
     $(".search").on("click", function () {
         let courseId = $("#courseId").val();
         window.location.href = "${APP_PATH}/student/searchCourseChapterInfo?courseId=" + courseId;

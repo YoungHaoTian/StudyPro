@@ -1,5 +1,11 @@
 package com.cdut.studypro.beans;
 
+import com.cdut.studypro.validates.common.Validate1;
+import com.cdut.studypro.validates.common.Validate3;
+import com.cdut.studypro.validates.common.Validate4;
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 
 public class DiscussPost {

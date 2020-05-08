@@ -65,7 +65,7 @@
 
             </form>
         </div>
-        <div class="panel-footer wk-panel-footer">
+        <div class="panel-footer wk-panel-footer" style="margin-bottom: 50px">
             <button type="button" class="btn btn-info" onclick="createNotice();">提&nbsp;&nbsp;交</button>
             <button type="button" class="btn btn-info" onclick="$('#noticeData')[0].reset();"
                     style="margin-left: 30px">

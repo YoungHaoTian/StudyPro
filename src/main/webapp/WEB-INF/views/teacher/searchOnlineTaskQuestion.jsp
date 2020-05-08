@@ -100,7 +100,7 @@
                         <td><span style="color:green;">${question.answer}</span></td>
                         <td><span style="color:red;">${question.score}</span></td>
                         <td>
-                            <button type="button" class="btn btn-info edit"
+                            <button type="button" class="btn btn-info btn-sm edit"
                                     data-toggle="tooltip" questionId="${question.id}"
                                     data-placement="left" title="修改该题目">
                                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
@@ -204,10 +204,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("批量删除成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.reload();
-                    }, 1000);
+                    });
                     <%--window.location.href = "${APP_PATH}/teacher/searchTaskQuestion/${taskId}?pageNum=${pageInfo.pageNum}&pageNumber=${pageNumber}";--%>
                 }
             },

@@ -16,6 +16,23 @@
     <script type="text/javascript" src="${APP_PATH}/resources1/js/jquery-3.1.1.js"></script>
     <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap-select.min.js"></script>
     <script type="text/javascript" src="${APP_PATH}/resources1/bootstrap/js/bootstrap.min.js"></script>
+    <style>
+        th, td {
+            /*vertical-align: middle;*/
+            text-align: center;
+            height: 30px;
+            width: 50%;
+            border: #CCCCCC 1px solid;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        .left {
+            text-align: left;
+        }
+    </style>
 </head>
 
 <body>
@@ -32,125 +49,126 @@
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default wk-panel ">
-            <div class="panel-heading">编辑学生信息 Update Data</div>
+            <div class="panel-heading">修改个人信息 Update Data</div>
             <form id="studentData" action="" method="POST">
                 <div class="panel-body">
                     <div class="row">
-                        <div class="form-inline">
-                            <div class="form-group">
-                                <label for="name" class="control-label wk-filed-label">学生姓名:
-                                </label>
-                                <div class="input-group">
-                                    <input required="required" id="name" name="name" type="text" maxlength="5"
-                                           class="form-control wk-normal-input" value="${student.name}"
-                                           placeholder="请输入学生姓名"/>
-                                </div>
-                            </div>
+                        <table class="table table-striped table-hover table-bordered"
+                               style="width: 500px;margin: 0 auto">
+                            <thead>
+                            <tr class="danger">
+                                <th colspan=2>修改个人信息</th>
+                            </tr>
+                            <tr class="info">
+                                <th colspan=2>学生：<span style="color: red">${student.name}</span>的信息如下</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="right" style="display:table-cell; vertical-align:middle">学生姓名：</td>
+                                <td class="left"><input required="required" id="name"
+                                                        name="name" maxlength="5"
+                                                        type="text"
+                                                        class="form-control"
+                                                        value="${student.name}"
+                                                        placeholder="请输入姓名"/></td>
+                            </tr>
+                            <tr>
+                                <td class="right" style="display:table-cell; vertical-align:middle">学生学号：</td>
+                                <td class="left"><input required="required" id="number" readonly="readonly"
+                                                        type="text" class="form-control"
+                                                        value="${student.number}"/></td>
+                            </tr>
+                            <tr>
+                                <td class="right" style="display:table-cell; vertical-align:middle">所属学院：</td>
+                                <td class="left"><input required="required" id="college" readonly="readonly" type="text"
+                                                        class="form-control"
+                                                        value="${student.college.name}"/></td>
+                            </tr>
+                            <tr>
+                                <td class="right" style="display:table-cell; vertical-align:middle">联系电话：</td>
+                                <td class="left"><input required="required" id="telephone" name="telephone"
+                                                        type="text"
+                                                        oninput="value=value.replace(/[^\d]/g,'')"
+                                                        maxlength="11"
+                                                        class="form-control"
+                                                        value="${student.telephone}"
+                                                        placeholder="请输入联系电话"/></td>
+                            </tr>
+                            <tr>
+                                <td class="right" style="display:table-cell; vertical-align:middle">身份证号码：</td>
+                                <td class="left"><input required="required" id="idCardNo" name="idCardNo"
+                                                        type="text"
+                                                        maxlength="18"
+                                                        class="form-control"
+                                                        value="${student.idCardNo}"
+                                                        placeholder="请输入身份证号码"/></td>
+                            </tr>
+                            <tr>
+                                <td class="right" style="display:table-cell; vertical-align:middle">性别：</td>
+                                <td class="left">
+                                    <select id="gender" name="gender" class="selectpicker">
+                                        <c:choose>
+                                            <c:when test="${student.gender == 0}">
+                                                <option value="0" selected="selected">男</option>
+                                                <option value="1">女</option>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <option value="1" selected="selected">女</option>
+                                                <option value="0">男</option>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="right" style="display:table-cell; vertical-align:middle">登录账户：</td>
+                                <td class="left"><input required="required" id="account" name="account"
+                                                        type="text" maxlength="18"
+                                                        class="form-control" value="${student.account}"
+                                                        placeholder="请输入登录账户"/></td>
+                            </tr>
+                            <tr>
+                                <td class="right" style="display:table-cell; vertical-align:middle">登录密码：</td>
+                                <td class="left"><input required="required" id="password" name="password"
+                                                        type="text" maxlength="18"
+                                                        class="form-control" value="${student.password}"
+                                                        placeholder="请输入登录密码"/></td>
+                            </tr>
 
-                            <div class="form-group">
-                                <label for="number" class="control-label wk-filed-label">学生学号:
-                                </label>
-                                <div class="input-group">
-                                    <input readonly="readonly" id="number" type="text"
-                                           class="form-control wk-normal-input" value="${student.number}"/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="college" class="control-label wk-filed-label">所属学院:
-                                </label>
-                                <div class="input-group">
-                                    <input readonly="readonly" id="college" type="text"
-                                           class="form-control wk-normal-input" value="${student.college.name}"/>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-inline">
-                            <div class="form-group">
-                                <label for="telephone" class="control-label wk-filed-label">联系电话:
-                                </label>
-                                <div class="input-group">
-                                    <input required="required" id="telephone" name="telephone"
-                                           oninput="value=value.replace(/[^\d]/g,'')" maxlength="11"
-                                           class="form-control wk-normal-input" value="${student.telephone}"
-                                           placeholder="请输入联系电话"/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="idCardNo" class="control-label wk-filed-label">身份证号:
-                                </label>
-                                <div class="input-group">
-                                    <input required="required" id="idCardNo" name="idCardNo" type="text" maxlength="18"
-                                           class="form-control wk-normal-input" value="${student.idCardNo}"
-                                           placeholder="请输入身份证号"/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="gender" class="control-label wk-filed-label">学生性别: </label>
-                                <select class="selectpicker" id="gender" name="gender">
-                                    <c:choose>
-                                        <c:when test="${student.gender == 0}">
-                                            <option value="0" selected="selected">男</option>
-                                            <option value="1">女</option>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <option value="1" selected="selected">女</option>
-                                            <option value="0">男</option>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-inline">
-                            <div class="form-group">
-                                <label for="account" class="control-label wk-filed-label">登录账户: </label>
-                                <div class="input-group">
-                                    <input required="required" id="account" name="account" type="text" maxlength="18"
-                                           class="form-control wk-normal-input" value="${student.account}"
-                                           placeholder="请输入登录账户"/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="password" class="control-label wk-filed-label">登录密码: </label>
-                                <div class="input-group">
-                                    <input required="required" id="password" name="password" type="text" maxlength="18"
-                                           class="form-control wk-normal-input" value="${student.password}"
-                                           placeholder="请输入登录密码"/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="email" class="control-label wk-filed-label">邮箱地址: </label>
-                                <div class="input-group">
-                                    <input required="required" id="email" name="email" type="text" maxlength="20"
-                                           class="form-control wk-normal-input" value="${student.email}"
-                                           placeholder="请输入邮箱地址"/>
-                                </div>
-                            </div>
-                            <div class="form-inline">
-                                <div class="form-group">
-                                    <label for="code" class="control-label wk-filed-label">验证码: </label>
-                                    <div class="input-group">
-                                        <input required="required" id="code" name="code" type="text" maxlength="6"
-                                               oninput="value=value.replace(/[^\d]/g,'')"
-                                               class="form-control wk-normal-input" placeholder="请输入验证码"/>
-                                    </div>
-                                    <div class="input-group">
-                                        <input type="button" class="btn btn-success btn_mfyzm" onclick="getCode()"
-                                               style="font-family: 宋体;width:100px;" value="获取验证码">
-                                    </div>
-                                    <div class="input-group">
-                                        <span style="color: red">注：接收验证码的手机号码是修改之前的手机号码</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel-footer wk-panel-footer">
-                        <button type="button" class="btn btn-info" onclick="updateStudent()">提&nbsp;&nbsp;交</button>
-                        <button type="reset" class="btn btn-info" style="margin-left: 20px">重&nbsp;&nbsp;填</button>
+                            <tr>
+                                <td class="right" style="display:table-cell; vertical-align:middle">邮箱地址：</td>
+                                <td class="left"><input required="required" id="email" name="email"
+                                                        type="text" maxlength="30"
+                                                        class="form-control"
+                                                        value="${student.email.trim()=="0"?"":student.email.trim() }"
+                                                        placeholder="请输入邮箱"/></td>
+                            </tr>
+                            <tr>
+                                <td class="right" style="display:table-cell; vertical-align:middle">验证码：</td>
+                                <td class="left"><input required="required" id="code" name="code" type="text"
+                                                        maxlength="6"
+                                                        oninput="value=value.replace(/[^\d]/g,'')"
+                                                        class="form-control" placeholder="请输入验证码"/>
+                            </tr>
+                            <tr>
+                                <td colspan=2><input type="button" class="btn btn-danger btn_mfyzm" onclick="getCode()"
+                                                     style="font-family: 宋体;width:100px;" value="获取验证码"></td>
+                            </tr>
+                            <tr>
+                                <td colspan=2><span style="color: red">注：接收验证码的手机号码是修改之前的手机号码</span></td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </form>
+        </div>
+        <div class="panel-footer wk-panel-footer" style="margin-bottom: 50px">
+            <button type="button" class="btn btn-info" onclick="updateStudent()">提&nbsp;&nbsp;交</button>
+            <button type="reset" class="btn btn-info" style="margin-left: 20px" onclick="$('#studentData')[0].reset();">
+                重&nbsp;&nbsp;填
+            </button>
         </div>
     </div>
 </div>
@@ -175,7 +193,7 @@
             });
             return;
         } else if (name.indexOf(" ") !== -1) {
-            layer.msg("姓名不能包含空格，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("姓名不能包含空格，请重新输入", {time: 2000, icon: 5, shift: 6}, function () {
             });
             return;
         } else if (!han.test(name)) {
@@ -190,7 +208,7 @@
             });
             return;
         } else if (!phones.test(telephone)) {
-            layer.msg("联系电话格式不正确，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("联系电话格式不正确，请重新输入", {time: 2500, icon: 5, shift: 6}, function () {
             });
             return;
         }
@@ -201,7 +219,7 @@
             });
             return;
         } else if (!idCardNos.test(idCardNo)) {
-            layer.msg("身份证号码格式错误，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("身份证号码格式错误，请重新输入", {time: 2500, icon: 5, shift: 6}, function () {
             });
             return;
         }
@@ -213,7 +231,7 @@
             return;
         }
         if (!accounts.test(account)) {
-            layer.msg("账户至少是12位，且由数字、字母、下划线组成", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("账户至少是12位，且由数字、字母、下划线组成", {time: 3000, icon: 5, shift: 6}, function () {
             });
             return;
         }
@@ -224,11 +242,11 @@
             });
             return;
         } else if (password.indexOf(" ") !== -1) {
-            layer.msg("登录密码不能包含空格，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("登录密码不能包含空格，请重新输入", {time: 2500, icon: 5, shift: 6}, function () {
             });
             return;
         } else if (!passwords.test(password)) {
-            layer.msg("登录密码只能由字母和数字组成，长度6-18位，请重新输入", {time: 1500, icon: 5, shift: 6}, function () {
+            layer.msg("登录密码只能由字母和数字组成，长度6-18位，请重新输入", {time: 3000, icon: 5, shift: 6}, function () {
             });
             return;
         }
@@ -262,14 +280,14 @@
                 layer.close(loadingIndex);
                 console.log(result);
                 if (result.code === 200) {
-                    layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
+                    layer.msg(result.message, {time: 3000, icon: 5, shift: 6}, function () {
                     });
                 }
                 if (result.code === 100) {
                     console.log("success");
                     layer.msg("修改个人信息成功", {time: 1500, icon: 6}, function () {
+                        window.location.reload();
                     });
-                    // window.location.reload(true);
                 }
             },
             error: function () {

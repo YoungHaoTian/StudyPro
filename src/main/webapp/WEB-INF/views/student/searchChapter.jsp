@@ -81,13 +81,13 @@
                             <td>未录入</td>
                         </c:if>
                         <td>
-                            <button type="button" class="btn btn-info viewFiles"
+                            <button type="button" class="btn btn-info btn-sm viewFiles"
                                     data-toggle="tooltip" chapterId="${chapter.id}"
                                     data-placement="left" title="查看该章节下所有的课件" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
                                 查看课件
                             </button>
-                            <button type="button" class="btn btn-info viewTask"
+                            <button type="button" class="btn btn-info btn-sm viewTask"
                                     data-toggle="tooltip" chapterId="${chapter.id}"
                                     data-placement="left" title="查看该章节下所有的作业" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
@@ -98,13 +98,13 @@
                 </c:forEach>
                 </tbody>
             </table>
-            <div class="panel-footer wk-panel-footer" style="margin-top: 50px">
+        </div>
+        <div class="panel-footer wk-panel-footer" style="margin-bottom: 50px">
                 <button type="button" class="btn btn-info"
                         onclick="window.location.href='${APP_PATH}/student/searchMyCourseInfo?pageNum=${pageNum}'"
                         style="margin-left: 20px">返&nbsp;&nbsp;回
                 </button>
             </div>
-        </div>
     </div>
 </div>
 </body>
@@ -117,9 +117,9 @@
         console.log(chapterId);
         window.location.href = "${APP_PATH}/student/viewChapterFiles/" + chapterId + "?pageNum=${pageNum}&courseId=${courseId}";
     });
-    /*$(".viewTask").on("click", function () {
+    $(".viewTask").on("click", function () {
         let chapterId = $(this).attr("chapterId");
         console.log(chapterId);
-        window.location.href = "${APP_PATH}/student/searchChapterTask/" + chapterId + "?pageNum=${pageNum}&courseId=${courseId}";
-    });*/
+        window.location.href = "${APP_PATH}/student/searchTaskInfo/" + chapterId + "?pageNum=${pageNum}&courseId=${courseId}";
+    });
 </script>

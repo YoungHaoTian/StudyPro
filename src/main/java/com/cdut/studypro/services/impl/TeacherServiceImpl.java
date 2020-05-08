@@ -546,6 +546,11 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public Integer getOnlineTaskTotalScore(Integer id) {
+        return onlineTaskQuestionMapper.getTotalScore(id);
+    }
+
+    @Override
     public boolean deleteDiscussPostByIdBatch(List<Integer> ids) {
         DiscussPostExample discussPostExample = new DiscussPostExample();
         DiscussPostExample.Criteria criteria = discussPostExample.createCriteria();

@@ -69,7 +69,7 @@
                 </div>
             </form>
         </div>
-        <div class="panel-footer wk-panel-footer">
+        <div class="panel-footer wk-panel-footer" style="margin-bottom: 50px">
             <button class="btn btn-info" type="button" onclick="upload()">提&nbsp;&nbsp;交</button>
         </div>
     </div>

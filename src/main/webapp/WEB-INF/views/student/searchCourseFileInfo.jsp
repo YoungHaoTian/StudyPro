@@ -52,14 +52,16 @@
                         <label for="courseId" class="control-label wk-filed-label"
                                style="margin-top: 20px">所属课程:</label>
                         <select class="selectpicker" id="courseId" name="courseId">
+                            <option value="0">请选择所属课程</option>
                             <c:forEach items="${course}" var="course">
                                 <c:choose>
                                     <c:when test="${courseId==course.id}">
                                         <option value="${course.id}"
-                                                selected="selected">${course.name}:${course.teacher.name}</option>
+                                                selected="selected">${course.name}:${course.teacher.name}(${course.teacher.college.name})
+                                        </option>
                                     </c:when>
                                     <c:otherwise>
-                                        <option value="${course.id}">${course.name}:${course.teacher.name}</option>
+                                        <option value="${course.id}">${course.name}:${course.teacher.name}(${course.teacher.college.name})</option>
                                     </c:otherwise>
                                 </c:choose>
                             </c:forEach>
@@ -80,15 +82,15 @@
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default  wk-panel">
-            <table class="table table-striped table-hover">
+            <table class="table table-striped table-hover" style="table-layout:fixed;">
                 <thead>
                 <tr class="info">
                     <th>文件名</th>
                     <th>所属课程</th>
                     <th>所属章节</th>
-                    <th>发布教师</th>
-                    <th>上传时间</th>
-                    <th>选择操作</th>
+                    <th style="width: 300px">发布教师(<span style="color: green">所属学院</span>)</th>
+                    <th style="width: 200px">上传时间</th>
+                    <th style="width: 150px">选择操作</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -96,15 +98,17 @@
                     <c:forEach items="${course.chapters}" var="chapter">
                         <c:forEach items="${chapter.files}" var="file">
                             <tr>
-                                <td>${file.path.substring(file.path.indexOf("_")+1)}</td>
+                                <td>${file.path.split("_",2)[1]}</td>
                                 <td>${course.name}</td>
                                 <td>${chapter.title}</td>
-                                <td>${course.teacher.name}(${course.teacher.college.name})</td>
+                                <td>${course.teacher.name}(<span
+                                        style="color: green">${course.teacher.college.name}</span>)
+                                </td>
                                 <td><fmt:formatDate value="${file.recordTime}" pattern="yyyy-MM-dd  HH:mm:ss"/></td>
                                 <td>
                                     <button class="btn btn-success btn-sm downloadFile" data-toggle="tooltip"
                                             data-placement="left"
-                                            title="下载该文件" fileId="${file.id}" style="margin-right: 20px">
+                                            title="下载该文件" fileId="${file.id}">
                                         <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
                                         下载
                                     </button>
@@ -122,7 +126,7 @@
 </html>
 <script src="${APP_PATH}/resources/js/layer/layer.js"></script>
 <script type="text/javascript">
-    //在线观看
+    //下载文件
     $(".downloadFile").on("click", function () {
         let id = $(this).attr("fileId");
         window.location.href = "${APP_PATH}/student/downloadCourseFile/" + id;

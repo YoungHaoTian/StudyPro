@@ -122,7 +122,7 @@
                 </div>
             </form>
         </div>
-        <div class="panel-footer wk-panel-footer">
+        <div class="panel-footer wk-panel-footer" style="margin-bottom: 50px">
             <button type="button" class="btn btn-info" onclick="createCourseVideo();">提&nbsp;&nbsp;交</button>
         </div>
     </div>

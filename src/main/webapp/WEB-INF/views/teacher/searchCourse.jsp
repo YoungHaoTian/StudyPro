@@ -109,13 +109,13 @@
                         <td>${course.college.name}</td>
                         <td>${course.intro}</td>
                         <td>
-                            <button type="button" class="btn btn-info viewChapter"
+                            <button type="button" class="btn btn-info btn-sm viewChapter"
                                     data-toggle="tooltip" courseId="${course.id}"
                                     data-placement="left" title="查看章节课件" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
                                 查看章节
                             </button>
-                            <button type="button" class="btn btn-info addChapter"
+                            <button type="button" class="btn btn-info btn-sm addChapter"
                                     data-toggle="tooltip" courseId="${course.id}"
                                     data-placement="left" title="为该课程添加章节" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
@@ -246,10 +246,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("查询成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.href = "${APP_PATH}/teacher/searchCourse";
-                    }, 1000);
+                    });
                 }
             },
             error: function () {

@@ -112,7 +112,7 @@
                 </div>
             </form>
         </div>
-        <div class="panel-footer wk-panel-footer">
+        <div class="panel-footer wk-panel-footer" style="margin-bottom: 50px">
             <button type="button"
                     class="btn btn-info createTaskQuestionBatch">批量导入
             </button>
@@ -273,6 +273,7 @@
                 }
                 if (result.code === 100) {
                     layer.msg("作业题目批量导入成功", {time: 1000, icon: 1}, function () {
+                        $("#createOnlineTaskQuestionModal").modal('hide');
                     });
                 }
             },

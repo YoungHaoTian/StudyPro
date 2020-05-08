@@ -40,14 +40,14 @@
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default wk-panel ">
-            <div class="panel-heading">查看管理员信息 View Data</div>
+            <div class="panel-heading">查看个人信息 View Data</div>
             <div class="panel-body">
                 <div class="row">
                     <table class="table table-striped table-hover table-bordered"
                            style="width: 500px;margin: 0 auto">
                         <thead>
                         <tr class="danger">
-                            <th colspan=2>查看管理员信息</th>
+                            <th colspan=2>查看个人信息</th>
                         </tr>
                         <tr class="info">
                             <th colspan=2>管理员：<span style="color: red">${admin.name}</span>的信息如下</th>

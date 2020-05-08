@@ -44,6 +44,5 @@ public interface DiscussPostMapper {
 
     List<DiscussPost> selectByDiscussIdWithStudentName(Map<String, Object> map);
 
-
     List<Integer> selectPostIdByExample(DiscussExample discussExample);
 }

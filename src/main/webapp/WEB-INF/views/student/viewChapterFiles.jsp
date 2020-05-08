@@ -111,14 +111,20 @@
                                 <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
                                 在线观看
                             </button>
+                            <button class="btn btn-success btn-sm downloadVideo" data-toggle="tooltip"
+                                    data-placement="left"
+                                    title="下载该视频" videoId="${video.id}">
+                                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+                                下载视频
+                            </button>
                         </td>
                     </tr>
                 </c:forEach>
                 </tbody>
             </table>
-            <div class="panel-footer wk-panel-footer" style="margin-top:50px">
-                <button type="button" class="btn btn-info" onclick="back()">返&nbsp;&nbsp;回</button>
-            </div>
+        </div>
+        <div class="panel-footer wk-panel-footer" style="margin-bottom:50px">
+            <button type="button" class="btn btn-info" onclick="back()">返&nbsp;&nbsp;回</button>
         </div>
     </div>
 </div>
@@ -149,4 +155,9 @@
     function back() {
         window.location.href = "${APP_PATH}/student/searchChapter?courseId=${courseId}&pageNum=${pageNum}";
     }
+
+    $(".downloadVideo").on("click", function () {
+        let id = $(this).attr("videoId");
+        window.location.href = "${APP_PATH}/student/downloadCourseVideo/" + id;
+    });
 </script>

@@ -85,7 +85,7 @@
                     <th>作业标题</th>
                     <th style="width:200px">作业类型</th>
                     <th style="width:200px">发布时间</th>
-                    <th style="width:700px">选择操作</th>
+                    <th style="width:600px">选择操作</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -97,33 +97,33 @@
                         <td><span style="color:green;">线上作业</span></td>
                         <td><fmt:formatDate value="${onlineTask.recordTime}" pattern="yyyy-MM-dd  HH:mm:ss"/></td>
                         <td>
-                            <button type="button" class="btn btn-danger deleteOnlineBtn"
+                            <button type="button" class="btn btn-danger btn-sm deleteOnlineBtn"
                                     data-toggle="tooltip" onlineTaskId="${onlineTask.id}"
                                     data-placement="left" title="删除该作业" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                                 删除
                             </button>
-                            <button type="button" class="btn btn-info updateOnlineBtn"
+                            <button type="button" class="btn btn-info btn-sm updateOnlineBtn"
                                     data-toggle="tooltip" onlineTaskId="${onlineTask.id}"
                                     data-placement="left" title="编辑该作业" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                                 编辑
                             </button>
-                            <button type="button" class="btn btn-info searchQuestionBtn"
+                            <button type="button" class="btn btn-info btn-sm searchQuestionBtn"
                                     data-toggle="tooltip" onlineTaskId="${onlineTask.id}"
                                     data-placement="left" title="查看该作业的题目" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
                                 查看题目
                             </button>
-                            <button type="button" class="btn btn-info createQuestionBtn"
+                            <button type="button" class="btn btn-info btn-sm createQuestionBtn"
                                     data-toggle="tooltip" onlineTaskId="${onlineTask.id}"
                                     data-placement="left" title="录入该作业的题目" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                                 录入题目
                             </button>
-                            <button type="button" class="btn btn-success viewTaskFinishBtn"
+                            <button type="button" class="btn btn-success btn-sm viewTaskFinishBtn"
                                     data-toggle="tooltip" onlineTaskId="${onlineTask.id}" taskType="online"
-                                    data-placement="left" title="查看作业完成情况" style="margin-right: 20px">
+                                    data-placement="left" title="查看作业完成情况">
                                 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                                 完成情况
                             </button>
@@ -138,21 +138,21 @@
                         <td><span style="color:red;">线下作业</span></td>
                         <td><fmt:formatDate value="${offlineTask.recordTime}" pattern="yyyy-MM-dd  HH:mm:ss"/></td>
                         <td>
-                            <button type="button" class="btn btn-danger deleteOfflineBtn"
+                            <button type="button" class="btn btn-danger btn-sm deleteOfflineBtn"
                                     data-toggle="tooltip" offlineTaskId="${offlineTask.id}"
                                     data-placement="left" title="删除该作业" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                                 删除
                             </button>
-                            <button type="button" class="btn btn-info updateOfflineBtn"
+                            <button type="button" class="btn btn-info btn-sm updateOfflineBtn"
                                     data-toggle="tooltip" offlineTaskId="${offlineTask.id}"
                                     data-placement="left" title="编辑该作业" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                                 编辑
                             </button>
-                            <button type="button" class="btn btn-success viewTaskFinishBtn"
+                            <button type="button" class="btn btn-success btn-sm viewTaskFinishBtn"
                                     data-toggle="tooltip" offlineTaskId="${offlineTask.id}" taskType="offline"
-                                    data-placement="left" title="查看作业完成情况" style="margin-right: 20px">
+                                    data-placement="left" title="查看作业完成情况">
                                 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                                 完成情况
                             </button>
@@ -254,7 +254,7 @@
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer" style="margin-bottom: 50px">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                 <button type="button" class="btn btn-primary" id="createOfflineTaskBtn">添加</button>
             </div>
@@ -293,10 +293,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("删除成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.reload();
-                    }, 1000);
+                    });
                     <%--window.location.href = "${APP_PATH}/teacher/searchChapterTask/${chapterId}?pageNum=${pageNum}&courseId=${chapterId}";--%>
                 }
             },
@@ -337,10 +335,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("删除成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.reload();
-                    }, 1000);
+                    });
                 }
             },
             error: function () {
@@ -415,10 +411,8 @@
                 if (result.code === 100) {
                     console.log("success");
                     layer.msg("作业添加成功", {time: 1500, icon: 6}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.reload();
-                    }, 1000);
+                    });
                 }
             },
             error: function () {
@@ -463,10 +457,8 @@
                 if (result.code === 100) {
                     console.log("success");
                     layer.msg("作业添加成功", {time: 1500, icon: 6}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.reload();
-                    }, 1000);
+                    });
                 }
             },
             error: function () {

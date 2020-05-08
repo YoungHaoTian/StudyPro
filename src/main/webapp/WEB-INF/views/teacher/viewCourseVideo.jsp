@@ -43,14 +43,14 @@
     <div class="col-lg-12">
         <div class="panel panel-default wk-panel">
             <div style="text-align: center">
-                <span style="color: red"><h3>${video.path.substring(video.path.indexOf("_")+1)}</h3></span>
+                <span style="color: red"><h3>${video.path.split("_",2)[1]}</h3></span>
             </div>
             <div style="text-align: center">
                 <video src="${APP_PATH}/video/${video.path}" preload="preload" controls="controls" width="60%"
                        height="500px" style="margin:20px 0px 20px 0px"></video>
             </div>
         </div>
-        <div class="panel-footer wk-panel-footer">
+        <div class="panel-footer wk-panel-footer" style="margin-bottom: 50px">
             <button type="button" class="btn btn-info" onclick="back()">返&nbsp;&nbsp;回
             </button>
         </div>

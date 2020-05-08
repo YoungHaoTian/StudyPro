@@ -25,7 +25,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         httpServletResponse.setContentType("text/html");
         String appPath = (String) httpServletRequest.getServletContext().getAttribute("APP_PATH");
         HttpSession session = httpServletRequest.getSession(false);
-        if (session == null) {//当session为空时说明超时了，需要用户重新登录
+        if (session == null) {//当session为空时，说明超时了，需要用户重新登录
             PrintWriter out = httpServletResponse.getWriter();
             out.flush();
             StringBuilder sb = new StringBuilder();

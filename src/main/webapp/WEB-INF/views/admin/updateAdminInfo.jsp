@@ -40,14 +40,14 @@
         <ul class="breadcrumb wk-breadcrumb">
             <li><a href="javascript:void(0)">大学生学习平台</a></li>
             <li><a href="javascript:void(0)">个人信息管理</a></li>
-            <li><a href="javascript:void(0)">个人信息修改</a></li>
+            <li><a href="javascript:void(0)">修改个人信息</a></li>
         </ul>
     </div>
 </div>
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default wk-panel ">
-            <div class="panel-heading">编辑管理员信息 Update Data</div>
+            <div class="panel-heading">修改个人信息 Update Data</div>
             <form id="adminData" action="" method="POST">
                 <div class="panel-body">
                     <div class="row">
@@ -55,7 +55,7 @@
                                style="width: 500px;margin: 0 auto">
                             <thead>
                             <tr class="danger">
-                                <th colspan=2>查看管理员信息</th>
+                                <th colspan=2>修改个人信息</th>
                             </tr>
                             <tr class="info">
                                 <th colspan=2>管理员：<span style="color: red">${admin.name}</span>的信息如下</th>
@@ -123,7 +123,7 @@
                 </div>
             </form>
         </div>
-        <div class="panel-footer wk-panel-footer">
+        <div class="panel-footer wk-panel-footer" style="margin-bottom: 50px">
             <button type="button" class="btn btn-info" onclick="updateAdmin()">提&nbsp;&nbsp;交</button>
             <button type="reset" class="btn btn-info" style="margin-left: 20px" onclick="$('#adminData')[0].reset();">重&nbsp;&nbsp;填</button>
         </div>
@@ -231,10 +231,8 @@
                 if (result.code === 100) {
                     console.log("success");
                     layer.msg("修改成功", {time: 1500, icon: 6}, function () {
-                    });
-                    window.setTimeout(function () {//一秒后刷新页面
                         window.location.reload();
-                    }, 1000);
+                    });
                 }
             },
             error: function () {

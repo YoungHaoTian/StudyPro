@@ -2,6 +2,7 @@
          pageEncoding="UTF-8" %>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -37,6 +38,17 @@
             <form id="taskForm" action="" method="POST">
                 <div class="panel-body">
                     <div class="row">
+                        <div class="form-inline" style="margin-bottom: 20px">
+                            <div class="form-group">
+                                <span class="control-label wk-filed-label"
+                                      style="font-size: 15px;color: blue">作业题目：${onlineTask.title}<span
+                                        style="color: green; ">（总分：${total}）</span>
+                                </span><br><br>
+                                <span class="control-label wk-filed-label"
+                                      style="color: red">发布时间：<fmt:formatDate
+                                        value="${onlineTask.recordTime}" pattern="yyyy-MM-dd  HH:mm:ss"/></span>
+                            </div>
+                        </div>
                         <c:forEach items="${sessionScope.questions}" var="question" varStatus="statu">
                             <div class="form-inline">
                                 <div class="form-group">
@@ -70,15 +82,16 @@
                     </div>
                 </div>
             </form>
-            <div class="panel-footer wk-panel-footer" style="margin-top: 50px">
-                <button type="button" class="btn btn-info" id="submitBtn"
-                        onclick="">提&nbsp;&nbsp;交
-                </button>
-                <button type="button" class="btn btn-info"
-                        onclick="back();"
-                        style="margin-left: 20px">返&nbsp;&nbsp;回
-                </button>
-            </div>
+        </div>
+        <div class="panel-footer wk-panel-footer" style="margin-bottom: 50px">
+            <button type="button" class="btn btn-info"
+                    id="submitBtn" <%--data-toggle="modal" data-target="#submitTaskModal"--%>
+                    onclick="">提&nbsp;&nbsp;交
+            </button>
+            <button type="button" class="btn btn-info"
+                    onclick="back();"
+                    style="margin-left: 20px">返&nbsp;&nbsp;回
+            </button>
         </div>
     </div>
 </div>
@@ -118,7 +131,7 @@
         let formData = $("#taskForm").serialize();
         let loadingIndex = layer.msg('处理中', {icon: 16});
         $.ajax({
-            url: "${APP_PATH}/student/saveStudentTask/${taskId}?chapterId=${chapterId}",
+            url: "${APP_PATH}/student/saveStudentTask/${taskId}",
             type: "POST",
             dataType: "json",
             data: formData,
@@ -127,18 +140,23 @@
                 console.log(result);
                 if (result.code === 200) {
                     layer.msg(result.message, {time: 1500, icon: 5, shift: 6}, function () {
+                        $('#submitTaskModal').modal('hide')
                     });
                 }
                 if (result.code === 100) {
                     $(".answer").css("color", "black");
                     let data = result.data;
                     let j = 0, len = data.length;
-                    for (; j < len - 1; j++) {
+                    for (; j < len - 2; j++) {
                         console.log(data[j]);
                         $("." + data[j]).css("color", "red");
                     }
                     $(".answer").css("display", "");
-                    layer.msg("作业提交成功，得分：" + data[len - 1], {time: 3000, icon: 6}, function () {
+                    layer.msg("作业提交成功，总分：" + data[len - 1] + "        得分：" + data[len - 2], {
+                        time: 2000,
+                        icon: 6
+                    }, function () {
+                        $('#submitTaskModal').modal('hide')
                     });
                 }
             },
@@ -153,7 +171,11 @@
         if (${flag==1}) {
             window.location.href = "${APP_PATH}/student/searchStudentTaskInfo?courseId=${courseId}";
         } else {
-            window.location.href = "${APP_PATH}/student/searchTaskInfo/${chapterId}?courseId=${courseId}";
+            if (${pageNum!=null}) {
+                window.location.href = "${APP_PATH}/student/searchTaskInfo/${chapterId}?courseId=${courseId}&pageNum=${pageNum}";
+            } else {
+                window.location.href = "${APP_PATH}/student/searchTaskInfo/${chapterId}?courseId=${courseId}";
+            }
         }
     }
 </script>

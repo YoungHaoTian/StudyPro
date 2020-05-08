@@ -68,7 +68,9 @@ public interface StudentService {
 
     Course getCourseWithChapterAndTeacherByCourseId(Integer courseId);
 
-    List<OnlineTask> getAllTasksByChapterId(Integer id);
+    List<OnlineTask> getAllOnlineTasksByChapterId(Integer id);
+
+    List<OfflineTask> getAllOfflineTasksByChapterId(Integer id);
 
     List<OnlineTaskQuestion> getTaskQuestionsWithTitleAndItemByTaskId(Integer id);
 
@@ -82,15 +84,15 @@ public interface StudentService {
 
     List<StudentOnlineTask> getFinishTaskByStudentId(Integer id);
 
-    List<StudentOnlineTask> getFinishTaskByStudentIdAndTaskIds(Integer studentId, List<Integer> taskIds);
+    List<StudentOnlineTask> getFinishOnlineTaskByStudentIdAndTaskIds(Integer studentId, List<Integer> taskIds);
 
-    boolean insertStudentTaskSelective(StudentOnlineTask studentTask);
+    boolean insertStudentOnlineTaskSelective(StudentOnlineTask studentTask);
 
-    List<OnlineTask> getAllTasksWithChapterByTaskIds(List<Integer> taskIds);
+    List<OnlineTask> getAllOnlineTasksWithChapterByTaskIds(List<Integer> taskIds);
 
     List<Integer> getChapterIdsByCourseId(Integer courseId);
 
-    List<Integer> getTaskIdsByChapterIds(List<Integer> chapterIds);
+    List<Integer> getOnlineTaskIdsByChapterIds(List<Integer> chapterIds);
 
     List<Integer> getTaskIdsByChapterId(Integer id);
 
@@ -99,4 +101,20 @@ public interface StudentService {
     Student getStudentByStudentIdWithCollege(Integer id);
 
     Student getStudentByStudentId(Integer id);
+
+    List<StudentOfflineTask> getFinishOfflineTaskByStudentIdAndTaskIds(Integer studentId, List<Integer> taskIds);
+
+    boolean uploadOfflineTaskFile(StudentOfflineTask studentOfflineTask);
+
+    StudentOfflineTask getStudentOfflineTask(Integer studentTaskId);
+
+    boolean reUploadOfflineTaskFile(StudentOfflineTask studentOfflineTask);
+
+    Integer getOnlineTaskTotalScore(Integer id);
+
+    OnlineTask getOnlineTask(Integer id);
+
+    List<Integer> getOfflineTaskIdsByChapterIds(List<Integer> chapterIds);
+
+    List<OfflineTask> getAllOfflineTasksWithChapterByTaskIds(List<Integer> taskIds);
 }

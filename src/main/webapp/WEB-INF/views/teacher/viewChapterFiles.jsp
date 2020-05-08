@@ -104,16 +104,19 @@
                 <c:forEach items="${files}" var="file">
                     <tr>
                         <td>${index}</td>
-                        <td>${file.path.substring(file.path.indexOf("_")+1)}</td>
+                        <td><a class="btn btn-link" title="下载该文件"
+                               href="${APP_PATH}/teacher/downloadCourseFile/${file.id}">
+                                ${file.path.split("_",2)[1]}
+                        </a></td>
                         <td><fmt:formatDate value="${file.recordTime}" pattern="yyyy-MM-dd  HH:mm:ss"/></td>
                         <td>课件</td>
                         <td>
-                            <button class="btn btn-success btn-sm downloadFile" data-toggle="tooltip"
-                                    data-placement="left"
-                                    title="下载当前文档" fileId="${file.id}" style="margin-right: 20px">
-                                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
-                                下载文档
-                            </button>
+                                <%--<button class="btn btn-success btn-sm downloadFile" data-toggle="tooltip"
+                                        data-placement="left"
+                                        title="下载当前文档" fileId="${file.id}" style="margin-right: 20px">
+                                    <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+                                    下载文档
+                                </button>--%>
                             <button class="btn btn-primary btn-sm editFile" data-toggle="tooltip" data-placement="left"
                                     title="重新上传当前文档" fileId="${file.id}" style="margin-right: 20px">
                                 <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
@@ -131,7 +134,10 @@
                 <c:forEach items="${videos}" var="video">
                     <tr>
                         <td>${index}</td>
-                        <td>${video.path.substring(video.path.indexOf("_")+1)}</td>
+                        <td><a class="btn btn-link" title="下载该视频"
+                               href="${APP_PATH}/teacher/downloadCourseVideo/${video.id}">
+                                ${video.path.split("_",2)[1]}
+                        </a></td>
                         <td><fmt:formatDate value="${video.recordTime}" pattern="yyyy-MM-dd  HH:mm:ss"/></td>
                         <td>视频</td>
                         <td>
@@ -403,10 +409,10 @@
         });
     });
     //下载文档
-    $(".downloadFile").on("click", function () {
+    /*$(".downloadFile").on("click", function () {
         let id = $(this).attr("fileId");
         window.location.href = "${APP_PATH}/teacher/downloadCourseFile/" + id;
-    })
+    })*/
 
     //删除单个视频
     $(".deleteVideo").on("click", function () {
@@ -525,6 +531,7 @@
     function back() {
         window.location.href = "${APP_PATH}/teacher/searchChapter?courseId=${courseId}&pageNum=${pageNum}";
     }
+
     //上传视频
     $("#createVideo").on("click", function () {
         $("#createCourseVideoModal").modal({
@@ -570,10 +577,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("视频上传成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.reload();
-                    }, 1000);
+                    });
                     // window.location.reload(true);
                 }
             },
@@ -621,10 +626,8 @@
                 }
                 if (result.code === 100) {
                     layer.msg("文档上传成功", {time: 1000, icon: 1}, function () {
-                    });
-                    window.setTimeout(function () {
                         window.location.reload();
-                    }, 1000);
+                    });
                     // window.location.reload(true);
                 }
             },
