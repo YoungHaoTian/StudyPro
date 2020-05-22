@@ -3,12 +3,10 @@ package com.cdut.studypro.controllers;
 import com.cdut.studypro.beans.*;
 import com.cdut.studypro.beans.StudentExample.*;
 import com.cdut.studypro.exceptions.DownloadException;
-import com.cdut.studypro.exceptions.FileIsNotExistException;
 import com.cdut.studypro.exceptions.MaxUploadSizeExceedException;
 import com.cdut.studypro.services.StudentService;
 import com.cdut.studypro.utils.MD5Util;
 import com.cdut.studypro.utils.RequestResult;
-import com.cdut.studypro.validates.StudentSequence;
 import com.cdut.studypro.validates.UpdateStudentSequence;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -25,12 +23,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -66,11 +63,6 @@ public class StudentController {
         return RequestResult.failure(e.getMessage());
     }
 
-    @ExceptionHandler(FileIsNotExistException.class)
-    public String handFileIsNotExistException(FileIsNotExistException e, HttpServletRequest request) {
-        request.setAttribute("exception", e);
-        return "error";
-    }
 
     @ResponseBody
     @PostMapping(value = "/login")

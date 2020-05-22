@@ -45,6 +45,7 @@
             <mvc:mapping path="/student/reUploadOfflineTask/*"/>
             <mvc:mapping path="/teacher/saveCourseFile"/>
             <mvc:mapping path="/teacher/updateCourseFile"/>
+            <mvc:mapping path="/teacher/taskQuestionBatchImport"/>
             <bean class="com.cdut.studypro.interceptors.FileUploadInterceptor">
                 &lt;!&ndash;单位：MB&ndash;&gt;
                 <property name="maxSize" value="100"/>
