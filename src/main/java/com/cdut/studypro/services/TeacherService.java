@@ -179,4 +179,6 @@ public interface TeacherService {
     List<OfflineTask> getAllOfflineTasksWithCourseAndChapterExample(OfflineTaskExample offlineTaskExample);
 
     Integer getOnlineTaskTotalScore(Integer id);
+
+    List<Notice> getAllNotices();
 }

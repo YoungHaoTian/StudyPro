@@ -70,6 +70,9 @@ public class TeacherServiceImpl implements TeacherService {
     @Autowired
     private OnlineTaskQuestionMapper onlineTaskQuestionMapper;
 
+    @Autowired
+    private NoticeMapper noticeMapper;
+
     @Override
     public List<Teacher> selectTeacherByExample(TeacherExample example) {
         return teacherMapper.selectByExample(example);
@@ -548,6 +551,13 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public Integer getOnlineTaskTotalScore(Integer id) {
         return onlineTaskQuestionMapper.getTotalScore(id);
+    }
+
+    @Override
+    public List<Notice> getAllNotices() {
+        NoticeExample noticeExample = new NoticeExample();
+        noticeExample.setOrderByClause("record_time desc");
+        return noticeMapper.selectByExampleWithBLOBs(noticeExample);
     }
 
     @Override

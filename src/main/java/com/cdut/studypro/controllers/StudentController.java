@@ -778,8 +778,8 @@ public class StudentController {
         StudentOfflineTask studentOfflineTask = new StudentOfflineTask();
         studentOfflineTask.setOfflineTaskId(taskId);
         studentOfflineTask.setRecordTime(date);
-//        studentOfflineTask.setStudentId(student.getId());
-        studentOfflineTask.setStudentId(26);
+        studentOfflineTask.setStudentId(student.getId());
+//        studentOfflineTask.setStudentId(26);
         studentOfflineTask.setPath(fileDir + fileName);
         boolean success = studentService.uploadOfflineTaskFile(studentOfflineTask);
         if (!success) {

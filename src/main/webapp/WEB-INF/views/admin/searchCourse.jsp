@@ -51,19 +51,19 @@
                 <form class="navbar-form navbar-right" role="search"
                       action="" method="post">
                     <div class="form-group">
-                        <label for="name" class="control-label wk-filed-label" style="margin-top: 20px">课程名称:</label>
+                        <label for="name" class="control-label wk-filed-label" style="margin-top: 20px;margin-left: 0">课程名称:</label>
                         <input type="text" class="form-control" name="name" id="name" placeholder="课程名称"
                                value="${sessionScope.courseQueryCriteria.get("name")}">
                     </div>
 
                     <div class="form-group">
-                        <label for="number" class="control-label wk-filed-label" style="margin-top: 20px">课程编号:</label>
+                        <label for="number" class="control-label wk-filed-label" style="margin-top: 20px;margin-left: 0">课程编号:</label>
                         <input type="text" class="form-control" name="number" id="number" placeholder="课程编号"
                                value="${sessionScope.courseQueryCriteria.get("number")}">
                     </div>
                     <div class="form-group">
                         <label for="collegeId" class="control-label wk-filed-label"
-                               style="margin-top: 20px">所属学院:</label>
+                               style="margin-top: 20px;margin-left: 0">所属学院:</label>
                         <select class="selectpicker" id="collegeId" name="collegeId">
                             <option value="0">请选择所属学院</option>
                             <c:forEach items="${colleges}" var="college">
@@ -79,7 +79,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="teacher" class="control-label wk-filed-label" style="margin-top: 20px">授课教师:</label>
+                        <label for="teacher" class="control-label wk-filed-label" style="margin-top: 20px;margin-left: 0">授课教师:</label>
                         <input type="text" class="form-control" name="teacher" id="teacher" placeholder="授课教师"
                                value="${sessionScope.courseQueryCriteria.get("teacher")}">
                     </div>

@@ -152,6 +152,23 @@
 
                     <div class="panel panel-info wk-accordion-header">
                         <div class="panel-heading">
+                            <a data-toggle="collapse" href="#GMenu" data-parent="#accordion"
+                               class="click">公告管理&nbsp;<span
+                                    class=" glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
+                        </div>
+                        <div id="GMenu" class="panel-collapse collapse">
+                            <div class="list-group wk-accordion-list-group">
+                                <button type="button" class="list-group-item"
+                                        href="${APP_PATH}/teacher/searchNoticeInfo">查看公告&nbsp;<span
+                                        class=" glyphicon glyphicon-hand-right"
+                                        aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-info wk-accordion-header">
+                        <div class="panel-heading">
                             <a data-toggle="collapse" href="#FMenu" data-parent="#accordion"
                                class="click">个人信息管理&nbsp;<span
                                     class=" glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>

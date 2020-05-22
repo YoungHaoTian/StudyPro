@@ -113,6 +113,7 @@ public class AdminController {
         if (message == null) {
             return RequestResult.failure("登录失败，请稍后重试");
         }
+        //根据登录信息查询数据
         List<Admin> admins = adminService.selectAdminByExample(adminExample);
         if (admins != null && admins.size() > 0) {
             if (admins.size() != 1) {
@@ -1847,6 +1848,7 @@ public class AdminController {
             request.getSession().setAttribute("collegeIds", collegeIds);
             OutputStream os = null;
             try (InputStream is = new FileInputStream(file)) {
+                //通过输入流创建工作簿对象
                 XSSFWorkbook xssfWorkbook = new XSSFWorkbook(is);
                 XSSFCellStyle cellStyle = xssfWorkbook.createCellStyle();
                 XSSFCellStyle cellColorStyle = xssfWorkbook.createCellStyle();
@@ -1990,103 +1992,100 @@ public class AdminController {
             HSSFWorkbook hssfWorkbook = null;
             try (InputStream inputStream = file.getInputStream()) {
                 hssfWorkbook = new HSSFWorkbook(inputStream);
-                //遍历工作表
-                for (int numSheet = 0; numSheet < hssfWorkbook.getNumberOfSheets(); numSheet++) {
-                    //获取到当前工作表
-                    HSSFSheet hssfSheet = hssfWorkbook.getSheetAt(numSheet);
-                    if (hssfSheet == null) {
+                //获取到当前工作表
+                HSSFSheet hssfSheet = hssfWorkbook.getSheetAt(0);
+                if (hssfSheet == null) {
+                   return RequestResult.failure("导入失败，请检查模板中是否表存在");
+                }
+                //获取行
+                //获取总行数
+                int totalRows = POIUtil.getExcelRealRowHSSF(hssfSheet);
+                //默认第一行是标题,index=0
+                HSSFRow titleRow = hssfSheet.getRow(0);
+                //判断表头是否被修改或换位置
+                for (int cellIndex = 0; cellIndex < current_title.length; cellIndex++) {
+                    current_title[cellIndex] = titleRow.getCell(cellIndex).getStringCellValue();
+                }
+                //判断两个标题数组的内容是否一致
+                boolean equals = Arrays.equals(original_title, current_title);
+                if (!equals) {
+                    return RequestResult.failure("导入失败，请检查模板中的表头是否被修改");
+                }
+                //从第二行开始循环读取数据
+                for (int rowIndex = 1; rowIndex <= totalRows; rowIndex++) {
+                    //获取行对象
+                    HSSFRow hssfRow = hssfSheet.getRow(rowIndex);
+                    if (hssfRow == null) {
                         continue;
                     }
-                    //获取行
-                    //获取总行数
-                    int totalRows = POIUtil.getExcelRealRowHSSF(hssfSheet);
-                    //默认第一行是标题,index=0
-                    HSSFRow titleRow = hssfSheet.getRow(0);
-                    //判断表头是否被修改或换位置
-                    for (int cellIndex = 0; cellIndex < current_title.length; cellIndex++) {
-                        current_title[cellIndex] = titleRow.getCell(cellIndex).getStringCellValue();
-                    }
-                    //判断两个标题数组的内容是否一致
-                    boolean equals = Arrays.equals(original_title, current_title);
-                    if (!equals) {
-                        return RequestResult.failure("导入失败，请检查模板中的表头是否被修改");
-                    }
-                    //从第二行开始循环读取数据
-                    for (int rowIndex = 1; rowIndex <= totalRows; rowIndex++) {
-                        //获取行对象
-                        HSSFRow hssfRow = hssfSheet.getRow(rowIndex);
-                        if (hssfRow == null) {
-                            continue;
+                    //读取列，从第一列开始
+                    Course course = new Course();
+                    HSSFCell cell;
+                    CellType cellType;
+                    String data;
+                    for (int i = 0; i < original_title.length; i++) {
+                        cell = hssfRow.getCell(i);
+                        cellType = cell.getCellType();
+                        if (cellType != CellType.STRING && cellType != CellType.BLANK) {
+                            return RequestResult.failure("导入失败，第" + (rowIndex + 1) + "行课程的" + original_title[i] + "不是文本类型");
                         }
-                        //读取列，从第一列开始
-                        Course course = new Course();
-                        HSSFCell cell;
-                        CellType cellType;
-                        String data;
-                        for (int i = 0; i < original_title.length; i++) {
-                            cell = hssfRow.getCell(i);
-                            cellType = cell.getCellType();
-                            if (cellType != CellType.STRING && cellType != CellType.BLANK) {
-                                return RequestResult.failure("导入失败，第" + (rowIndex + 1) + "行课程的" + original_title[i] + "不是文本类型");
+                        data = "";
+                        if (cellType == CellType.STRING) {
+                            data = cell.getStringCellValue().trim();
+                        }
+                        if (data.contains(" ")) {//包含空格
+                            return RequestResult.failure("导入失败，第" + (rowIndex + 1) + "行课程的" + original_title[i] + "中包含空格");
+                        }
+                        if (i == 0) {
+                            if ("".equals(data)) {
+                                return RequestResult.failure("导入失败，第" + (rowIndex + 1) + "行课程的" + original_title[i] + "不能为空");
                             }
-                            data = "";
-                            if (cellType == CellType.STRING) {
-                                data = cell.getStringCellValue().trim();
+                            course.setName(data);
+                        }
+                        if (i == 1) {
+                            if ("".equals(data)) {
+                                return RequestResult.failure("导入失败，第" + (rowIndex + 1) + "行课程的" + original_title[i] + "不能为空");
                             }
-                            if (data.contains(" ")) {//包含空格
-                                return RequestResult.failure("导入失败，第" + (rowIndex + 1) + "行课程的" + original_title[i] + "中包含空格");
+                            if (!data.matches(number)) {//判断课程编号是否符合格式
+                                return RequestResult.failure("导入失败，第" + (rowIndex + 1) + "行课程的" + original_title[i] + "格式错误");
                             }
-                            if (i == 0) {
-                                if ("".equals(data)) {
-                                    return RequestResult.failure("导入失败，第" + (rowIndex + 1) + "行课程的" + original_title[i] + "不能为空");
-                                }
-                                course.setName(data);
+                            if (numbers.contains(data)) {//表中的编号有重复
+                                int j = numbers.indexOf(data);
+                                return RequestResult.failure("导入失败，第" + (rowIndex + 1) + "行课程的" + original_title[i] + "和第" + (j + 2) + "行老师的重复了");
                             }
-                            if (i == 1) {
-                                if ("".equals(data)) {
-                                    return RequestResult.failure("导入失败，第" + (rowIndex + 1) + "行课程的" + original_title[i] + "不能为空");
-                                }
-                                if (!data.matches(number)) {//判断课程编号是否符合格式
-                                    return RequestResult.failure("导入失败，第" + (rowIndex + 1) + "行课程的" + original_title[i] + "格式错误");
-                                }
-                                if (numbers.contains(data)) {//表中的编号有重复
-                                    int j = numbers.indexOf(data);
-                                    return RequestResult.failure("导入失败，第" + (rowIndex + 1) + "行课程的" + original_title[i] + "和第" + (j + 2) + "行老师的重复了");
-                                }
-                                numbers.add(data);
-                                if (exist_numbers.contains(data)) {//判断编号是否已经被注册
-                                    return RequestResult.failure("导入失败，第" + (rowIndex + 1) + "行课程的" + original_title[i] + "已经被注册");
-                                }
-                                course.setNumber(data);
+                            numbers.add(data);
+                            if (exist_numbers.contains(data)) {//判断编号是否已经被注册
+                                return RequestResult.failure("导入失败，第" + (rowIndex + 1) + "行课程的" + original_title[i] + "已经被注册");
                             }
-                            if (i == 2) {
-                                if ("".equals(data)) {
-                                    course.setCollegeId(0);
-                                } else {
-                                    if (!collegeIds.contains(data)) {
-                                        return RequestResult.failure("导入失败，请检查第" + (rowIndex + 1) + "行课程的" + original_title[i] + "是否在范围之中");
-                                    }
-                                    course.setCollegeId(Integer.parseInt(data));
+                            course.setNumber(data);
+                        }
+                        if (i == 2) {
+                            if ("".equals(data)) {
+                                course.setCollegeId(0);
+                            } else {
+                                if (!collegeIds.contains(data)) {
+                                    return RequestResult.failure("导入失败，请检查第" + (rowIndex + 1) + "行课程的" + original_title[i] + "是否在范围之中");
                                 }
+                                course.setCollegeId(Integer.parseInt(data));
+                            }
 
-                            }
-                            if (i == 3) {
-                                if ("".equals(data)) {
-                                    course.setTeacherId(0);
-                                } else {
-                                    if (!teacherIds.contains(data)) {
-                                        return RequestResult.failure("导入失败，请检查第" + (rowIndex + 1) + "行课程的" + original_title[i] + "是否在范围之中");
-                                    }
-                                    course.setTeacherId(Integer.parseInt(data));
+                        }
+                        if (i == 3) {
+                            if ("".equals(data)) {
+                                course.setTeacherId(0);
+                            } else {
+                                if (!teacherIds.contains(data)) {
+                                    return RequestResult.failure("导入失败，请检查第" + (rowIndex + 1) + "行课程的" + original_title[i] + "是否在范围之中");
                                 }
-                            }
-                            if (i == 4) {
-                                course.setIntro(data);
+                                course.setTeacherId(Integer.parseInt(data));
                             }
                         }
-                        System.out.println(course);
-                        courses.add(course);
+                        if (i == 4) {
+                            course.setIntro(data);
+                        }
                     }
+                    System.out.println(course);
+                    courses.add(course);
                     boolean i = adminService.insertCourseBatch(courses);
                     if (!i) {
                         return RequestResult.failure("批量导入失败，请稍后再试");
@@ -2104,9 +2103,9 @@ public class AdminController {
             try (InputStream inputStream = file.getInputStream()) {
                 xssfWorkbook = new XSSFWorkbook(inputStream);
                 //获取到含有课程信息的工作表
-                XSSFSheet xssfSheet = xssfWorkbook.getSheet("课程信息");
+                XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
                 if (xssfSheet == null) {
-                    return RequestResult.failure("导入失败，请查看课程信息表表名是否被修改");
+                     return RequestResult.failure("导入失败，请检查模板中是否表存在");
                 }
                 //获取行
                 //默认第一行是标题,index=0

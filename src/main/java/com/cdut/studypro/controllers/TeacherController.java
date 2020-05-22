@@ -2101,7 +2101,8 @@ public class TeacherController {
                                                 @RequestParam("chapterId") Integer chapterId,
                                                 @RequestParam("taskId") Integer taskId,
                                                 HttpServletRequest request) {
-        String path = request.getServletContext().getRealPath("/offlineTask/") + courseId + "\\" + chapterId + "\\" + taskId + "\\";
+        String basePath = request.getServletContext().getRealPath("/offlineTask/");
+        String path = basePath + courseId + "\\" + chapterId + "\\" + taskId + "\\";
         File file = new File(path);
         if (!file.exists()) {
             file.mkdirs();
@@ -2118,7 +2119,7 @@ public class TeacherController {
         }
         List<File> files = new ArrayList<>();
         for (StudentOfflineTask task : studentOfflineTasks) {
-            file = new File(path + task.getPath());
+            file = new File(basePath + task.getPath());
             if (file.exists()) {
                 files.add(file);
             }
@@ -2139,6 +2140,13 @@ public class TeacherController {
         } catch (IOException e) {
             throw new DownloadException("下载异常，请稍后再试");
         }
+    }
+
+    @RequestMapping("/searchNoticeInfo")
+    public String searchNoticeInfo(Map<String, Object> map) {
+        List<Notice> notices = teacherService.getAllNotices();
+        map.put("notices", notices);
+        return "teacher/searchNoticeInfo";
     }
 
     @ResponseBody

@@ -270,7 +270,7 @@
                 $("#txtconfirm").focus();
                 return;
             }
-            if (/(^\s*)|(\s*$)/g.test(txtPwd)) {
+            if (txtPwd.indexOf(" ") !== -1) {
                 layer.msg("登录密码不能包含空格", {time: 1500, icon: 5, shift: 6}, function () {
                 });
                 $("#txtconfirm").focus();

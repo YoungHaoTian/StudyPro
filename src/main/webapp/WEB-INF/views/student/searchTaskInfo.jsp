@@ -81,14 +81,14 @@
                 <tr class="info">
                     <th>作业标题</th>
                     <th style="width: 200px">发布时间</th>
-                    <th style="width: 200px">完成状态</th>
+                    <th>完成状态</th>
                     <th style="width: 200px">完成时间</th>
                     <c:if test="${sessionScope.taskType.equals('online')}">
                         <th style="width: 200px">分数<span style="color:red;">/总分</span></th>
 
                     </c:if>
                     <c:if test="${sessionScope.taskType.equals('offline')}">
-                        <th style="width: 300px">文件</th>
+                        <th style="width: 200px">文件</th>
 
                     </c:if>
                     <td style="width: 100px">作业类型</td>

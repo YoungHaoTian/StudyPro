@@ -67,8 +67,9 @@ public class IndexController {
             JSONObject json = null;
             //生成6位验证码
             String verifyCode = String.valueOf(new Random().nextInt(899999) + 100000);
-            //发送短信
+            //通过榛子云账户信息获取短信发送对象
             ZhenziSmsClient client = new ZhenziSmsClient(APIURL, APPID, APPSERCRET);
+            //存放手机号码和短信内容
             Map<String, String> data = new HashMap<>();
             String message = null;
             if ("register".equals(type)) {
@@ -85,6 +86,7 @@ public class IndexController {
             }
             data.put("message", message);
             data.put("number", phone);
+            //发送短信
             String send = client.send(data);
             json = JSONObject.fromObject(send);
             if (json.getInt("code") != 0) {//发送短信失败
