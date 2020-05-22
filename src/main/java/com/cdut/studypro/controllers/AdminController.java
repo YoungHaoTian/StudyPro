@@ -224,7 +224,7 @@ public class AdminController {
     //下载学生模板
     @RequestMapping("/downloadStudentTemplate")
     public ResponseEntity<byte[]> downloadStudentTemplate(HttpServletRequest request) {
-        String path = request.getServletContext().getRealPath("/excels/");
+        String path = request.getServletContext().getRealPath("/templates/");
         String fileName = "Student_Template.xlsx";
         File file = new File(path + fileName);
         // 设置响应头通知浏览器下载
@@ -1209,7 +1209,7 @@ public class AdminController {
     //下载教师模板
     @RequestMapping("/downloadTeacherTemplate")
     public ResponseEntity<byte[]> downloadTeacherTemplate(HttpServletRequest request) {
-        String path = request.getServletContext().getRealPath("/excels/");
+        String path = request.getServletContext().getRealPath("/templates/");
         String fileName = "Teacher_Template.xlsx";
         File file = new File(path + fileName);
         // 设置响应头通知浏览器下载
@@ -1480,7 +1480,7 @@ public class AdminController {
     //下载学院模板
     @RequestMapping("/downloadCollegeTemplate")
     public ResponseEntity<byte[]> downloadCollegeTemplate(HttpServletRequest request) {
-        String path = request.getServletContext().getRealPath("/excels/");
+        String path = request.getServletContext().getRealPath("/templates/");
         String fileName = "College_Template.xlsx";
         File file = new File(path + fileName);
 
@@ -1828,7 +1828,7 @@ public class AdminController {
 
     @RequestMapping("/createCourseBatch")
     public String createCourseBatch(HttpServletRequest request) {
-        String path = request.getServletContext().getRealPath("/excels/");
+        String path = request.getServletContext().getRealPath("/templates/");
         String fileName = "Course_Template.xlsx";
         File file = new File(path + fileName);
         if (file.exists()) {
@@ -1952,7 +1952,7 @@ public class AdminController {
     //下载课程模板
     @RequestMapping("/downloadCourseTemplate")
     public ResponseEntity<byte[]> downloadCourseTemplate(HttpServletRequest request) {
-        String path = request.getServletContext().getRealPath("/excels/");
+        String path = request.getServletContext().getRealPath("/templates/");
         String fileName = "Course_Template.xlsx";
         File file = new File(path + fileName);
         // 设置响应头通知浏览器下载

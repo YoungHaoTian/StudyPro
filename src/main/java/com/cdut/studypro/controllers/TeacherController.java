@@ -1417,8 +1417,8 @@ public class TeacherController {
     //下载作业模板
     @RequestMapping("/downloadTaskQuestionTemplate")
     public ResponseEntity<byte[]> downloadTaskQuestionTemplate(HttpServletRequest request) {
-        String path = request.getServletContext().getRealPath("/excels/");
-        String fileName = "Task_Template.xlsx";
+        String path = request.getServletContext().getRealPath("/templates/");
+        String fileName = "OnlineTaskQuestion_Template.xlsx";
         File file = new File(path + fileName);
         // 设置响应头通知浏览器下载
         HttpHeaders headers = new HttpHeaders();
