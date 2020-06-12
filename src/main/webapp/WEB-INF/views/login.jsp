@@ -61,7 +61,7 @@
                             <i class="icon_user"></i>
                         </div>
                         <input type="text" class="form-control" maxlength="30" name="username" id="username"
-                               placeholder="邮箱\手机号\账号" value="201613161013"
+                               placeholder="邮箱\手机号\账号" value=""
                                autocomplete="off">
                     </div>
                 </div>
@@ -71,7 +71,7 @@
                             <i class="icon_password"></i>
                         </div>
                         <input type="password" class="form-control" name="password" id="password" placeholder="密码"
-                               value="123456789"
+                               value=""
                                autocomplete="off">
                     </div>
                 </div>

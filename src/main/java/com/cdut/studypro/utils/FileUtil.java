@@ -8,7 +8,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 /**
- * @description:
+ * @description: 提供压缩、解压缩文件和删除目录的功能
  * @author: Mr.Young
  * @date: 2020-05-02 14:15
  * @email: no.bugs@foxmail.com

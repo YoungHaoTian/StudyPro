@@ -3,7 +3,7 @@ package com.cdut.studypro.utils;
 import javax.servlet.ServletContext;
 
 /**
- * @description:
+ * @description: 未使用
  * @author: Mr.Young
  * @date: 2020-05-06 12:30
  * @email: no.bugs@foxmail.com

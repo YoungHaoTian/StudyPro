@@ -1,7 +1,7 @@
 package com.cdut.studypro.utils;
 
 /**
- * @description:
+ * @description: 该类主要是封装服务器的返回信息，并最终以JSON形式返回给浏览器
  * @author: Mr.Young
  * @date: 2020-03-31 21:22
  * @email: no.bugs@foxmail.com
